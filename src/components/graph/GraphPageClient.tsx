@@ -90,11 +90,11 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
     <div className="relative">
       <button
         onClick={() => setShowExport((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-hover transition-colors"
+        className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
       >
-        <Download size={13} />
+        <Download size={15} />
         Exporter
-        <ChevronDown size={11} className={cn('transition-transform', showExport && 'rotate-180')} />
+        <ChevronDown size={14} className={cn('transition-transform', showExport && 'rotate-180')} />
       </button>
       {showExport && (
         <>
@@ -137,13 +137,13 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
               <button
                 onClick={switchToWorkflow}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors',
+                  'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-semibold transition-colors',
                   mode === 'workflow'
-                    ? 'bg-white text-text-primary shadow-[0px_1px_2px_rgba(16,24,40,0.08)] border border-border'
+                    ? 'bg-white text-text-primary shadow-xs border border-border'
                     : 'text-text-tertiary hover:text-text-secondary',
                 )}
               >
-                <Network size={11} />
+                <Network size={14} />
                 Workflow
               </button>
               <button
@@ -151,15 +151,15 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
                 onMouseEnter={(e) => !isBagSelected && setSacBtnRect((e.currentTarget as HTMLElement).getBoundingClientRect())}
                 onMouseLeave={() => setSacBtnRect(null)}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors',
+                  'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-semibold transition-colors',
                   mode === 'focus'
-                    ? 'bg-white text-text-primary shadow-[0px_1px_2px_rgba(16,24,40,0.08)] border border-border'
+                    ? 'bg-white text-text-primary shadow-xs border border-border'
                     : isBagSelected
                       ? 'text-text-tertiary hover:text-text-secondary'
                       : 'text-text-muted cursor-not-allowed',
                 )}
               >
-                <Package size={11} />
+                <Package size={14} />
                 Sac
               </button>
             </div>
@@ -331,7 +331,7 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
           style={{ top: sacBtnRect.top + sacBtnRect.height / 2, left: sacBtnRect.right + 8, transform: 'translateY(-50%)' }}
         >
           <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '6px solid #101828' }} />
-          <span className="bg-[#101828] text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
+          <span className="bg-overlay text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
             Sélectionne d'abord un sac sur le graphe
           </span>
         </div>

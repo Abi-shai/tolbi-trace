@@ -39,10 +39,10 @@ export default function ProcessStepper() {
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <p className="text-lg font-semibold text-[#101828] leading-7 shrink-0">
+        <p className="text-lg font-semibold text-text-primary leading-7 shrink-0">
           Progression de la campagne
         </p>
-        <span className="flex items-center px-2 py-0.5 rounded-full border text-xs font-medium bg-[#fffaeb] border-[#fedf89] text-[#b54708]">
+        <span className="flex items-center px-2 py-0.5 rounded-full border text-xs font-medium bg-warning-bg border-warning-border text-warning-text">
           En cours
         </span>
       </div>
@@ -56,12 +56,12 @@ export default function ProcessStepper() {
           The gray background fills it fully; the green div grows inside it.
         */}
         <div
-          className="absolute h-[2px] bg-[#eaecf0] overflow-hidden"
+          className="absolute h-[2px] bg-border overflow-hidden"
           style={{ top: '12px', left: '12px', right: '12px' }}
         >
           {greenPct > 0 && (
             <div
-              className="h-full bg-[#056033] transition-all duration-500"
+              className="h-full bg-primary transition-all duration-500"
               style={{ width: `${greenPct}%` }}
             />
           )}
@@ -76,22 +76,22 @@ export default function ProcessStepper() {
             return (
               <div key={step.stepId} className={cn(
                 'relative w-6 h-6 rounded-full overflow-hidden shrink-0',
-                (status === 'complete' || status === 'active') ? 'bg-[#e6f0eb]' : 'bg-[#f9fafb]',
+                (status === 'complete' || status === 'active') ? 'bg-[#e6f0eb]' : 'bg-surface',
                 isGlow && 'shadow-[0px_0px_0px_4px_rgba(5,96,51,0.24)]',
               )}>
                 {status === 'complete' && (
-                  <div className="absolute inset-0 rounded-full bg-[#056033] flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-primary flex items-center justify-center">
                     <Check size={12} className="text-white" strokeWidth={2.5} />
                   </div>
                 )}
                 {status === 'active' && (
-                  <div className="absolute inset-0 rounded-full bg-[#056033] flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-primary flex items-center justify-center">
                     <span className="w-2 h-2 rounded-full bg-white" />
                   </div>
                 )}
                 {status === 'upcoming' && (
-                  <div className="absolute inset-0 rounded-full border-[1.5px] border-[#eaecf0] flex items-center justify-center">
-                    <span className="w-2 h-2 rounded-full bg-[#d0d5dd]" />
+                  <div className="absolute inset-0 rounded-full border-[1.5px] border-border flex items-center justify-center">
+                    <span className="w-2 h-2 rounded-full bg-status-offline" />
                   </div>
                 )}
               </div>
@@ -118,9 +118,9 @@ export default function ProcessStepper() {
               <div key={step.stepId} className={cn('w-6 flex flex-col gap-1', alignment)}>
                 <p className={cn(
                   'text-sm font-semibold leading-5 whitespace-nowrap',
-                  isGlow                ? 'text-[#044b28]' :
+                  isGlow                ? 'text-brand-700' :
                   status === 'upcoming' ? 'text-[#98a2b3]' :
-                                          'text-[#344054]',
+                                          'text-text-secondary',
                 )}>
                   {SHORT_NAMES[i]}
                 </p>
@@ -128,8 +128,8 @@ export default function ProcessStepper() {
                 <p className={cn(
                   'text-sm leading-5 whitespace-nowrap',
                   isGlow                ? 'text-[#056033]' :
-                  status === 'upcoming' ? 'text-[#d0d5dd]'  :
-                                          'text-[#475467]',
+                  status === 'upcoming' ? 'text-text-disabled'  :
+                                          'text-text-tertiary',
                 )}>
                   {STEP_DATES[i]}
                 </p>
@@ -138,8 +138,8 @@ export default function ProcessStepper() {
                   'text-xs tabular-nums whitespace-nowrap',
                   isGlow                ? 'text-[#056033] font-medium' :
                   status === 'complete' ? 'text-primary font-medium'   :
-                  status === 'active'   ? 'text-[#475467]'             :
-                                          'text-[#d0d5dd]',
+                  status === 'active'   ? 'text-text-tertiary'             :
+                                          'text-text-disabled',
                 )}>
                   {bagCountLabel(step.order, step.bagsCompleted, step.bagsInProgress, step.bagsTotal)}
                 </p>

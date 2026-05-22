@@ -40,7 +40,7 @@ function IconTooltip({ label, rect }: { label: string; rect: DOMRect }) {
       style={{ top: rect.top + rect.height / 2, left: rect.right + 8, transform: 'translateY(-50%)' }}
     >
       <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '6px solid #101828' }} />
-      <span className="bg-[#101828] text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
+      <span className="bg-overlay text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
         {label}
       </span>
     </div>
@@ -63,7 +63,7 @@ function CollapseBtn({ onClick }: { onClick: () => void }) {
       <button
         onClick={onClick}
         {...handlers}
-        className="flex items-center justify-center p-2 rounded-lg border border-[#eaecf0] text-[#667085] hover:bg-[#f9fafb] transition-colors shrink-0"
+        className="flex items-center justify-center p-2 rounded-lg border border-border text-text-muted hover:bg-surface transition-colors shrink-0"
       >
         <ChevronsLeft size={20} />
       </button>
@@ -79,7 +79,7 @@ function ExpandBtn({ onClick }: { onClick: () => void }) {
       <button
         onClick={onClick}
         {...handlers}
-        className="flex items-center justify-center p-2 rounded-lg border border-[#eaecf0] text-[#667085] hover:bg-[#f9fafb] transition-colors"
+        className="flex items-center justify-center p-2 rounded-lg border border-border text-text-muted hover:bg-surface transition-colors"
       >
         <ChevronsRight size={20} />
       </button>
@@ -102,7 +102,7 @@ function NavIconBtn({
         {...handlers}
         className={cn(
           'flex items-center justify-center w-12 h-12 rounded-[6px] transition-colors',
-          active ? 'bg-[#f9fafb] text-[#182230]' : 'bg-white text-[#667085] hover:bg-[#f9fafb] hover:text-[#182230]',
+          active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-muted hover:bg-surface hover:text-text-nav-hover',
         )}
       >
         <Icon size={24} />
@@ -123,11 +123,11 @@ function NavTextBtn({
       className={cn(
         'flex items-center gap-3 w-full px-3 py-2 rounded-[6px] text-base font-semibold transition-colors whitespace-nowrap',
         active
-          ? 'bg-[#f9fafb] text-[#182230]'
-          : 'bg-white text-[#344054] hover:bg-[#f9fafb] hover:text-[#182230]',
+          ? 'bg-surface text-text-nav-hover'
+          : 'bg-white text-text-secondary hover:bg-surface hover:text-text-nav-hover',
       )}
     >
-      <Icon size={24} className={active ? 'text-[#344054]' : 'text-[#667085]'} />
+      <Icon size={24} className={active ? 'text-text-secondary' : 'text-text-muted'} />
       {label}
     </button>
   )
@@ -203,12 +203,12 @@ export default function Sidebar() {
         <motion.aside
           animate={{ width: collapsed ? W.collapsed : W.expanded }}
           transition={widthTransition}
-          className="flex shrink-0 h-full bg-white border-r border-[#eaecf0] overflow-hidden"
+          className="flex shrink-0 h-full bg-white border-r border-border overflow-hidden"
         >
           {/* Icon rail */}
           <div className={cn(
             'flex flex-col w-[80px] shrink-0 pt-4',
-            !collapsed && 'border-r border-[#eaecf0]',
+            !collapsed && 'border-r border-border',
           )}>
             {/* Top: expand btn (collapsed only) → module icon → divider */}
             <div className="flex flex-col items-center gap-4 px-2 mb-6">
@@ -220,7 +220,7 @@ export default function Sidebar() {
                 )}
               </AnimatePresence>
               <ModuleIcon />
-              <div className="w-full h-px bg-[#eaecf0]" />
+              <div className="w-full h-px bg-border" />
             </div>
 
             {/* Nav: all icons when collapsed, Route only when expanded */}
@@ -273,7 +273,7 @@ export default function Sidebar() {
                 className="flex flex-col flex-1 min-w-0 px-4 py-4 gap-6 overflow-y-auto"
               >
                 <div className="flex items-center justify-between gap-2 shrink-0">
-                  <p className="text-xl font-semibold text-[#101828] leading-[30px] truncate">
+                  <p className="text-xl font-semibold text-text-primary leading-[30px] truncate">
                     {workflow.name}
                   </p>
                   <CollapseBtn onClick={toggleSidebar} />
@@ -282,7 +282,7 @@ export default function Sidebar() {
                 <div className="flex flex-col gap-6">
                   {navGroups.map((group) => (
                     <div key={group.label} className="flex flex-col gap-3">
-                      <p className="text-base font-medium text-[#475467] leading-6">
+                      <p className="text-base font-medium text-text-tertiary leading-6">
                         {group.label}
                       </p>
                       <div className="flex flex-col gap-1">
@@ -323,7 +323,7 @@ export default function Sidebar() {
     <motion.aside
       animate={{ width: collapsed ? W.collapsed : W.expanded }}
       transition={widthTransition}
-      className="flex flex-col shrink-0 h-full bg-white border-r border-[#eaecf0] overflow-hidden"
+      className="flex flex-col shrink-0 h-full bg-white border-r border-border overflow-hidden"
     >
       <AnimatePresence mode="wait" initial={false}>
         {collapsed ? (
@@ -336,7 +336,7 @@ export default function Sidebar() {
             <div className="flex flex-col items-center gap-4 px-2">
               <ExpandBtn onClick={toggleSidebar} />
               <ModuleIcon />
-              <div className="w-full h-px bg-[#eaecf0]" />
+              <div className="w-full h-px bg-border" />
             </div>
             <div className="flex flex-col gap-2 items-start px-4">
               <NavIconBtn
@@ -355,7 +355,7 @@ export default function Sidebar() {
           >
             <div className="flex items-center gap-3 px-4">
               <ModuleIcon />
-              <span className="flex-1 text-xl font-semibold text-[#101828] leading-[30px] whitespace-nowrap">
+              <span className="flex-1 text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">
                 Trace
               </span>
               <CollapseBtn onClick={toggleSidebar} />

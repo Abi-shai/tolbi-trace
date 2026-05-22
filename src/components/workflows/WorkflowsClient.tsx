@@ -32,7 +32,7 @@ export default function WorkflowsClient() {
         actions={
           <button
             onClick={() => setPanelOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
           >
             <Plus size={16} />
             Nouveau workflow

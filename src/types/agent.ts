@@ -4,4 +4,6 @@ export interface Agent {
   role: string
   phone?: string
   workflowId: string
+  lastActivity?: string
+  progress?: number
 }

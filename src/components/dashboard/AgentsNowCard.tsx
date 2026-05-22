@@ -17,7 +17,7 @@ function statusOf(lastSeen: string): 'active' | 'idle' | 'silent' {
 const STATUS_DOT: Record<string, string> = {
   active: 'bg-green-500',
   idle:   'bg-orange-400',
-  silent: 'bg-[#d0d5dd]',
+  silent: 'bg-status-offline',
 }
 
 export default function AgentsNowCard({ agents }: { agents: ActiveAgent[] }) {

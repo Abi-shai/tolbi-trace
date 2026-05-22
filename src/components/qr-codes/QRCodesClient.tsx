@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
-import { QrCode, Search, Eye } from 'lucide-react'
+import { QrCode, Search, Eye, Package, CheckCircle2, Clock } from 'lucide-react'
 import Header from '@/components/layout/Header'
+import MetricCard from '@/components/ui/MetricCard'
 import QRCodeViewerModal from './QRCodeViewerModal'
 import { useQRCodesStore } from '@/store/qr-codes'
 import type { QRCode as QRCodeType } from '@/types/qr-code'
@@ -84,10 +85,23 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
 
         <main className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
 
-          {/* Stats */}
-          <div className="bg-white border border-border rounded-lg px-4 py-3 inline-block">
-            <p className="text-2xl font-bold leading-tight text-text-primary">{activeCodes.length}</p>
-            <p className="text-xs text-text-tertiary mt-0.5">Sacs enregistrés</p>
+          {/* Métriques */}
+          <div className="flex gap-4 w-full">
+            <MetricCard
+              icon={Package}
+              label="Sacs enregistrés"
+              value={activeCodes.length}
+            />
+            <MetricCard
+              icon={CheckCircle2}
+              label="Complétés"
+              value={activeCodes.filter((c) => c.currentStep === 5).length}
+            />
+            <MetricCard
+              icon={Clock}
+              label="En cours"
+              value={activeCodes.filter((c) => c.currentStep > 1 && c.currentStep < 5).length}
+            />
           </div>
 
           {/* Filtres */}
@@ -111,7 +125,7 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
                   className={cn(
                     'px-3 py-1.5 rounded-md text-xs font-medium transition-colors',
                     filter === value
-                      ? 'bg-white text-text-primary shadow-[0px_1px_2px_rgba(16,24,40,0.08)] border border-border'
+                      ? 'bg-white text-text-primary shadow-xs border border-border'
                       : 'text-text-tertiary hover:text-text-secondary',
                   )}
                 >

@@ -7,7 +7,7 @@ import type { GraphExportFns } from './GraphView'
 const GraphView = dynamic(() => import('./GraphView'), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center flex-1 h-full text-sm text-text-tertiary bg-[#f9fafb]">
+    <div className="flex items-center justify-center flex-1 h-full text-sm text-text-tertiary bg-surface">
       Chargement du graphe…
     </div>
   ),

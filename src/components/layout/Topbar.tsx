@@ -90,12 +90,12 @@ export default function Topbar() {
                 {crumb.href ? (
                   <Link
                     href={crumb.href}
-                    className="px-2 py-1 rounded-[6px] text-[#d0d5dd] text-sm font-medium leading-5 hover:text-white transition-colors whitespace-nowrap"
+                    className="px-2 py-1 rounded-[6px] text-text-disabled text-sm font-medium leading-5 hover:text-white transition-colors whitespace-nowrap"
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className="px-2 py-1 rounded-[6px] bg-[#056033] text-[#eaecf0] text-sm font-semibold leading-5 max-w-[220px] truncate">
+                  <span className="px-2 py-1 rounded-[6px] bg-primary text-border text-sm font-semibold leading-5 max-w-[220px] truncate">
                     {crumb.label}
                   </span>
                 )}
@@ -109,11 +109,11 @@ export default function Topbar() {
       <div className="flex items-center gap-4 shrink-0">
 
         {/* Credits badge */}
-        <div className="flex items-center gap-2 px-2.5 pr-3 py-1 rounded-full bg-[#fffaeb]">
+        <div className="flex items-center gap-2 px-2.5 pr-3 py-1 rounded-full bg-warning-bg">
           <img src="/icons/token-coin.png" alt="" className="w-[17px] h-[17px] rounded-full shrink-0 object-cover" />
           <p className="text-sm leading-6 whitespace-nowrap">
-            <span className="font-bold text-[#044b28]">32</span>
-            <span className="font-medium text-[#344054]"> crédits disponibles</span>
+            <span className="font-bold text-brand-700">32</span>
+            <span className="font-medium text-text-secondary"> crédits disponibles</span>
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export default function Topbar() {
 
           {/* Apprendre */}
           <button
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[#eaecf0] text-sm font-semibold border border-[#056033] shadow-sm hover:bg-[#056033] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-border text-sm font-semibold border border-primary shadow-sm hover:bg-primary transition-colors"
             style={{ backgroundColor: 'rgba(5, 96, 51, 0.9)' }}
           >
             <BookOpen size={16} />
@@ -139,7 +139,7 @@ export default function Topbar() {
             <button className="flex items-center justify-center p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors">
               <Bell size={18} />
             </button>
-            <div className="absolute top-[14px] right-[14px] w-1.5 h-1.5 rounded-full bg-[#d92d20] border-[1.5px] border-[#eaecf0] pointer-events-none" />
+            <div className="absolute top-[14px] right-[14px] w-1.5 h-1.5 rounded-full bg-status-anomaly border-[1.5px] border-border pointer-events-none" />
           </div>
 
           {/* Grid */}
@@ -149,8 +149,8 @@ export default function Topbar() {
         </div>
 
         {/* Avatar */}
-        <button className="w-10 h-10 rounded-full bg-[#f2f4f7] border border-black/[0.08] flex items-center justify-center shrink-0 hover:ring-2 hover:ring-white/30 transition-all">
-          <span className="text-sm font-semibold text-[#667085]">AG</span>
+        <button className="w-10 h-10 rounded-full bg-surface-alt border border-black/[0.08] flex items-center justify-center shrink-0 hover:ring-2 hover:ring-white/30 transition-all">
+          <span className="text-sm font-semibold text-text-muted">AG</span>
         </button>
       </div>
     </header>

@@ -44,10 +44,10 @@ export function GhostNode({ data }: NodeProps) {
 
         {!isEmpty && (
           <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-            <div className="bg-[#101828] text-white text-xs font-semibold px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap">
+            <div className="bg-overlay text-white text-xs font-semibold px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap">
               Ajouter une étape
             </div>
-            <div className="mx-auto mt-0.5 h-0 w-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#101828]" />
+            <div className="mx-auto mt-0.5 h-0 w-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-overlay" />
           </div>
         )}
       </div>

@@ -69,7 +69,7 @@ export default function CampaignEntriesCard() {
 
       {/* Step summary strip */}
       {activeStep && (
-        <div className="flex items-center gap-4 px-5 py-2.5 bg-[#f9fafb] border-b border-border">
+        <div className="flex items-center gap-4 px-5 py-2.5 bg-surface border-b border-border">
           <Pill color="green"  value={activeStep.bagsCompleted}  label="validés"  />
           {activeStep.bagsInProgress > 0 && (
             <Pill color="orange" value={activeStep.bagsInProgress} label="en cours" />
@@ -92,7 +92,7 @@ export default function CampaignEntriesCard() {
             return (
               <li
                 key={event.id}
-                className="flex items-center gap-3 px-5 py-3 hover:bg-[#f9fafb] cursor-pointer transition-colors group"
+                className="flex items-center gap-3 px-5 py-3 hover:bg-surface cursor-pointer transition-colors group"
               >
                 <div className={cn('flex items-center justify-center w-7 h-7 rounded-lg shrink-0', cfg.bg)}>
                   <Icon size={13} className={cfg.color} />

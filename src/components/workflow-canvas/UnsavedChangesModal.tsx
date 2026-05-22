@@ -13,7 +13,7 @@ export default function UnsavedChangesModal({ onSave, onDiscard, onCancel }: Uns
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       {/* Backdrop — dark + blur, matching Figma */}
       <div
-        className="absolute inset-0 bg-[#0c111d]/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-modal-overlay/70 backdrop-blur-sm"
         onClick={onCancel}
       />
 
@@ -43,13 +43,13 @@ export default function UnsavedChangesModal({ onSave, onDiscard, onCancel }: Uns
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3">
           <button
             onClick={onDiscard}
-            className="px-4 py-[10px] text-sm font-semibold text-text-secondary bg-white border border-border rounded-lg hover:bg-surface transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+            className="px-4 py-[10px] text-sm font-semibold text-text-secondary bg-white border border-border rounded-lg hover:bg-surface transition-colors shadow-xs"
           >
             Quitter sans enregistrer
           </button>
           <button
             onClick={onSave}
-            className="px-4 py-[10px] text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+            className="px-4 py-[10px] text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
           >
             Enregistrer
           </button>

@@ -70,7 +70,7 @@ export default function NewWorkflowPanel({ onCreate, onClose }: NewWorkflowPanel
         <button
           onClick={handleSubmit}
           disabled={!name.trim()}
-          className="w-full px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Créer le workflow
         </button>

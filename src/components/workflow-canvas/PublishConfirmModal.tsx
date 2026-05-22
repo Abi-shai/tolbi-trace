@@ -10,7 +10,7 @@ interface PublishConfirmModalProps {
 export default function PublishConfirmModal({ onConfirm, onCancel }: PublishConfirmModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-[#0c111d]/70 backdrop-blur-sm" onClick={onCancel} />
+      <div className="absolute inset-0 bg-modal-overlay/70 backdrop-blur-sm" onClick={onCancel} />
 
       <div className="relative bg-white rounded-xl w-full max-w-[480px] overflow-hidden shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.08),0px_8px_8px_-4px_rgba(16,24,40,0.03)]">
         <div className="px-6 pt-6 pb-5 relative">
@@ -33,13 +33,13 @@ export default function PublishConfirmModal({ onConfirm, onCancel }: PublishConf
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3">
           <button
             onClick={onCancel}
-            className="px-4 py-[10px] text-sm font-semibold text-text-secondary bg-white border border-border rounded-lg hover:bg-surface transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+            className="px-4 py-[10px] text-sm font-semibold text-text-secondary bg-white border border-border rounded-lg hover:bg-surface transition-colors shadow-xs"
           >
             Annuler
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-[10px] text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+            className="px-4 py-[10px] text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
           >
             Publier
           </button>

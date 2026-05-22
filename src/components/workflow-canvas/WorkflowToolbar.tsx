@@ -107,7 +107,7 @@ export default function WorkflowToolbar({ workflowId, workflowName, description,
           {status === 'draft' && (
             <button
               onClick={() => setShowPublishModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-colors shadow-xs"
             >
               <Rocket size={14} />
               Publier
@@ -125,7 +125,7 @@ export default function WorkflowToolbar({ workflowId, workflowName, description,
           <button
             onClick={markSaved}
             disabled={!hasUnsaved}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] disabled:cursor-default
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors shadow-xs disabled:cursor-default
               bg-primary text-white hover:bg-primary-hover
               disabled:bg-surface disabled:text-text-tertiary disabled:border disabled:border-border disabled:shadow-none"
           >

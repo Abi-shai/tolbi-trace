@@ -17,7 +17,7 @@ function onlineStatus(lastSeen: string): 'online' | 'away' | 'offline' {
 const STATUS_DOT: Record<string, string> = {
   online:  'bg-green-500',
   away:    'bg-orange-400',
-  offline: 'bg-[#d0d5dd]',
+  offline: 'bg-status-offline',
 }
 
 export default function ActiveAgentsCard({ agents }: { agents: ActiveAgent[] }) {

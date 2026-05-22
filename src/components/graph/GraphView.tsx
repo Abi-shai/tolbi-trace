@@ -499,7 +499,7 @@ export default function GraphView({
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className="relative w-full h-full bg-[#f9fafb]">
+    <div className="relative w-full h-full bg-surface">
       <div ref={containerRef} className="w-full h-full" />
 
       {/* Node tooltip */}
@@ -526,7 +526,7 @@ export default function GraphView({
             key={title}
             onClick={action}
             title={title}
-            className="flex items-center justify-center w-8 h-8 bg-white border border-border rounded-lg text-text-secondary hover:bg-surface shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-colors"
+            className="flex items-center justify-center w-8 h-8 bg-white border border-border rounded-lg text-text-secondary hover:bg-surface shadow-xs transition-colors"
           >
             <Icon size={14} />
           </button>

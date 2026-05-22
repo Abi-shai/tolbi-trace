@@ -72,7 +72,7 @@ export default function ActivityFeed({ events, defaultExpanded = true }: Activit
       {/* Header — collapsible */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 border-b border-border hover:bg-[#f9fafb] transition-colors text-left"
+        className="w-full flex items-center justify-between px-5 py-4 border-b border-border hover:bg-surface transition-colors text-left"
       >
         <div>
           <h2 className="text-sm font-semibold text-text-primary">Historique d'activité</h2>
@@ -95,7 +95,7 @@ export default function ActivityFeed({ events, defaultExpanded = true }: Activit
       {expanded && (
         <>
           {/* Filtres inline */}
-          <div className="px-5 py-3 border-b border-border bg-[#f9fafb] space-y-2">
+          <div className="px-5 py-3 border-b border-border bg-surface space-y-2">
             <div className="flex items-center gap-2.5 flex-wrap">
               <select value={filterStep}   onChange={(e) => setFilterStep(e.target.value)}   className={selectClass}>
                 <option value="">Toutes les étapes</option>
