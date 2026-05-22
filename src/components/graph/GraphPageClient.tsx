@@ -45,18 +45,20 @@ const EXPORT_OPTIONS: { label: string; desc: string; key: keyof GraphExportFns }
 type ViewMode = 'workflow' | 'focus'
 
 export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] }) {
-  const [showExport, setShowExport]   = useState(false)
-  const [mode, setMode]               = useState<ViewMode>('workflow')
-  const [selected, setSelected]       = useState<GraphNode | null>(null)
+  const [showExport, setShowExport]       = useState(false)
+  const [mode, setMode]                   = useState<ViewMode>('workflow')
+  const [selected, setSelected]           = useState<GraphNode | null>(null)
+  const [sacBtnRect, setSacBtnRect]       = useState<DOMRect | null>(null)
   const exportRef = useRef<GraphExportFns | null>(null)
 
   const isBagSelected = selected?.type === 'bag'
 
   function handleNodeSelect(node: GraphNode | null) {
     setSelected(node)
-    // If switching away from a bag, exit focus mode
     if (!node || node.type !== 'bag') {
       setMode('workflow')
+    } else {
+      setMode('focus')
     }
   }
 
@@ -146,8 +148,8 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
               </button>
               <button
                 onClick={switchToFocus}
-                disabled={!isBagSelected}
-                title={!isBagSelected ? 'Sélectionne un sac sur le graphe' : undefined}
+                onMouseEnter={(e) => !isBagSelected && setSacBtnRect((e.currentTarget as HTMLElement).getBoundingClientRect())}
+                onMouseLeave={() => setSacBtnRect(null)}
                 className={cn(
                   'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors',
                   mode === 'focus'
@@ -161,11 +163,6 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
                 Sac
               </button>
             </div>
-            {!isBagSelected && (
-              <p className="text-[10px] text-text-muted mt-1.5 text-center leading-tight">
-                Clique sur un sac orange pour l'explorer
-              </p>
-            )}
           </div>
 
           {/* Workflow legends */}
@@ -230,8 +227,8 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
             </div>
           )}
 
-          {/* Bag detail panel */}
-          {selected && bagDetail && (
+          {/* Bag detail panel — focus mode only */}
+          {mode === 'focus' && bagDetail && (
             <div className="flex flex-col flex-1 overflow-y-auto border-t border-border">
               {/* Bag header */}
               <div className="px-4 py-4 border-b border-border">
@@ -259,15 +256,6 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
                     </div>
                   )}
                 </div>
-
-                {mode === 'workflow' && (
-                  <button
-                    onClick={switchToFocus}
-                    className="mt-3 w-full py-1.5 rounded-md border border-border text-[11px] font-semibold text-text-secondary hover:bg-surface transition-colors"
-                  >
-                    Explorer en détail →
-                  </button>
-                )}
               </div>
 
               {/* Event history */}
@@ -317,7 +305,7 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
                 </span>
               </span>
               <button
-                onClick={switchToWorkflow}
+                onClick={() => handleNodeSelect(null)}
                 className="text-xs text-text-muted hover:text-text-secondary transition-colors ml-1"
               >
                 ✕
@@ -335,6 +323,19 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
           />
         </div>
       </div>
+
+      {/* Tooltip "Vue Sac" — aucun sac sélectionné */}
+      {sacBtnRect && (
+        <div
+          className="fixed z-50 pointer-events-none flex items-center gap-1.5"
+          style={{ top: sacBtnRect.top + sacBtnRect.height / 2, left: sacBtnRect.right + 8, transform: 'translateY(-50%)' }}
+        >
+          <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '6px solid #101828' }} />
+          <span className="bg-[#101828] text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
+            Sélectionne d'abord un sac sur le graphe
+          </span>
+        </div>
+      )}
     </div>
   )
 }

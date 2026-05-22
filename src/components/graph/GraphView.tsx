@@ -439,9 +439,6 @@ export default function GraphView({
       const found = nodes.find((n) => n.id === e.target.id()) ?? null
       onNodeSelectRef.current(found)
     })
-    cy.on('tap', (e) => {
-      if (e.target === cy) onNodeSelectRef.current(null)
-    })
 
     cyRef.current = cy
     onExportReady?.({ png: exportPng, svg: exportSvg, pdf: exportPdf })
