@@ -207,12 +207,15 @@ export default function StepConfigPanel() {
             </div>
           ) : (
             <div className="space-y-2">
-              {step.questions.map((q) => (
+              {step.questions.map((q, i) => (
                 <div
                   key={q.id}
                   className="group flex items-start gap-2 p-3 border border-border rounded-lg bg-white hover:border-border-strong transition-colors"
                 >
                   <GripVertical size={14} className="text-text-muted mt-[9px] shrink-0 cursor-grab" />
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-surface border border-border text-[10px] font-bold text-text-tertiary shrink-0 mt-[9px]">
+                    {i + 1}
+                  </span>
 
                   <div className="flex-1 space-y-2 min-w-0">
                     <select
