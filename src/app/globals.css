@@ -2,25 +2,52 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #101828;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins);
+  --font-mono: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Brand primaire — source Figma */
+  --color-primary:       #056033;
+  --color-primary-hover: #044b28;
+  --color-brand-50:      #e6f0eb;
+  --color-brand-700:     #044b28;
+
+  /* Topbar */
+  --color-topbar: rgba(6, 105, 56, 0.95);
+
+  /* Texte */
+  --color-text-primary:   #101828;
+  --color-text-secondary: #344054;
+  --color-text-tertiary:  #475467;
+  --color-text-nav-hover: #182230;
+  --color-text-on-brand:  #ffffff;
+  --color-text-muted:     #d0d5dd;
+
+  /* Backgrounds */
+  --color-surface:        #f9fafb;
+  --color-surface-alt:    #f2f4f7;
+  --color-surface-active: #f9fafb;
+
+  /* Borders */
+  --color-border:         #eaecf0;
+  --color-border-strong:  #d0d5dd;
+
+  /* Statuts sac */
+  --color-status-completed:  #16a34a;
+  --color-status-inprogress: #ea580c;
+  --color-status-pending:    #9ca3af;
+  --color-status-anomaly:    #d92d20;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins, system-ui, sans-serif);
 }

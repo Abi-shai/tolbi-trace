@@ -1,0 +1,43 @@
+import type { Workflow } from '@/types/workflow'
+
+export const workflows: Workflow[] = [
+  {
+    id: 'wf-001',
+    name: 'Collecte maïs — Campagne nov. 2025',
+    description: 'Suivi complet depuis le producteur jusqu\'à l\'entrepôt AgroSénégal. Coopérative Kaolack Maïs, 12 producteurs, préfixe KLK-2025-.',
+    project: 'AgroSénégal SA',
+    stepCount: 5,
+    status: 'active',
+    createdAt: '2025-10-15',
+    bagsTotal: 48,
+    bagsCompleted: 20,
+    bagsInProgress: 15,
+    bagsPending: 10,
+  },
+  {
+    id: 'wf-002',
+    name: 'Collecte coton — Campagne oct. 2025',
+    description: 'Workflow en préparation pour la collecte et le contrôle qualité du coton.',
+    project: 'AgroSénégal SA',
+    stepCount: 4,
+    status: 'draft',
+    createdAt: '2025-09-20',
+    bagsTotal: 0,
+    bagsCompleted: 0,
+    bagsInProgress: 0,
+    bagsPending: 0,
+  },
+  {
+    id: 'wf-003',
+    name: 'Collecte arachide — Campagne 2024',
+    description: 'Campagne terminée — 120 sacs collectés et archivés.',
+    project: 'AgroSénégal SA',
+    stepCount: 3,
+    status: 'draft',
+    createdAt: '2024-11-01',
+    bagsTotal: 120,
+    bagsCompleted: 120,
+    bagsInProgress: 0,
+    bagsPending: 0,
+  },
+]
