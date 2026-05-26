@@ -62,7 +62,7 @@ export default function ActiveAgentsCard({ agents }: { agents: ActiveAgent[] }) 
                   <div className="mt-2 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-text-muted">
-                        {agent.bagsScanned} / {agent.bagsTarget} sacs
+                        {agent.bagsScanned} / {agent.bagsTarget} QR codes
                       </span>
                       <span className="text-[11px] font-semibold text-text-secondary">{pct}%</span>
                     </div>

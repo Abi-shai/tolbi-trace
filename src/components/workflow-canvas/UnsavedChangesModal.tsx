@@ -21,7 +21,7 @@ export default function UnsavedChangesModal({ onSave, onDiscard, onCancel }: Uns
               Modifications non enregistrées
             </h2>
             <p className="text-sm text-text-tertiary leading-5 mt-1">
-              Tu as des modifications non enregistrées sur ce canvas. Veux-tu les enregistrer avant de quitter ?
+              Vous avez des modifications non enregistrées. Voulez-vous les enregistrer avant de quitter ?
             </p>
           </div>
           <button

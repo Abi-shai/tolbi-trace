@@ -7,7 +7,7 @@ export default function StepProgressList({ steps }: { steps: StepProgress[] }) {
       <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-text-primary">Progression par étape</h2>
-          <p className="text-xs text-text-tertiary mt-0.5">Sacs validés et en cours</p>
+          <p className="text-xs text-text-tertiary mt-0.5">QR codes validés et en cours</p>
         </div>
         <span className="text-[11px] text-text-muted shrink-0">Sync il y a 2 min</span>
       </div>
@@ -33,7 +33,7 @@ export default function StepProgressList({ steps }: { steps: StepProgress[] }) {
                 <div className="flex items-center gap-3 shrink-0 text-right">
                   {knownTotal ? (
                     <span className="text-xs text-text-tertiary">
-                      <span className="font-semibold text-text-primary">{step.bagsCompleted}</span>/{step.bagsTotal} sacs
+                      <span className="font-semibold text-text-primary">{step.bagsCompleted}</span>/{step.bagsTotal} QR codes
                     </span>
                   ) : (
                     <span className="text-xs text-text-tertiary">

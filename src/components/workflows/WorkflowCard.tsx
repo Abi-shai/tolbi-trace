@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CheckCircle2, Circle, Layers } from 'lucide-react'
+import { Layers } from 'lucide-react'
 import type { Workflow, WorkflowStatus } from '@/types/workflow'
 import { cn } from '@/lib/utils'
 
@@ -25,10 +25,7 @@ function formatDate(iso: string) {
 }
 
 export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
-  const {
-    name, description, stepCount, status, createdAt,
-    bagsTotal, bagsCompleted, bagsInProgress,
-  } = workflow
+  const { name, description, stepCount, status, createdAt } = workflow
 
   return (
     <Link href={`/workflows/${workflow.id}`} className="block bg-white border border-border rounded-lg p-5 hover:border-border-strong hover:shadow-[0px_1px_4px_rgba(16,24,40,0.08)] transition-all cursor-pointer">
@@ -49,20 +46,6 @@ export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
             {stepCount} étape{stepCount > 1 ? 's' : ''}
           </span>
 
-          {bagsTotal > 0 && (
-            <div className="flex items-center gap-2.5">
-              <span className="flex items-center gap-1 text-status-completed">
-                <CheckCircle2 size={12} />
-                {bagsCompleted}
-              </span>
-              <span className="flex items-center gap-1 text-status-inprogress">
-                <Circle size={12} />
-                {bagsInProgress}
-              </span>
-              <span className="text-border-strong">·</span>
-              <span>{bagsTotal} sacs</span>
-            </div>
-          )}
         </div>
 
         <span className="text-text-muted">Créé le {formatDate(createdAt)}</span>

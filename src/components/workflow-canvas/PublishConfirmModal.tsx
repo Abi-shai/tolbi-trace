@@ -17,10 +17,10 @@ export default function PublishConfirmModal({ onConfirm, onCancel }: PublishConf
         <div className="px-6 pt-6 pb-5 relative">
           <div className="pr-8">
             <h2 className="text-[18px] font-semibold text-text-primary leading-7">
-              Publier le workflow
+              Publier le processus
             </h2>
             <p className="text-sm text-text-tertiary leading-5 mt-1">
-              Une fois publié, ce workflow sera visible et accessible aux agents sur l'application mobile. Tu pourras le repasser en brouillon à tout moment.
+              Une fois publié, ce processus sera visible et accessible aux agents sur l'application mobile. Vous pourrez le repasser en brouillon à tout moment.
             </p>
           </div>
           <button

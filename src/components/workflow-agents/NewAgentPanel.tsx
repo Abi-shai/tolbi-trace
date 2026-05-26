@@ -17,12 +17,11 @@ export default function NewAgentPanel({ workflowId, onClose }: NewAgentPanelProp
   const addAgent = useAgentsStore((s) => s.addAgent)
 
   const [name,  setName]  = useState('')
-  const [role,  setRole]  = useState('')
   const [phone, setPhone] = useState('')
 
   function handleSubmit() {
-    if (!name.trim() || !role.trim()) return
-    addAgent(workflowId, name.trim(), role.trim(), phone.trim() || undefined)
+    if (!name.trim()) return
+    addAgent(workflowId, name.trim(), phone.trim() || undefined)
     onClose()
   }
 
@@ -62,7 +61,7 @@ export default function NewAgentPanel({ workflowId, onClose }: NewAgentPanelProp
             <div className="flex flex-col gap-1">
               <h2 className="text-xl font-semibold text-text-primary leading-[30px]">Ajouter un agent</h2>
               <p className="text-sm text-text-tertiary leading-5">
-                Renseigne les informations de l'agent terrain à assigner à ce workflow.
+                Renseignez les informations de l'agent terrain à assigner à ce processus.
               </p>
             </div>
           </div>
@@ -82,14 +81,6 @@ export default function NewAgentPanel({ workflowId, onClose }: NewAgentPanelProp
           />
 
           <Input
-            label="Rôle / Titre"
-            type="text"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            placeholder="Ex. Magasinier, Responsable qualité…"
-          />
-
-          <Input
             label="Téléphone"
             hint="Optionnel"
             type="tel"
@@ -101,7 +92,7 @@ export default function NewAgentPanel({ workflowId, onClose }: NewAgentPanelProp
 
         <div className="px-6 py-4 border-t border-border shrink-0 flex items-center justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>Annuler</Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={!name.trim() || !role.trim()}>
+          <Button variant="primary" onClick={handleSubmit} disabled={!name.trim()}>
             Ajouter l'agent
           </Button>
         </div>

@@ -33,7 +33,7 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
     const q = search.toLowerCase()
     if (!q) return workflowAgents
     return workflowAgents.filter((a) =>
-      a.name.toLowerCase().includes(q) || a.role.toLowerCase().includes(q)
+      a.name.toLowerCase().includes(q)
     )
   }, [workflowAgents, search])
 
@@ -45,6 +45,7 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       <Header
         title="Agents"
+        description="Agents terrain assignés à ce processus. Ils exécutent leurs étapes depuis l'application mobile."
         actions={
           <Button variant="primary" icon={UserPlus} onClick={() => setPanelOpen(true)}>
             Ajouter un agent
@@ -88,8 +89,8 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
                 </p>
                 <p className="text-xs text-text-muted leading-5 max-w-xs">
                   {search
-                    ? 'Essaie un autre terme de recherche.'
-                    : 'Ajoute les agents terrain qui participeront à ce workflow.'}
+                    ? 'Essayez un autre terme de recherche.'
+                    : 'Ajoutez les agents terrain qui participeront à ce processus.'}
                 </p>
               </div>
             )}

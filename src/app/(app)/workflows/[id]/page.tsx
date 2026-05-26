@@ -67,7 +67,7 @@ export default function WorkflowCanvasPage({
         <div className="flex items-center gap-2 px-5 py-2 border-b border-amber-200 bg-amber-50 shrink-0">
           <AlertCircle size={13} className="text-amber-500 shrink-0" />
           <p className="text-xs text-amber-800 font-medium">
-            Ce workflow est en brouillon — les agents n'y ont pas encore accès. Publie-le pour démarrer la collecte.
+            Ce processus est en brouillon — les agents n'y ont pas encore accès. Publiez-le pour démarrer la collecte.
           </p>
         </div>
       )}

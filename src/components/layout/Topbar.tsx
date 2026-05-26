@@ -13,7 +13,7 @@ interface Crumb {
 const SUB_LABELS: Record<string, string> = {
   'qr-codes': 'QR Codes',
   graphe:     'Traçabilité',
-  sacs:       'Détail sac',
+  sacs:       'Détail QR code',
   agents:     'Équipe',
 }
 

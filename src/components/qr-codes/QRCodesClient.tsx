@@ -15,14 +15,6 @@ const TOTAL_STEPS = 5
 
 type Filter = 'all' | 1 | 2 | 3 | 4 | 5
 
-const FILTERS: { value: Filter; label: string }[] = [
-  { value: 'all', label: 'Tous'    },
-  { value: 1,     label: 'Étape 1' },
-  { value: 2,     label: 'Étape 2' },
-  { value: 3,     label: 'Étape 3' },
-  { value: 4,     label: 'Étape 4' },
-  { value: 5,     label: 'Étape 5' },
-]
 
 function StepDots({ currentStep }: { currentStep: number }) {
   return (
@@ -80,7 +72,7 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
       <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
         <Header
           title="QR Codes"
-          description="Suivez les sacs collectés par vos agents terrain."
+          description="Suivez les QR codes collectés par vos agents terrain."
         />
 
         <main className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
@@ -89,7 +81,7 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
           <div className="flex gap-4 w-full">
             <MetricCard
               icon={Package}
-              label="Sacs enregistrés"
+              label="QR codes enregistrés"
               value={activeCodes.length}
             />
             <MetricCard
@@ -106,33 +98,27 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
 
           {/* Filtres */}
           <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-xs">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <div className="relative w-[260px]">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un code ou un producteur…"
-                className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                className="w-full pl-9 pr-3.5 py-2.5 text-sm bg-white border border-border-strong rounded-lg shadow-xs placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               />
             </div>
 
-            <div className="flex items-center gap-1 bg-surface rounded-lg p-1 border border-border">
-              {FILTERS.map(({ value, label }) => (
-                <button
-                  key={String(value)}
-                  onClick={() => setFilter(value)}
-                  className={cn(
-                    'px-3 py-1.5 rounded-md text-xs font-medium transition-colors',
-                    filter === value
-                      ? 'bg-white text-text-primary shadow-xs border border-border'
-                      : 'text-text-tertiary hover:text-text-secondary',
-                  )}
-                >
-                  {label}
-                </button>
+            <select
+              value={String(filter)}
+              onChange={(e) => setFilter(e.target.value === 'all' ? 'all' : Number(e.target.value) as Filter)}
+              className="px-3 py-2 text-sm border border-border-strong rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer"
+            >
+              <option value="all">Toutes les étapes</option>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>Étape {n}</option>
               ))}
-            </div>
+            </select>
 
             <span className="text-xs text-text-muted ml-auto">
               {filtered.length} résultat{filtered.length > 1 ? 's' : ''}
@@ -201,8 +187,8 @@ export default function QRCodesClient({ initialCodes, workflowId }: QRCodesClien
                   <tr>
                     <td colSpan={6} className="px-4 py-12 text-center">
                       <QrCode size={24} className="mx-auto text-text-muted mb-2" />
-                      <p className="text-sm font-medium text-text-secondary">Aucun sac trouvé</p>
-                      <p className="text-xs text-text-muted mt-1">Modifie les filtres pour affiner la recherche.</p>
+                      <p className="text-sm font-medium text-text-secondary">Aucun QR code trouvé</p>
+                      <p className="text-xs text-text-muted mt-1">Modifiez les filtres pour affiner la recherche.</p>
                     </td>
                   </tr>
                 )}

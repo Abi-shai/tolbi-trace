@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { X, GitBranch } from 'lucide-react'
+import { X, Route } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -52,12 +52,12 @@ export default function NewWorkflowPanel({ onCreate, onClose }: NewWorkflowPanel
 
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary">
-              <GitBranch size={16} />
+              <Route size={16} />
             </div>
             <div className="flex flex-col gap-1">
-              <h2 className="text-xl font-semibold text-text-primary leading-[30px]">Nouveau workflow</h2>
+              <h2 className="text-xl font-semibold text-text-primary leading-[30px]">Nouveau processus</h2>
               <p className="text-sm text-text-tertiary leading-5">
-                Remplissez les informations requises pour créer votre workflow.
+                Donnez un nom à votre processus.
               </p>
             </div>
           </div>
@@ -67,7 +67,7 @@ export default function NewWorkflowPanel({ onCreate, onClose }: NewWorkflowPanel
 
         <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-6">
           <Input
-            label="Nom du workflow"
+            label="Nom du processus"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -84,7 +84,7 @@ export default function NewWorkflowPanel({ onCreate, onClose }: NewWorkflowPanel
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Décris l'objectif et le contexte de ce workflow…"
+              placeholder="Décrivez l'objectif et le contexte de ce processus…"
               rows={4}
               className="w-full px-3.5 py-2.5 text-sm text-text-primary border border-border-strong rounded-lg placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
             />
@@ -94,7 +94,7 @@ export default function NewWorkflowPanel({ onCreate, onClose }: NewWorkflowPanel
         <div className="px-6 py-4 border-t border-border shrink-0 flex items-center justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>Annuler</Button>
           <Button variant="primary" onClick={handleSubmit} disabled={!name.trim()}>
-            Créer le workflow
+            Créer le processus
           </Button>
         </div>
       </motion.aside>

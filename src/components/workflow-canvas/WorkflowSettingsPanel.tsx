@@ -51,7 +51,7 @@ export default function WorkflowSettingsPanel() {
             <div className="flex flex-col gap-1">
               <h2 className="text-xl font-semibold text-text-primary leading-[30px]">Paramètres</h2>
               <p className="text-sm text-text-tertiary leading-5">
-                Modifie le nom et la description de ce workflow.
+                Modifiez le nom et la description de ce processus.
               </p>
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function WorkflowSettingsPanel() {
 
         <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-6">
           <Input
-            label="Nom du workflow"
+            label="Nom du processus"
             type="text"
             value={name}
             onChange={(e) => updateMeta(e.target.value, description)}
@@ -76,7 +76,7 @@ export default function WorkflowSettingsPanel() {
             <textarea
               value={description}
               onChange={(e) => updateMeta(name, e.target.value)}
-              placeholder="Décris l'objectif et le contexte de ce workflow…"
+              placeholder="Décrivez l'objectif et le contexte de ce processus…"
               rows={4}
               className="w-full px-3.5 py-2.5 text-sm text-text-primary border border-border-strong rounded-lg placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
             />

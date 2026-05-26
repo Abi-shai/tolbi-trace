@@ -17,7 +17,6 @@ export function StepNode({ data }: NodeProps) {
 
   const agents     = useAgentsStore((s) => s.agents)
   const agentName  = agentId ? (agents.find((a) => a.id === agentId)?.name ?? agentRole) : agentRole
-  const agentTitle = agentId ? (agents.find((a) => a.id === agentId)?.role ?? '') : ''
   const uniqueTypes = [...new Set(questions.map((q) => q.type))]
 
   return (
@@ -53,9 +52,6 @@ export function StepNode({ data }: NodeProps) {
             <User size={12} className="text-text-muted shrink-0 mt-0.5" />
             <div className="min-w-0">
               <p className="text-xs text-text-secondary leading-4 font-medium truncate">{agentName}</p>
-              {agentTitle && (
-                <p className="text-[10px] text-text-muted leading-3 mt-0.5 truncate">{agentTitle}</p>
-              )}
             </div>
           </div>
         )}

@@ -13,7 +13,7 @@ import { NODE_COLORS, STATUS_BORDER } from './graph-constants'
 let pluginsRegistered = false
 
 const NODE_TYPE_LABELS: Record<string, string> = {
-  bag:         'Sac',
+  bag:         'QR code',
   cooperative: 'Coopérative',
   producer:    'Producteur',
   agent:       'Agent',

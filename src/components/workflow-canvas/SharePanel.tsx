@@ -42,7 +42,7 @@ export default function SharePanel({ workflowId, workflowName }: SharePanelProps
                 <Link2 size={14} className="text-primary" />
               </div>
               <span className="text-sm font-semibold text-text-primary flex-1 min-w-0 truncate">
-                Partager le workflow
+                Partager le processus
               </span>
               <button
                 onClick={closePanel}
@@ -62,14 +62,14 @@ export default function SharePanel({ workflowId, workflowName }: SharePanelProps
                   className="w-[160px] h-[160px] rounded-lg"
                 />
                 <p className="text-xs text-text-tertiary text-center leading-4 max-w-[200px]">
-                  L'agent scanne ce code pour accéder au workflow sur mobile
+                  L'agent scanne ce code pour accéder au processus sur mobile
                 </p>
               </div>
 
               {/* Workflow name label */}
               <div>
                 <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">
-                  Workflow partagé
+                  Processus partagé
                 </p>
                 <p className="text-sm font-medium text-text-primary leading-5">{workflowName}</p>
               </div>
@@ -94,7 +94,7 @@ export default function SharePanel({ workflowId, workflowName }: SharePanelProps
 
               {/* Info */}
               <p className="text-xs text-text-muted leading-4">
-                Partage ce lien ou ce QR code avec tes agents terrain. Ils pourront accéder au workflow sur l'application mobile Tolbi.
+                Partagez ce lien ou ce QR code avec vos agents terrain. Ils pourront accéder au processus sur l'application mobile Tolbi.
               </p>
 
             </div>

@@ -92,7 +92,7 @@ export default function AgentsNowCard({ agents }: { agents: ActiveAgent[] }) {
                   <div className="mt-2.5 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-text-muted">
-                        {agent.bagsScanned} / {agent.bagsTarget} sacs aujourd'hui
+                        {agent.bagsScanned} / {agent.bagsTarget} QR codes aujourd'hui
                       </span>
                       <span className={cn(
                         'text-[11px] font-semibold',

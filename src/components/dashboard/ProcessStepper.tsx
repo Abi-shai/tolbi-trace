@@ -16,9 +16,9 @@ function getStatus(bagsCompleted: number, bagsInProgress: number): StepStatus {
 function bagCountLabel(order: number, completed: number, inProgress: number, total: number): string {
   const status = getStatus(completed, inProgress)
   if (status === 'upcoming') return 'En attente'
-  if (order === 1)           return `${completed + inProgress} sacs`
-  if (status === 'complete') return `${completed} sacs validés`
-  return `${completed} / ${total} sacs`
+  if (order === 1)           return `${completed + inProgress} QR codes`
+  if (status === 'complete') return `${completed} QR codes validés`
+  return `${completed} / ${total} QR codes`
 }
 
 export default function ProcessStepper() {

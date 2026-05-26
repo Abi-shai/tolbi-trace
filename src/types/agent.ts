@@ -1,7 +1,7 @@
 export interface Agent {
   id: string
   name: string
-  role: string
+  role?: string
   phone?: string
   workflowId: string
   lastActivity?: string

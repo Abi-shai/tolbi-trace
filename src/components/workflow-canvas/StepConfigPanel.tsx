@@ -121,7 +121,7 @@ export default function StepConfigPanel() {
                 <option value="">— Aucun agent assigné</option>
                 {workflowAgents.map((agent) => (
                   <option key={agent.id} value={agent.id}>
-                    {agent.name} · {agent.role}
+                    {agent.name}
                   </option>
                 ))}
               </select>
@@ -205,7 +205,7 @@ export default function StepConfigPanel() {
               </div>
               <p className="text-sm font-medium text-text-secondary mb-1">Aucune question</p>
               <p className="text-xs text-text-muted leading-4 max-w-[200px]">
-                Clique sur "Ajouter" pour définir les données à collecter.
+                Cliquez sur « Ajouter » pour définir les données à collecter.
               </p>
             </div>
           ) : (

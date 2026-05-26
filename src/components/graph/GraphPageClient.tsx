@@ -15,7 +15,7 @@ import { getBagEvents } from '@/data/bag-events'
 
 const LEGEND_NODES = [
   { type: 'step'        as const, label: 'Étape'      },
-  { type: 'bag'         as const, label: 'Sac'         },
+  { type: 'bag'         as const, label: 'QR code'     },
   { type: 'producer'    as const, label: 'Producteur'  },
   { type: 'agent'       as const, label: 'Agent'       },
   { type: 'cooperative' as const, label: 'Coopérative' },
@@ -29,9 +29,9 @@ const STATUS_LEGEND = [
 ]
 
 const EDGE_LEGEND = [
-  { color: '#056033', dash: false, label: 'Séquence workflow'  },
-  { color: '#ea580c', dash: true,  label: 'Sac → Étape'        },
-  { color: '#93c5fd', dash: true,  label: 'Sac → Producteur'   },
+  { color: '#056033', dash: false, label: 'Séquence processus' },
+  { color: '#ea580c', dash: true,  label: 'QR code → Étape'    },
+  { color: '#93c5fd', dash: true,  label: 'QR code → Producteur' },
   { color: '#9ca3af', dash: true,  label: 'Agent → Étape'      },
   { color: '#c4b5fd', dash: true,  label: 'Producteur → Coop'  },
 ]
@@ -125,45 +125,45 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       <Header
         title="Traçabilité"
-        description="Visualise les relations entre sacs, producteurs, étapes et agents."
+        description="Visualisez les relations entre QR codes, producteurs, étapes et agents."
         actions={exportActions}
       />
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
 
         {/* ── Left panel ────────────────────────────────────────────────────── */}
-        <aside className="flex flex-col w-56 shrink-0 border-r border-border bg-white overflow-y-auto">
+        <aside className="flex flex-col w-fit shrink-0 border-r border-border bg-white overflow-y-auto">
 
           {/* Mode toggle */}
           <div className="px-3 py-3 border-b border-border">
-            <div className="flex bg-surface rounded-lg p-0.5 border border-border gap-0.5">
+            <div className="flex items-center gap-2">
               <button
                 onClick={switchToWorkflow}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-semibold transition-colors',
+                  'flex-1 flex items-center justify-center gap-1.5 h-9 px-3 rounded-md text-sm font-semibold whitespace-nowrap transition-colors',
                   mode === 'workflow'
-                    ? 'bg-white text-text-primary shadow-xs border border-border'
-                    : 'text-text-tertiary hover:text-text-secondary',
+                    ? 'bg-white text-text-secondary shadow-[0px_1px_3px_0px_rgba(16,24,40,0.10),0px_1px_2px_0px_rgba(16,24,40,0.06)]'
+                    : 'text-text-muted hover:text-text-secondary',
                 )}
               >
                 <Network size={14} />
-                Workflow
+                Processus
               </button>
               <button
                 onClick={switchToFocus}
                 onMouseEnter={(e) => !isBagSelected && setSacBtnRect((e.currentTarget as HTMLElement).getBoundingClientRect())}
                 onMouseLeave={() => setSacBtnRect(null)}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-semibold transition-colors',
+                  'flex-1 flex items-center justify-center gap-1.5 h-9 px-3 rounded-md text-sm font-semibold whitespace-nowrap transition-colors',
                   mode === 'focus'
-                    ? 'bg-white text-text-primary shadow-xs border border-border'
+                    ? 'bg-white text-text-secondary shadow-[0px_1px_3px_0px_rgba(16,24,40,0.10),0px_1px_2px_0px_rgba(16,24,40,0.06)]'
                     : isBagSelected
-                      ? 'text-text-tertiary hover:text-text-secondary'
+                      ? 'text-text-muted hover:text-text-secondary'
                       : 'text-text-muted cursor-not-allowed',
                 )}
               >
                 <Package size={14} />
-                Sac
+                QR code
               </button>
             </div>
           </div>
@@ -335,7 +335,7 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
         >
           <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '6px solid #101828' }} />
           <span className="bg-overlay text-white text-xs font-semibold px-2.5 py-1.5 rounded-md whitespace-nowrap shadow-lg">
-            Sélectionne d'abord un sac sur le graphe
+            Sélectionnez d'abord un QR code sur le graphe
           </span>
         </div>
       )}

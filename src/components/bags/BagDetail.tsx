@@ -81,7 +81,7 @@ export default function BagDetail({ bag, events, workflowId }: { bag: QRCode; ev
               <p className="text-sm font-semibold text-text-primary">{bag.producerName ?? '—'}</p>
             </div>
             <div className="flex-1 min-w-0 px-5 py-4">
-              <p className="text-xs text-text-tertiary mb-1">Workflow</p>
+              <p className="text-xs text-text-tertiary mb-1">Processus</p>
               <p className="text-sm font-semibold text-text-primary">Collecte maïs 2025</p>
             </div>
           </div>

@@ -48,7 +48,7 @@ export default function OperationsSummaryCard() {
               {activeWorkflows.length}
             </p>
             <p className="text-xs text-text-muted mt-0.5">
-              workflow{activeWorkflows.length > 1 ? 's' : ''} actif{activeWorkflows.length > 1 ? 's' : ''}
+              processus actif{activeWorkflows.length > 1 ? 's' : ''}
             </p>
           </div>
           <div>
@@ -66,7 +66,7 @@ export default function OperationsSummaryCard() {
             />
           </div>
           <p className="text-[11px] text-text-muted">
-            {activeBagsCompleted} / {activeBagsTotal} sacs complétés sur les workflows actifs
+            {activeBagsCompleted} / {activeBagsTotal} QR codes complétés sur les processus actifs
           </p>
         </div>
       </div>

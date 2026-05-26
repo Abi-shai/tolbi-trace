@@ -8,7 +8,7 @@ interface AgentsState {
   agents: Agent[]
   initialized: boolean
   init: () => void
-  addAgent: (workflowId: string, name: string, role: string, phone?: string) => Agent
+  addAgent: (workflowId: string, name: string, phone?: string) => Agent
   removeAgent: (id: string) => void
 }
 
@@ -22,11 +22,10 @@ export const useAgentsStore = create<AgentsState>((set, get) => ({
     }
   },
 
-  addAgent: (workflowId, name, role, phone) => {
+  addAgent: (workflowId, name, phone) => {
     const agent: Agent = {
       id: `ag-new-${++_counter}`,
       name,
-      role,
       workflowId,
       ...(phone ? { phone } : {}),
     }

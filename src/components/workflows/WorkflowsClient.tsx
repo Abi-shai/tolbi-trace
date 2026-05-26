@@ -29,11 +29,11 @@ export default function WorkflowsClient() {
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       <Header
-        title="Workflows"
-        description="Créez des workflows et gérez la traçabilité de vos campagnes de bout en bout."
+        title="Processus"
+        description="Créez et gérez vos processus de traçabilité terrain."
         actions={
           <Button variant="primary" icon={Plus} onClick={() => setPanelOpen(true)}>
-            Nouveau workflow
+            Nouveau processus
           </Button>
         }
       />
