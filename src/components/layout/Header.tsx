@@ -22,3 +22,4 @@ export default function Header({ title, description, actions }: HeaderProps) {
     </div>
   )
 }
+

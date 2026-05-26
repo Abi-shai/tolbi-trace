@@ -1,10 +1,15 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { UserPlus, Search, Eye, User, Users, ChevronLeft, ChevronRight } from 'lucide-react'
+import { UserPlus, Search, Eye, Users, ChevronLeft, ChevronRight } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 import { useAgentsStore } from '@/store/agents'
 import Header from '@/components/layout/Header'
 import NewAgentPanel from './NewAgentPanel'
+import Button from '@/components/ui/Button'
+import Avatar from '@/components/ui/Avatar'
+import ProgressBar from '@/components/ui/ProgressBar'
+import Input from '@/components/ui/Input'
 
 interface AgentsClientProps {
   workflowId: string
@@ -41,28 +46,23 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
       <Header
         title="Agents"
         actions={
-          <button
-            onClick={() => setPanelOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
-          >
-            <UserPlus size={15} />
+          <Button variant="primary" icon={UserPlus} onClick={() => setPanelOpen(true)}>
             Ajouter un agent
-          </button>
+          </Button>
         }
       />
 
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <main className="flex-1 overflow-y-auto px-4 py-4 bg-surface flex flex-col gap-4">
+      <div className="flex-1 overflow-hidden">
+        <main className="h-full overflow-y-auto px-4 py-4 bg-surface flex flex-col gap-4">
 
           {/* Search */}
-          <div className="relative w-[260px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-            <input
+          <div className="w-[260px]">
+            <Input
+              leadingIcon={Search}
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1) }}
               placeholder="Rechercher un agent..."
-              className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-xs transition-colors"
             />
           </div>
 
@@ -102,9 +102,7 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
               >
                 {/* Nom */}
                 <div className="px-6 py-2 flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-surface-alt ring-[0.75px] ring-black/[0.08] shrink-0">
-                    <User size={16} className="text-text-tertiary" />
-                  </div>
+                  <Avatar name={agent.name} size="md" />
                   <span className="text-sm font-medium text-text-primary">{agent.name}</span>
                 </div>
 
@@ -116,16 +114,8 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
                 </div>
 
                 {/* Progression */}
-                <div className="px-6 py-4 flex items-center gap-3">
-                  <div className="flex-1 h-2 bg-surface-alt rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${agent.progress ?? 0}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-text-secondary tabular-nums w-9 shrink-0 text-right">
-                    {agent.progress ?? 0}%
-                  </span>
+                <div className="px-6 py-4 flex items-center">
+                  <ProgressBar value={agent.progress ?? 0} showLabel />
                 </div>
 
                 {/* Actions */}
@@ -177,13 +167,16 @@ export default function AgentsClient({ workflowId }: AgentsClientProps) {
 
         </main>
 
+      </div>
+
+      <AnimatePresence>
         {panelOpen && (
           <NewAgentPanel
             workflowId={workflowId}
             onClose={() => setPanelOpen(false)}
           />
         )}
-      </div>
+      </AnimatePresence>
     </div>
   )
 }

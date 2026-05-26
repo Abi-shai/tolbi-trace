@@ -8,25 +8,9 @@ const svgPlugin = require('cytoscape-svg')
 const dagre = require('cytoscape-dagre')
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import type { GraphNode, GraphEdge, NodeType } from '@/data/graph'
+import { NODE_COLORS, STATUS_BORDER } from './graph-constants'
 
 let pluginsRegistered = false
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const NODE_COLORS: Record<NodeType, string> = {
-  cooperative: '#7c3aed',
-  step:        '#056033',
-  agent:       '#475467',
-  producer:    '#2563eb',
-  bag:         '#ea580c',
-}
-
-const STATUS_BORDER: Record<string, string> = {
-  done:        '#17b26a',
-  in_progress: '#f79009',
-  pending:     '#98a2b3',
-  blocked:     '#f04438',
-}
 
 const NODE_TYPE_LABELS: Record<string, string> = {
   bag:         'Sac',

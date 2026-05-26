@@ -1,6 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react'
+import Button from '@/components/ui/Button'
 
 interface PublishConfirmModalProps {
   onConfirm: () => void
@@ -31,18 +32,8 @@ export default function PublishConfirmModal({ onConfirm, onCancel }: PublishConf
         </div>
 
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-3">
-          <button
-            onClick={onCancel}
-            className="px-4 py-[10px] text-sm font-semibold text-text-secondary bg-white border border-border rounded-lg hover:bg-surface transition-colors shadow-xs"
-          >
-            Annuler
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-[10px] text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
-          >
-            Publier
-          </button>
+          <Button variant="secondary" onClick={onCancel}>Annuler</Button>
+          <Button variant="primary" onClick={onConfirm}>Publier</Button>
         </div>
       </div>
     </div>

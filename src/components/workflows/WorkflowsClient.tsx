@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 import { useWorkflowsStore } from '@/store/workflows'
 import Header from '@/components/layout/Header'
 import WorkflowCard from './WorkflowCard'
 import NewWorkflowPanel from './NewWorkflowPanel'
+import Button from '@/components/ui/Button'
 
 export default function WorkflowsClient() {
   const router         = useRouter()
@@ -30,38 +32,28 @@ export default function WorkflowsClient() {
         title="Workflows"
         description="Créez des workflows et gérez la traçabilité de vos campagnes de bout en bout."
         actions={
-          <button
-            onClick={() => setPanelOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
-          >
-            <Plus size={16} />
+          <Button variant="primary" icon={Plus} onClick={() => setPanelOpen(true)}>
             Nouveau workflow
-          </button>
+          </Button>
         }
       />
 
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <main className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-4xl">
-            <p className="text-sm text-text-tertiary mb-5">
-              {workflows.length} workflow{workflows.length > 1 ? 's' : ''}
-            </p>
+      <main className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {workflows.map((workflow) => (
+            <WorkflowCard key={workflow.id} workflow={workflow} />
+          ))}
+        </div>
+      </main>
 
-            <div className="grid gap-3">
-              {workflows.map((workflow) => (
-                <WorkflowCard key={workflow.id} workflow={workflow} />
-              ))}
-            </div>
-          </div>
-        </main>
-
+      <AnimatePresence>
         {panelOpen && (
           <NewWorkflowPanel
             onCreate={handleCreate}
             onClose={() => setPanelOpen(false)}
           />
         )}
-      </div>
+      </AnimatePresence>
     </div>
   )
 }

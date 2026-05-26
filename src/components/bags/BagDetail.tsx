@@ -68,20 +68,20 @@ export default function BagDetail({ bag, events, workflowId }: { bag: QRCode; ev
       </div>
 
       <main className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl">
 
           {/* Info card */}
-          <div className="bg-white border border-border rounded-xl px-5 py-4 mb-8 grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs text-text-tertiary mb-0.5">Code QR</p>
+          <div className="bg-white border border-border rounded-xl mb-8 flex items-stretch divide-x divide-border">
+            <div className="flex-1 min-w-0 px-5 py-4">
+              <p className="text-xs text-text-tertiary mb-1">Code QR</p>
               <p className="text-sm font-mono font-semibold text-text-primary">{bag.code}</p>
             </div>
-            <div>
-              <p className="text-xs text-text-tertiary mb-0.5">Producteur</p>
+            <div className="flex-1 min-w-0 px-5 py-4">
+              <p className="text-xs text-text-tertiary mb-1">Producteur</p>
               <p className="text-sm font-semibold text-text-primary">{bag.producerName ?? '—'}</p>
             </div>
-            <div>
-              <p className="text-xs text-text-tertiary mb-0.5">Workflow</p>
+            <div className="flex-1 min-w-0 px-5 py-4">
+              <p className="text-xs text-text-tertiary mb-1">Workflow</p>
               <p className="text-sm font-semibold text-text-primary">Collecte maïs 2025</p>
             </div>
           </div>

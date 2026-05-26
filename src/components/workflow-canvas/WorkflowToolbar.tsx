@@ -7,11 +7,13 @@ import { useWorkflowBuilderStore } from '@/store/workflow-builder'
 import { useWorkflowsStore } from '@/store/workflows'
 import UnsavedChangesModal from './UnsavedChangesModal'
 import PublishConfirmModal from './PublishConfirmModal'
+import Button from '@/components/ui/Button'
+import Badge from '@/components/ui/Badge'
 import type { WorkflowStatus } from '@/types/workflow'
 
-const STATUS_BADGE: Record<WorkflowStatus, string> = {
-  active: 'bg-green-50 text-green-700 border-green-200',
-  draft:  'bg-surface text-text-tertiary border-border',
+const STATUS_BADGE_VARIANT: Record<WorkflowStatus, 'success' | 'neutral'> = {
+  active: 'success',
+  draft:  'neutral',
 }
 
 const STATUS_LABELS: Record<WorkflowStatus, string> = {
@@ -80,9 +82,9 @@ export default function WorkflowToolbar({ workflowId, workflowName, description,
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-semibold text-text-primary leading-5">{displayName}</h1>
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border ${STATUS_BADGE[status]}`}>
+              <Badge variant={STATUS_BADGE_VARIANT[status]}>
                 {STATUS_LABELS[status]}
-              </span>
+              </Badge>
             </div>
             <p className="text-xs text-text-tertiary leading-4">
               {count} étape{count > 1 ? 's' : ''}
@@ -92,45 +94,31 @@ export default function WorkflowToolbar({ workflowId, workflowName, description,
 
         <div className="flex items-center gap-2">
 
-          {/* Partager — actif seulement */}
           {status === 'active' && (
-            <button
-              onClick={openSharePanel}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-text-secondary text-sm font-medium hover:bg-surface transition-colors"
-            >
-              <Share2 size={14} />
+            <Button variant="secondary" icon={Share2} size="sm" onClick={openSharePanel}>
               Partager
-            </button>
+            </Button>
           )}
 
-          {/* Publier — brouillon seulement */}
           {status === 'draft' && (
-            <button
-              onClick={() => setShowPublishModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-colors shadow-xs"
-            >
-              <Rocket size={14} />
+            <Button variant="primary" icon={Rocket} size="sm" onClick={() => setShowPublishModal(true)}>
               Publier
-            </button>
+            </Button>
           )}
 
-          <button
-            onClick={openSettings}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-text-secondary text-sm font-medium hover:bg-surface transition-colors"
-          >
-            <Pencil size={14} />
+          <Button variant="secondary" icon={Pencil} size="sm" onClick={openSettings}>
             Modifier
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant={hasUnsaved ? 'primary' : 'secondary'}
+            icon={hasUnsaved ? undefined : Check}
+            size="sm"
             onClick={markSaved}
             disabled={!hasUnsaved}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors shadow-xs disabled:cursor-default
-              bg-primary text-white hover:bg-primary-hover
-              disabled:bg-surface disabled:text-text-tertiary disabled:border disabled:border-border disabled:shadow-none"
           >
-            {hasUnsaved ? 'Enregistrer' : <><Check size={14} />Enregistré</>}
-          </button>
+            {hasUnsaved ? 'Enregistrer' : 'Enregistré'}
+          </Button>
         </div>
       </div>
 

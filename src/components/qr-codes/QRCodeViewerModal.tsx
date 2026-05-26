@@ -3,7 +3,9 @@
 import { X, Download, Copy, Check } from 'lucide-react'
 import QRCode from 'react-qr-code'
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { QRCode as QRCodeType } from '@/types/qr-code'
+import Button from '@/components/ui/Button'
 
 const STEP_LABELS = [
   'Collecte chez le producteur',
@@ -29,21 +31,24 @@ export default function QRCodeViewerModal({ qrCode, onClose }: QRCodeViewerModal
 
   const stepLabel = STEP_LABELS[qrCode.currentStep - 1]
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+  // This component only mounts on client (triggered by user interaction),
+  // so document.body is always available — no mounted-state guard needed.
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
 
-      <div className="relative bg-white rounded-xl shadow-[0px_8px_32px_rgba(16,24,40,0.16)] w-full max-w-sm mx-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+
+      {/* Card */}
+      <div className="relative z-10 bg-white rounded-xl shadow-[0px_20px_48px_rgba(16,24,40,0.24)] w-full max-w-sm">
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div>
             <h2 className="text-sm font-semibold text-text-primary font-mono">{qrCode.code}</h2>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-text-tertiary">
-                Étape {qrCode.currentStep}/5 — {stepLabel}
-              </span>
-            </div>
+            <p className="text-xs text-text-tertiary mt-0.5">
+              Étape {qrCode.currentStep}/5 · {stepLabel}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -72,19 +77,15 @@ export default function QRCodeViewerModal({ qrCode, onClose }: QRCodeViewerModal
 
         {/* Footer */}
         <div className="flex items-center gap-2 px-5 py-4 border-t border-border">
-          <button
-            onClick={handleCopy}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary hover:bg-surface transition-colors"
-          >
-            {copied ? <Check size={14} className="text-primary" /> : <Copy size={14} />}
+          <Button variant="secondary" icon={copied ? Check : Copy} onClick={handleCopy} fullWidth>
             {copied ? 'Copié !' : 'Copier le code'}
-          </button>
-          <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors">
-            <Download size={14} />
+          </Button>
+          <Button variant="primary" icon={Download} fullWidth>
             Télécharger
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

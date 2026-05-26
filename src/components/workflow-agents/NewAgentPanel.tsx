@@ -1,8 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X, UserPlus } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useAgentsStore } from '@/store/agents'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 
 interface NewAgentPanelProps {
   workflowId: string
@@ -22,79 +26,87 @@ export default function NewAgentPanel({ workflowId, onClose }: NewAgentPanelProp
     onClose()
   }
 
-  return (
-    <aside className="w-[360px] shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
+  if (typeof window === 'undefined') return null
 
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-border shrink-0">
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 shrink-0">
-          <UserPlus size={14} className="text-primary" />
+  return createPortal(
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-40 bg-black/20"
+        onClick={onClose}
+      />
+
+      <motion.aside
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+        className="fixed inset-y-0 right-0 z-50 w-[400px] bg-white border-l border-border-strong shadow-[0_32px_64px_-12px_rgba(16,24,40,0.14)] flex flex-col overflow-hidden">
+
+        {/* Header */}
+        <div className="relative px-6 pt-6 pb-0 shrink-0 flex flex-col gap-4">
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-4 flex items-center justify-center w-10 h-10 rounded-lg text-text-tertiary hover:bg-surface transition-colors"
+          >
+            <X size={16} />
+          </button>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary">
+              <UserPlus size={16} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-semibold text-text-primary leading-[30px]">Ajouter un agent</h2>
+              <p className="text-sm text-text-tertiary leading-5">
+                Renseigne les informations de l'agent terrain à assigner à ce workflow.
+              </p>
+            </div>
+          </div>
+
+          <div className="h-px bg-border w-full" />
         </div>
-        <span className="text-sm font-semibold text-text-primary flex-1 min-w-0">
-          Ajouter un agent
-        </span>
-        <button
-          onClick={onClose}
-          className="flex items-center justify-center p-1.5 rounded-md text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors shrink-0"
-        >
-          <X size={16} />
-        </button>
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
-
-        <div>
-          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
-            Nom complet
-          </label>
-          <input
+        <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-6">
+          <Input
+            label="Nom complet"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="Ex. Mamadou Diallo"
             autoFocus
-            className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
           />
-        </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
-            Rôle / Titre
-          </label>
-          <input
+          <Input
+            label="Rôle / Titre"
             type="text"
             value={role}
             onChange={(e) => setRole(e.target.value)}
             placeholder="Ex. Magasinier, Responsable qualité…"
-            className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
           />
-        </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
-            Téléphone{' '}
-            <span className="font-normal normal-case text-text-muted">(optionnel)</span>
-          </label>
-          <input
+          <Input
+            label="Téléphone"
+            hint="Optionnel"
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+221 77 000 00 00"
-            className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
           />
         </div>
 
-      </div>
-
-      <div className="px-5 py-4 border-t border-border shrink-0">
-        <button
-          onClick={handleSubmit}
-          disabled={!name.trim() || !role.trim()}
-          className="w-full px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          Ajouter l'agent
-        </button>
-      </div>
-    </aside>
+        <div className="px-6 py-4 border-t border-border shrink-0 flex items-center justify-end gap-3">
+          <Button variant="secondary" onClick={onClose}>Annuler</Button>
+          <Button variant="primary" onClick={handleSubmit} disabled={!name.trim() || !role.trim()}>
+            Ajouter l'agent
+          </Button>
+        </div>
+      </motion.aside>
+    </>,
+    document.body
   )
 }

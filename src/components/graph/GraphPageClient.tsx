@@ -3,10 +3,12 @@
 import { useState, useRef } from 'react'
 import { Download, ChevronDown, Network, Package } from 'lucide-react'
 import Header from '@/components/layout/Header'
+import Button from '@/components/ui/Button'
 import GraphLoader from '@/components/graph/GraphLoader'
 import { cn } from '@/lib/utils'
 import type { GraphNode, GraphEdge } from '@/data/graph'
-import { NODE_COLORS, STATUS_BORDER, type GraphExportFns } from '@/components/graph/GraphView'
+import { NODE_COLORS, STATUS_BORDER } from '@/components/graph/graph-constants'
+import type { GraphExportFns } from '@/components/graph/GraphView'
 import { getBagEvents } from '@/data/bag-events'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -88,14 +90,15 @@ export default function GraphPageClient({ nodes, edges }: { nodes: GraphNode[]; 
 
   const exportActions = (
     <div className="relative">
-      <button
+      <Button
+        variant="primary"
+        icon={Download}
+        iconRight={ChevronDown}
         onClick={() => setShowExport((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-xs"
+        className={showExport ? '[&_svg:last-child]:rotate-180' : ''}
       >
-        <Download size={15} />
         Exporter
-        <ChevronDown size={14} className={cn('transition-transform', showExport && 'rotate-180')} />
-      </button>
+      </Button>
       {showExport && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setShowExport(false)} />

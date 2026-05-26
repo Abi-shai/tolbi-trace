@@ -64,7 +64,7 @@ export default function ActivityFeed({ events, defaultExpanded = true }: Activit
     setFilterDateStart(''); setFilterDateEnd('')
   }
 
-  const selectClass = 'px-3 py-1.5 text-xs border border-border rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer'
+  const selectClass = 'px-3 py-1.5 text-xs border border-border-strong rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer'
 
   return (
     <div className="bg-white border border-border rounded-xl overflow-hidden">
@@ -114,10 +114,10 @@ export default function ActivityFeed({ events, defaultExpanded = true }: Activit
               <div className="flex items-center gap-1.5 ml-auto">
                 <span className="text-xs text-text-muted shrink-0">Période</span>
                 <input type="date" value={filterDateStart} onChange={(e) => setFilterDateStart(e.target.value)}
-                  className="px-2.5 py-1.5 text-xs border border-border rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" />
+                  className="px-2.5 py-1.5 text-xs border border-border-strong rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" />
                 <span className="text-xs text-text-muted">→</span>
                 <input type="date" value={filterDateEnd}   onChange={(e) => setFilterDateEnd(e.target.value)}
-                  className="px-2.5 py-1.5 text-xs border border-border rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" />
+                  className="px-2.5 py-1.5 text-xs border border-border-strong rounded-lg bg-white text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" />
               </div>
               {hasFilters && (
                 <button onClick={clearAll} className="text-xs text-text-muted hover:text-text-secondary transition-colors">

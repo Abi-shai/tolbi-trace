@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { X, Trash2, Plus, GripVertical, Users, AlertTriangle } from 'lucide-react'
 import { useWorkflowBuilderStore } from '@/store/workflow-builder'
 import { useAgentsStore } from '@/store/agents'
 import { QUESTION_TYPE_LABELS, type QuestionType, type ValidationType } from '@/types/workflow-step'
 import { cn } from '@/lib/utils'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 
 const QUESTION_TYPE_OPTIONS: { value: QuestionType; label: string }[] = [
   { value: 'qr_batch',   label: 'Scan QR (rafale)' },
@@ -43,9 +46,7 @@ export default function StepConfigPanel() {
   const step            = steps.find((s) => s.id === selectedId)
   const workflowAgents  = agents.filter((a) => a.workflowId === workflowId)
 
-  if (!step) return null
-
-  const validationType = step.validationType ?? 'form'
+  const validationType = step?.validationType ?? 'form'
 
   function handleDelete() {
     removeStep(step!.id)
@@ -65,7 +66,16 @@ export default function StepConfigPanel() {
   }
 
   return (
-    <aside className="w-[360px] shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
+    <AnimatePresence>
+      {step && (
+    <motion.aside
+      initial={{ width: 0 }}
+      animate={{ width: 360 }}
+      exit={{ width: 0 }}
+      transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+      className="shrink-0 border-l border-border bg-white flex flex-col overflow-hidden"
+    >
+      <div className="w-[360px] flex flex-col flex-1 min-h-0">
 
       <div className="flex items-center gap-3 px-5 py-4 border-b border-border shrink-0">
         <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">
@@ -87,14 +97,11 @@ export default function StepConfigPanel() {
         <div className="px-5 py-5 space-y-4">
 
           <div>
-            <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
-              Nom de l'étape
-            </label>
-            <input
+            <Input
+              label="Nom de l'étape"
               type="text"
               value={step.name}
               onChange={(e) => updateStep(step.id, { name: e.target.value })}
-              className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               placeholder="Nom de l'étape"
             />
           </div>
@@ -109,7 +116,7 @@ export default function StepConfigPanel() {
               <select
                 value={step.agentId ?? ''}
                 onChange={(e) => handleAgentChange(e.target.value)}
-                className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer"
+                className="w-full px-3 py-2 text-sm text-text-primary border border-border-strong rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer"
               >
                 <option value="">— Aucun agent assigné</option>
                 {workflowAgents.map((agent) => (
@@ -170,7 +177,7 @@ export default function StepConfigPanel() {
               value={step.description ?? ''}
               onChange={(e) => updateStep(step.id, { description: e.target.value })}
               rows={2}
-              className="w-full px-3 py-2 text-sm text-text-primary border border-border rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
+              className="w-full px-3 py-2 text-sm text-text-primary border border-border-strong rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
               placeholder="Description courte de cette étape"
             />
           </div>
@@ -186,13 +193,9 @@ export default function StepConfigPanel() {
                 {step.questions.length}
               </span>
             </h3>
-            <button
-              onClick={() => addQuestion(step.id, 'texte')}
-              className="flex items-center gap-1 px-2.5 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-hover transition-colors"
-            >
-              <Plus size={12} />
+            <Button variant="primary" icon={Plus} size="sm" onClick={() => addQuestion(step.id, 'texte')}>
               Ajouter
-            </button>
+            </Button>
           </div>
 
           {step.questions.length === 0 ? (
@@ -223,7 +226,7 @@ export default function StepConfigPanel() {
                       onChange={(e) =>
                         updateQuestion(step.id, q.id, { type: e.target.value as QuestionType })
                       }
-                      className="w-full px-2.5 py-1.5 text-xs font-semibold border border-border rounded-md bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer"
+                      className="w-full px-2.5 py-1.5 text-xs font-semibold border border-border-strong rounded-md bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors appearance-none cursor-pointer"
                     >
                       {QUESTION_TYPE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -239,7 +242,7 @@ export default function StepConfigPanel() {
                         updateQuestion(step.id, q.id, { label: e.target.value })
                       }
                       placeholder={`Libellé — ex. "${QUESTION_TYPE_LABELS[q.type]}"`}
-                      className="w-full px-2.5 py-1.5 text-xs text-text-primary border border-border rounded-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-2.5 py-1.5 text-xs text-text-primary border border-border-strong rounded-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
 
@@ -268,7 +271,7 @@ export default function StepConfigPanel() {
       </div>
 
       {/* Modale de confirmation */}
-      {confirmDelete && typeof window !== 'undefined' && createPortal(
+      {confirmDelete && step && typeof window !== 'undefined' && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center"
           onClick={() => setConfirmDelete(false)}
@@ -291,23 +294,20 @@ export default function StepConfigPanel() {
               Cette action est irréversible. Les questions configurées et l'agent assigné seront supprimés avec l'étape.
             </p>
             <div className="flex gap-2 pt-1">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="flex-1 py-2 border border-border bg-white text-sm font-semibold text-text-secondary rounded-lg hover:bg-surface transition-colors"
-              >
+              <Button variant="secondary" fullWidth onClick={() => setConfirmDelete(false)}>
                 Annuler
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors"
-              >
+              </Button>
+              <Button variant="danger" fullWidth onClick={handleDelete}>
                 Supprimer
-              </button>
+              </Button>
             </div>
           </div>
         </div>,
         document.body,
       )}
-    </aside>
+      </div>
+    </motion.aside>
+      )}
+    </AnimatePresence>
   )
 }

@@ -26,7 +26,7 @@ function formatDate(iso: string) {
 
 export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
   const {
-    name, description, project, stepCount, status, createdAt,
+    name, description, stepCount, status, createdAt,
     bagsTotal, bagsCompleted, bagsInProgress,
   } = workflow
 
@@ -34,10 +34,7 @@ export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
     <Link href={`/workflows/${workflow.id}`} className="block bg-white border border-border rounded-lg p-5 hover:border-border-strong hover:shadow-[0px_1px_4px_rgba(16,24,40,0.08)] transition-all cursor-pointer">
       {/* Titre + badge */}
       <div className="flex items-start justify-between gap-4 mb-2">
-        <div className="min-w-0">
-          <h2 className="text-sm font-semibold text-text-primary leading-5 truncate">{name}</h2>
-          <p className="text-xs text-text-tertiary mt-0.5 leading-4">{project}</p>
-        </div>
+        <h2 className="text-sm font-semibold text-text-primary leading-5 min-w-0 truncate">{name}</h2>
         <StatusBadge status={status} />
       </div>
 
