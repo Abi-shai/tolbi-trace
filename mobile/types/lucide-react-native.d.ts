@@ -22,11 +22,18 @@ declare module 'lucide-react-native' {
   export const CheckCircle2:   LucideIcon
   export const CheckSquare:    LucideIcon
   export const ChevronRight:   LucideIcon
+  export const Circle:         LucideIcon
   export const Clock:          LucideIcon
   export const Download:       LucideIcon
   export const Eye:            LucideIcon
   export const FileText:       LucideIcon
+  export const House:          LucideIcon
+  export const LayoutList:     LucideIcon
+  export const LogOut:         LucideIcon
+  export const MoreHorizontal: LucideIcon
   export const QrCode:         LucideIcon
   export const User:           LucideIcon
+  export const Wifi:           LucideIcon
+  export const WifiOff:        LucideIcon
   export const X:              LucideIcon
 }

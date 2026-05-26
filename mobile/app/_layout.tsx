@@ -1,4 +1,5 @@
-import { Stack } from 'expo-router'
+import { useEffect } from 'react'
+import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import {
@@ -8,6 +9,26 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins'
+import { AuthProvider, useAuth } from '../context/AuthContext'
+
+function RootLayoutNav() {
+  const { isLoggedIn } = useAuth()
+  const segments = useSegments()
+  const router = useRouter()
+
+  useEffect(() => {
+    const onLoginScreen = segments[0] === 'login'
+    const onProtectedRoute = !onLoginScreen
+
+    if (!isLoggedIn && onProtectedRoute) {
+      router.replace('/login')
+    } else if (isLoggedIn && onLoginScreen) {
+      router.replace('/')
+    }
+  }, [isLoggedIn, segments])
+
+  return <Stack screenOptions={{ headerShown: false }} />
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -23,7 +44,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       {/* @ts-ignore — backgroundColor is valid on expo-status-bar but typing lags */}
       <StatusBar style="light" backgroundColor="#056033" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
     </SafeAreaProvider>
   )
 }
