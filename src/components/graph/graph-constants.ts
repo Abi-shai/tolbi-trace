@@ -1,4 +1,4 @@
-import type { NodeType } from '@/data/graph'
+import type { NodeType } from '~/data/graph'
 
 export const NODE_COLORS: Record<NodeType, string> = {
   cooperative: '#7c3aed',
