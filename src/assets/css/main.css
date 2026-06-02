@@ -1,3 +1,4 @@
+@import "@abi-shai/tolbi-design-system/dist/index.css";
 @import "tailwindcss";
 
 @theme inline {

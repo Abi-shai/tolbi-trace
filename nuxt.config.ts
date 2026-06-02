@@ -34,6 +34,10 @@ export default defineNuxtConfig({
     { path: '~/components', pathPrefix: false },
   ],
 
+  experimental: {
+    inlineSSRStyles: false,
+  },
+
   devtools: { enabled: true },
 
   compatibilityDate: '2025-01-01',
