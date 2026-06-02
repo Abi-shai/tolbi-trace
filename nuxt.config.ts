@@ -18,17 +18,16 @@ export default defineNuxtConfig({
     download: true,
   },
 
-  css: ['~/assets/css/main.css'],
+  css: [
+    '~/assets/css/main.css',
+  ],
+
+  dir: {
+    public: 'public',
+  },
 
   vite: {
     plugins: [tailwindcss()],
-    publicDir: resolve('./public'),
-  },
-
-  nitro: {
-    publicAssets: [
-      { baseURL: '/', dir: resolve('./public') },
-    ],
   },
 
   components: [

@@ -10,12 +10,7 @@
       >
         <!-- Header -->
         <div class="relative px-6 pt-6 pb-0 shrink-0 flex flex-col gap-4">
-          <button
-            @click="$emit('close')"
-            class="absolute top-6 right-4 flex items-center justify-center w-10 h-10 rounded-lg text-text-tertiary hover:bg-surface transition-colors"
-          >
-            <X :size="16" />
-          </button>
+          <DsCloseButton @click="$emit('close')" class="absolute top-6 right-4" />
 
           <div class="flex flex-col gap-4">
             <div class="flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary">
@@ -33,16 +28,15 @@
         </div>
 
         <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-6">
-          <Input
+          <DsInputField
             label="Nom complet"
             type="text"
             v-model="name"
             @keydown.enter="handleSubmit"
             placeholder="Ex. Mamadou Diallo"
-            autofocus
           />
 
-          <Input
+          <DsInputField
             label="Téléphone"
             hint="Optionnel"
             type="tel"
@@ -52,10 +46,8 @@
         </div>
 
         <div class="px-6 py-4 border-t border-border shrink-0 flex items-center justify-end gap-3">
-          <Button variant="secondary" @click="$emit('close')">Annuler</Button>
-          <Button variant="primary" @click="handleSubmit" :disabled="!name.trim()">
-            Ajouter l'agent
-          </Button>
+          <DsButton label="Annuler" variant="secondary-gray" @click="$emit('close')" />
+          <DsButton label="Ajouter l'agent" variant="primary" :disabled="!name.trim()" @click="handleSubmit" />
         </div>
       </aside>
     </Transition>
@@ -64,10 +56,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { X, UserPlus } from 'lucide-vue-next'
+import { UserPlus } from 'lucide-vue-next'
 import { useAgentsStore } from '~/stores/agents'
-import Button from '~/components/ui/Button.vue'
-import Input from '~/components/ui/Input.vue'
 
 const props = defineProps<{ workflowId: string }>()
 const emit  = defineEmits<{ close: [] }>()
