@@ -1,3 +1,5 @@
+import '@abi-shai/tolbi-design-system/dist/tokens/index.css'
+import '@abi-shai/tolbi-design-system/dist/index.css'
 import {
   Avatar,
   Badge,

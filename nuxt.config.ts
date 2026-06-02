@@ -19,9 +19,7 @@ export default defineNuxtConfig({
   },
 
   css: [
-    '@abi-shai/tolbi-design-system/dist/tokens/index.css',
     '~/assets/css/main.css',
-    '@abi-shai/tolbi-design-system/dist/index.css',
   ],
 
   dir: {
