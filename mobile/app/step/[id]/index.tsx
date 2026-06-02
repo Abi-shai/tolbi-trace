@@ -2,8 +2,9 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Animated } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
-import { ArrowLeft, QrCode, FileText, CheckCircle2, Circle, CheckSquare, LayoutList } from 'lucide-react-native'
+import { QrCode, FileText, CheckCircle2, Circle, CheckSquare, LayoutList } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 import { isTaskDone, getStepMeta } from '../../../lib/stepState'
 import { PressableScale } from '../../../components/ui/PressableScale'
 
@@ -20,14 +21,14 @@ const TASKS_FORM: Task[] = [
     id: 'scan',
     icon: QrCode,
     label: 'Scanner les sacs',
-    description: '12 sacs à vérifier avec les QR codes',
+    description: 'Scanne les 12 sacs avec les QR codes',
     route: 'scan',
   },
   {
     id: 'form',
     icon: FileText,
     label: 'Remplir le formulaire',
-    description: 'Humidité, état des sacs, transporteur…',
+    description: 'Poids, humidité, état des sacs et infos transport',
     route: 'form',
   },
 ]
@@ -37,14 +38,14 @@ const TASKS_CODE: Task[] = [
     id: 'scan',
     icon: QrCode,
     label: 'Scanner les sacs',
-    description: '18 sacs à vérifier avec les QR codes',
+    description: 'Scanne les 18 sacs avec les QR codes',
     route: 'scan',
   },
   {
     id: 'code',
     icon: CheckSquare,
     label: 'Saisir le code de validation',
-    description: 'Code fourni par le responsable qualité',
+    description: 'Obtiens le code auprès de ton responsable',
     route: 'code',
   },
 ]
@@ -84,22 +85,18 @@ export default function StepScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={8}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>Réception entrepôt</Text>
-          <Text style={s.headerSub}>Collecte maïs — Campagne nov. 2025</Text>
-        </View>
-      </View>
+      <AppHeader
+        title="Réception entrepôt"
+        subtitle="Collecte maïs — Campagne nov. 2025"
+        onBack={() => router.back()}
+      />
 
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
         {/* Progress summary */}
         <View style={[s.progressCard, allDone && s.progressCardDone]}>
           <Text style={s.progressLabel}>
-            {doneTasks}/{TASKS.length} actions complétées
+            {doneTasks}/{TASKS.length} tâches effectuées
           </Text>
           <View style={s.progressTrack}>
             <Animated.View style={[
@@ -178,19 +175,7 @@ export default function StepScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backBtn: { padding: 8 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.md, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
   scroll: { flex: 1, paddingHorizontal: 16, paddingTop: 20 },
 

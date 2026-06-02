@@ -33,7 +33,7 @@
     >
       <button
         @click="builder.insertStep(source)"
-        class="flex items-center justify-center w-5 h-5 rounded bg-white border border-border shadow-sm text-text-muted hover:border-primary hover:text-primary hover:bg-brand-50 transition-colors"
+        class="flex items-center justify-center w-5 h-5 rounded bg-white border border-border shadow-sm text-text-quaternary hover:border-primary hover:text-primary hover:bg-brand-50 transition-colors"
       >
         <Plus :size="11" />
       </button>

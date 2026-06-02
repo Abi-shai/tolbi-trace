@@ -1,14 +1,20 @@
-import { useRef, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Animated } from 'react-native'
+import { useState, useEffect, useRef } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, LayoutAnimation, UIManager, Platform, Animated } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { CheckCircle2, Circle, ChevronRight, AlertTriangle, User } from 'lucide-react-native'
-import { colors, radius, fontSize, fonts } from '../../lib/tokens'
+import {
+  Settings,
+  CheckCircle2, Circle, AlertTriangle, User,
+} from 'lucide-react-native'
+import { colors, radius, fontSize, fonts, spacing } from '../../lib/tokens'
 import { ConnectivityPill } from '../../components/ui/ConnectivityPill'
 import { PressableScale } from '../../components/ui/PressableScale'
 import { useConnectivity } from '../../context/ConnectivityContext'
+import { useExploration } from '../../context/ExplorationContext'
 
-const ME = 'Mamadou Diallo'
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true)
+}
 
 type StepStatus = 'done' | 'active' | 'upcoming'
 
@@ -21,378 +27,514 @@ interface WorkflowStep {
   itemsLabel?: string
   anomalies?: number
   validatedAt?: string
+  started?: boolean
 }
 
 interface Mission {
   id: string
   name: string
-  season: string
   client: string
   steps: WorkflowStep[]
 }
 
-const MISSIONS: Mission[] = [
+interface Persona {
+  name: string
+  initials: string
+  hint: string
+  missions: Mission[]
+}
+
+const PERSONAS: Persona[] = [
   {
-    id: 'm1',
-    name: 'Collecte maïs',
-    season: 'Campagne nov. 2025',
-    client: 'AgroSénégal SA',
-    steps: [
+    name: 'Mamadou Diallo',
+    initials: 'MD',
+    hint: 'Agent · Étape 2+',
+    missions: [
       {
-        id: '1',
-        name: 'Collecte chez le producteur',
-        status: 'done',
-        agent: 'Ibrahim Sow',
-        itemsCount: 20,
-        itemsLabel: 'sacs collectés',
-        validatedAt: '22 mai · 09h15',
+        id: 'm1',
+        name: 'Collecte maïs',
+        client: 'AgroSénégal SA',
+        steps: [
+          { id: '1',  name: 'Collecte chez le producteur',  status: 'done',     agent: 'Ibrahim Sow',     itemsCount: 20, validatedAt: '22 mai · 09h15' },
+          { id: '2',  name: 'Pesée et contrôle humidité',   status: 'done',     agent: 'Aïssatou Baldé',  itemsCount: 20, anomalies: 1, validatedAt: '23 mai · 14h32' },
+          { id: '3',  name: 'Réception entrepôt',           status: 'active',   agent: 'Mamadou Diallo',  itemsCount: 12 },
+          { id: '4',  name: 'Contrôle qualité final',       status: 'upcoming', agent: 'Aïssatou Baldé' },
+          { id: '5',  name: 'Chargement transport',         status: 'upcoming', agent: 'Ousmane Traoré' },
+        ],
       },
       {
-        id: '2',
-        name: 'Pesée et contrôle humidité',
-        status: 'done',
-        agent: 'Aïssatou Baldé',
-        itemsCount: 20,
-        itemsLabel: 'sacs pesés',
-        anomalies: 1,
-        validatedAt: '23 mai · 14h32',
+        id: 'm2',
+        name: 'Collecte sorgho',
+        client: 'AgroSénégal SA',
+        steps: [
+          { id: 'm2-1', name: 'Collecte chez le producteur',  status: 'done',     agent: 'Boubacar Diallo', itemsCount: 18, validatedAt: '20 mai · 08h40' },
+          { id: 'm2-2', name: 'Pesée et contrôle humidité',   status: 'active',   agent: 'Mamadou Diallo',  itemsCount: 18, started: true },
+          { id: 'm2-3', name: 'Chargement transport',         status: 'upcoming', agent: 'Ousmane Traoré' },
+          { id: 'm2-4', name: 'Réception entrepôt',           status: 'upcoming', agent: 'Mamadou Diallo' },
+          { id: 'm2-5', name: 'Contrôle qualité final',       status: 'upcoming', agent: 'Aïssatou Baldé' },
+        ],
       },
-      {
-        id: '3',
-        name: 'Réception entrepôt',
-        status: 'active',
-        agent: ME,
-        itemsCount: 12,
-        itemsLabel: 'sacs attendus',
-      },
-      { id: '4', name: 'Contrôle qualité final', status: 'upcoming', agent: 'Aïssatou Baldé' },
-      { id: '5', name: 'Chargement transport',   status: 'upcoming', agent: 'Ousmane Traoré' },
     ],
   },
   {
-    id: 'm2',
-    name: 'Collecte sorgho',
-    season: 'Campagne oct. 2025',
-    client: 'AgroSénégal SA',
-    steps: [
+    name: 'Ibrahim Sow',
+    initials: 'IS',
+    hint: 'Agent · Étape 1',
+    missions: [
       {
-        id: 'm2-1',
-        name: 'Collecte chez le producteur',
-        status: 'done',
-        agent: 'Boubacar Diallo',
-        itemsCount: 18,
-        itemsLabel: 'sacs collectés',
-        validatedAt: '20 mai · 08h40',
+        id: 'm3',
+        name: 'Collecte arachide',
+        client: 'AgroSénégal SA',
+        steps: [
+          { id: 'm3-1', name: 'Collecte chez le producteur',  status: 'active',   agent: 'Ibrahim Sow' },
+          { id: 'm3-2', name: 'Pesée et contrôle humidité',   status: 'upcoming', agent: 'Aïssatou Baldé' },
+          { id: 'm3-3', name: 'Chargement transport',         status: 'upcoming', agent: 'Ousmane Traoré' },
+          { id: 'm3-4', name: 'Réception entrepôt',           status: 'upcoming', agent: 'Mamadou Diallo' },
+          { id: 'm3-5', name: 'Contrôle qualité final',       status: 'upcoming', agent: 'Aïssatou Baldé' },
+        ],
       },
-      {
-        id: 'm2-2',
-        name: 'Pesée et contrôle humidité',
-        status: 'active',
-        agent: ME,
-        itemsCount: 18,
-        itemsLabel: 'sacs à peser',
-      },
-      { id: 'm2-3', name: 'Chargement transport',    status: 'upcoming', agent: 'Ousmane Traoré' },
-      { id: 'm2-4', name: 'Réception entrepôt',      status: 'upcoming', agent: ME },
-      { id: 'm2-5', name: 'Contrôle qualité final',  status: 'upcoming', agent: 'Aïssatou Baldé' },
     ],
   },
 ]
 
-function PulseDot() {
-  const anim = useRef(new Animated.Value(1)).current
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, { toValue: 0.2, duration: 700, useNativeDriver: true }),
-        Animated.timing(anim, { toValue: 1, duration: 700, useNativeDriver: true }),
-      ])
-    )
-    loop.start()
-    return () => loop.stop()
-  }, [])
-  return <Animated.View style={[s.activeDot, { opacity: anim }]} />
-}
-
 export default function MissionScreen() {
   const router = useRouter()
   const { online } = useConnectivity()
-  const isMyStep = (step: WorkflowStep) => step.agent === ME
-  const activeMissions = MISSIONS.filter((m) => m.steps.some((s) => s.status === 'active'))
+  const { personaIndex } = useExploration()
+  const persona = PERSONAS[personaIndex]
+  const ME = persona.name
+  const missions = persona.missions
+
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(missions.map((m) => m.id)))
+
+  const allMissionIds = PERSONAS.flatMap((p) => p.missions.map((m) => m.id))
+  const expandAnims = useRef<Record<string, Animated.Value>>(
+    Object.fromEntries(allMissionIds.map((id) => [id, new Animated.Value(1)]))
+  ).current
+
+  useEffect(() => {
+    setExpandedIds(new Set(PERSONAS[personaIndex].missions.map((m) => m.id)))
+  }, [personaIndex])
+
+  const toggleExpand = (id: string) => {
+    const isExpanding = !expandedIds.has(id)
+
+    LayoutAnimation.configureNext({
+      duration: 380,
+      update: { type: LayoutAnimation.Types.easeInEaseOut },
+      create: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity },
+      delete: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity },
+    })
+
+    Animated.timing(expandAnims[id], {
+      toValue: isExpanding ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start()
+
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const uniteesATraiter = missions.reduce((acc, m) => {
+    const myStep = m.steps.find((s) => s.status === 'active' && s.agent === ME)
+    return acc + (myStep?.itemsCount ?? 0)
+  }, 0)
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      {/* Global header */}
-      <View style={s.topbar}>
-        <View style={{ flex: 1 }}>
-          <Text style={s.topbarTitle}>Mes missions</Text>
-          <Text style={s.topbarSub}>
-            {activeMissions.length} mission{activeMissions.length > 1 ? 's' : ''} en cours
-          </Text>
-        </View>
-        <ConnectivityPill online={online} />
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
 
-      <ScrollView
-        style={s.scroll}
-        contentContainerStyle={s.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {MISSIONS.map((mission, mIdx) => {
-          const activeStep   = mission.steps.find((s) => s.status === 'active')
-          const doneSteps    = mission.steps.filter((s) => s.status === 'done')
-          const upcomingSteps = mission.steps.filter((s) => s.status === 'upcoming')
-          const stepsDone    = doneSteps.length
-          const stepsTotal   = mission.steps.length
-          const progressPct  = (stepsDone / stepsTotal) * 100
+        {/* Header */}
+        <View style={s.header}>
+          <View style={s.avatarRow}>
+            <View style={s.avatar}>
+              <Text style={s.avatarText}>{persona.initials}</Text>
+            </View>
+            <View>
+              <Text style={s.greeting}>Bonjour</Text>
+              <Text style={s.userName}>{ME.split(' ')[0]}</Text>
+            </View>
+          </View>
+          <View style={s.headerRight}>
+            <ConnectivityPill online={online} />
+            <Settings size={22} color={colors.textSecondary} strokeWidth={1.8} />
+          </View>
+        </View>
+
+        {/* Stats card — masqué si aucune quantité connue (étape 1) */}
+        {uniteesATraiter > 0 && (
+          <View style={s.statsCard}>
+            <Text style={s.statsNumber}>{uniteesATraiter}</Text>
+            <Text style={s.statsLabel}>Unités à traiter</Text>
+          </View>
+        )}
+
+        {/* Projects section */}
+        <Text style={s.sectionTitle}>Missions</Text>
+
+        {missions.map((mission) => {
+          const expanded = expandedIds.has(mission.id)
+          const activeStep = mission.steps.find((s) => s.status === 'active')
 
           return (
-            <View key={mission.id} style={s.missionBlock}>
+            <View key={mission.id} style={s.projectCard}>
 
-              {/* Mission header */}
-              <View style={s.missionHeader}>
+              {/* Project info */}
+              <View style={s.projectInfo}>
+                <View style={s.projectIcon}>
+                  <Text style={s.projectIconEmoji}>📦</Text>
+                </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={s.missionName}>{mission.name}</Text>
-                  <Text style={s.missionSub}>{mission.season} · {mission.client}</Text>
-                </View>
-                <View style={s.progressPill}>
-                  <Text style={s.progressText}>{stepsDone}/{stepsTotal}</Text>
-                  <Text style={s.progressLabel}>étapes</Text>
+                  <View style={s.projectNameRow}>
+                    <Text style={[s.projectName, { flex: 1 }]}>{mission.name}</Text>
+                  </View>
+                  <Text style={s.projectMeta}>
+                    {mission.steps.length} étapes · {mission.client}
+                  </Text>
                 </View>
               </View>
 
-              {/* Progress bar */}
-              <View style={s.progressTrack}>
-                <View style={[s.progressFill, { width: `${progressPct}%` as any }]} />
-              </View>
-
-              {/* Active step */}
+              {/* CTA */}
               {activeStep && (
-                <View style={s.section}>
-                  <Text style={s.sectionLabel}>MAINTENANT</Text>
-                  <PressableScale
-                    style={s.activeCard}
-                    onPress={() => router.push(`/step/${activeStep.id}`)}
-                  >
-                    <View style={s.activeCardTop}>
-                      <PulseDot />
-                      <Text style={s.activeStepName}>{activeStep.name}</Text>
-                    </View>
-                    <Text style={s.activeStepMeta}>
-                      {activeStep.itemsCount} {activeStep.itemsLabel}
+                <PressableScale
+                  style={s.ctaButton}
+                  onPress={() => router.push(`/step/${activeStep.id}`)}
+                >
+                  <Text style={s.ctaText}>
+                    {activeStep.started ? 'Continuer mon étape' : 'Démarrer mon étape'}
+                  </Text>
+                </PressableScale>
+              )}
+
+              {/* Expand toggle */}
+              {mission.steps.length > 0 && (
+                <TouchableOpacity
+                  style={s.expandToggle}
+                  onPress={() => toggleExpand(mission.id)}
+                  activeOpacity={0.7}
+                >
+                  <View style={s.expandToggleLabelWrap}>
+                    {/* Spacer invisible pour fixer la largeur sur le texte le plus long */}
+                    <Text style={[s.expandToggleText, { opacity: 0 }]} aria-hidden>
+                      {`Voir toutes les étapes (${mission.steps.length})`}
                     </Text>
-                    <View style={s.activeCardFooter}>
-                      {isMyStep(activeStep) && (
-                        <View style={s.myStepBadge}>
-                          <User size={10} color={colors.primary} />
-                          <Text style={s.myStepBadgeText}>Assignée à toi</Text>
-                        </View>
-                      )}
-                      <View style={{ flex: 1 }} />
-                      <Text style={s.startBtn}>Commencer</Text>
-                      <ChevronRight size={16} color={colors.primary} />
-                    </View>
-                  </PressableScale>
-                </View>
+                    <Animated.Text style={[s.expandToggleText, s.expandToggleLabelAbs, {
+                      opacity: expandAnims[mission.id].interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
+                    }]}>
+                      {`Voir toutes les étapes (${mission.steps.length})`}
+                    </Animated.Text>
+                    <Animated.Text style={[s.expandToggleText, s.expandToggleLabelAbs, {
+                      opacity: expandAnims[mission.id],
+                    }]}>
+                      Masquer les étapes
+                    </Animated.Text>
+                  </View>
+                </TouchableOpacity>
               )}
 
-              {/* Done steps */}
-              {doneSteps.length > 0 && (
-                <View style={s.section}>
-                  <Text style={s.sectionLabel}>COMPLÉTÉES</Text>
-                  {doneSteps.map((step) => (
-                    <View key={step.id} style={s.doneRow}>
-                      <CheckCircle2 size={18} color={colors.statusCompleted} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={s.doneStepName}>{step.name}</Text>
-                        <Text style={s.doneStepMeta}>
-                          {step.validatedAt}
-                          {step.itemsCount ? ` · ${step.itemsCount} ${step.itemsLabel}` : ''}
-                        </Text>
-                        <View style={s.agentRow}>
-                          <User size={10} color={isMyStep(step) ? colors.primary : colors.textMuted} />
-                          <Text style={[s.agentName, isMyStep(step) && s.agentNameMine]}>
-                            {isMyStep(step) ? 'Toi' : step.agent}
-                          </Text>
+              {/* Expanded — process timeline */}
+              {expanded && (
+                <View style={s.stepList}>
+                  {mission.steps.map((step, idx) => {
+                    const isLast   = idx === mission.steps.length - 1
+                    const isMe     = step.agent === ME
+                    const isDone   = step.status === 'done'
+                    const isActive = step.status === 'active'
+
+                    return (
+                      <View key={step.id} style={s.timelineRow}>
+                        <View style={s.timelineConnector}>
+                          <View style={[
+                            s.timelineDot,
+                            isDone   && s.timelineDotDone,
+                            isActive && s.timelineDotActive,
+                          ]}>
+                            {isDone
+                              ? <CheckCircle2 size={13} color={colors.white} />
+                              : isActive
+                                ? <View style={s.timelineDotInner} />
+                                : <Circle size={13} color={colors.textMuted} />
+                            }
+                          </View>
+                          {!isLast && <View style={[s.timelineLine, isDone && s.timelineLineDone]} />}
+                        </View>
+
+                        <View style={[s.timelineContent, isLast && { paddingBottom: 0 }]}>
+                          <View style={s.timelineTop}>
+                            <Text style={[
+                              s.timelineStepName,
+                              isDone   && s.timelineStepNameDone,
+                              !isDone && !isActive && s.timelineStepNameUpcoming,
+                            ]}>
+                              {step.name}
+                            </Text>
+                            {isActive && (
+                              <View style={s.timelineActiveBadge}>
+                                <View style={s.timelineActiveDot} />
+                                <Text style={s.timelineActiveBadgeText}>En cours</Text>
+                              </View>
+                            )}
+                            {step.anomalies ? (
+                              <View style={s.timelineAnomalyBadge}>
+                                <AlertTriangle size={9} color={colors.statusAnomaly} />
+                                <Text style={s.timelineAnomalyText}>{step.anomalies}</Text>
+                              </View>
+                            ) : null}
+                          </View>
+
+                          <View style={s.timelineMeta}>
+                            {isMe ? (
+                              <View style={s.timelineMeBadge}>
+                                <User size={10} color={colors.primary} />
+                                <Text style={s.timelineMeBadgeText}>Toi</Text>
+                              </View>
+                            ) : (
+                              <>
+                                <User size={10} color={colors.textMuted} />
+                                <Text style={s.timelineAgent}>{step.agent}</Text>
+                              </>
+                            )}
+                            {step.validatedAt && (
+                              <Text style={s.timelineValidatedAt}> · {step.validatedAt}</Text>
+                            )}
+                          </View>
                         </View>
                       </View>
-                      {step.anomalies ? (
-                        <View style={s.anomalyBadge}>
-                          <AlertTriangle size={11} color={colors.statusAnomaly} />
-                          <Text style={s.anomalyBadgeText}>{step.anomalies}</Text>
-                        </View>
-                      ) : null}
-                    </View>
-                  ))}
+                    )
+                  })}
                 </View>
               )}
 
-              {/* Upcoming steps */}
-              {upcomingSteps.length > 0 && (
-                <View style={s.section}>
-                  <Text style={s.sectionLabel}>À VENIR</Text>
-                  {upcomingSteps.map((step) => (
-                    <View key={step.id} style={[s.doneRow, s.upcomingRow]}>
-                      <Circle size={18} color={colors.textMuted} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={s.upcomingStepName}>{step.name}</Text>
-                        <View style={s.agentRow}>
-                          <User size={10} color={isMyStep(step) ? colors.primary : colors.textMuted} />
-                          <Text style={[s.agentName, isMyStep(step) && s.agentNameMine]}>
-                            {isMyStep(step) ? 'Toi' : step.agent}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              <View style={{ height: 14 }} />
             </View>
           )
         })}
 
       </ScrollView>
+
     </SafeAreaView>
   )
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
+  content: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: 40,
+  },
 
-  topbar: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 16,
+  // ── Header ──────────────────────────────────────────────────────────────────
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'space-between',
+    marginBottom: spacing['2xl'],
   },
-  topbarTitle: { fontFamily: fonts.bold, fontSize: fontSize.xl, color: colors.white },
-  topbarSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
-
-  scroll: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 28,
-    gap: 14,
-  },
-
-  missionBlock: {
+  avatarRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: colors.white,
-    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
-    overflow: 'hidden',
-    shadowColor: '#101828',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-
-  missionHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 10,
-    gap: 12,
-  },
-  missionName: { fontFamily: fonts.bold, fontSize: fontSize.md, color: colors.textPrimary },
-  missionSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: colors.textTertiary, marginTop: 2 },
-  progressPill: {
     alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    justifyContent: 'center',
   },
-  progressText: { fontFamily: fonts.bold, fontSize: fontSize.sm, color: colors.textPrimary },
-  progressLabel: { fontFamily: fonts.regular, fontSize: 9, color: colors.textMuted, marginTop: -1 },
+  avatarText: {
+    fontFamily: fonts.bold,
+    fontSize: fontSize.md,
+    color: colors.textPrimary,
+    letterSpacing: -0.3,
+  },
+  greeting: { fontFamily: fonts.medium, fontSize: fontSize.sm, color: colors.textTertiary, lineHeight: 20 },
+  userName: { fontFamily: fonts.bold, fontSize: 22, color: colors.textPrimary, lineHeight: 28, letterSpacing: -0.3 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
 
-  progressTrack: {
-    height: 3,
-    backgroundColor: colors.surfaceAlt,
-    marginHorizontal: 16,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: 4,
-  },
-  progressFill: {
-    height: 3,
-    backgroundColor: colors.primary,
-    borderRadius: 2,
-  },
-
-  section: { paddingHorizontal: 16, paddingTop: 14, marginBottom: 2 },
-  sectionLabel: {
-    fontFamily: fonts.semibold,
-    fontSize: 10,
-    color: colors.textTertiary,
-    letterSpacing: 0.9,
-    marginBottom: 10,
-  },
-
-  activeCard: {
-    backgroundColor: colors.white,
+  // ── Stats card ──────────────────────────────────────────────────────────────
+  statsCard: {
+    backgroundColor: colors.brand50,
     borderRadius: radius.xl,
-    borderWidth: 1.5,
-    borderColor: colors.primary,
-    padding: 16,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    paddingVertical: 28,
+    alignItems: 'center',
+    marginBottom: spacing['2xl'],
   },
-  activeCardTop: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.statusInprogress },
-  activeStepName: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.textPrimary, flex: 1 },
-  activeStepMeta: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: colors.textTertiary, marginBottom: 12, marginLeft: 16 },
-  activeCardFooter: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 10, gap: 6 },
-  myStepBadge: {
+  statsNumber: {
+    fontFamily: fonts.bold,
+    fontSize: 64,
+    lineHeight: 80,
+    color: colors.primary,
+    letterSpacing: -1.5,
+  },
+  statsLabel: {
+    fontFamily: fonts.bold,
+    fontSize: fontSize.xs,
+    color: colors.primary,
+    marginTop: 6,
+    letterSpacing: 0.2,
+  },
+
+  // ── Section title ────────────────────────────────────────────────────────────
+  sectionTitle: {
+    fontFamily: fonts.medium,
+    fontSize: fontSize.sm,
+    color: colors.textTertiary,
+    marginBottom: spacing.lg,
+  },
+
+  // ── Project card ─────────────────────────────────────────────────────────────
+  projectCard: {
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  projectInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  projectIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  projectIconEmoji: { fontSize: 26 },
+  projectNameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: 2 },
+  projectName: { fontFamily: fonts.bold, fontSize: fontSize.md, color: colors.textPrimary },
+  projectMeta: { fontFamily: fonts.medium, fontSize: fontSize.xs, color: colors.textTertiary, marginTop: 2 },
+
+  // ── CTA button ───────────────────────────────────────────────────────────────
+  ctaButton: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  ctaText: { fontFamily: fonts.bold, fontSize: fontSize.sm, color: colors.white },
+
+  // ── Expand toggle ────────────────────────────────────────────────────────────
+  expandToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.xl,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.full,
+  },
+  expandToggleLabelWrap: {
+    position: 'relative',
+    alignItems: 'center',
+  },
+  expandToggleLabelAbs: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+  },
+  expandToggleText: {
+    fontFamily: fonts.bold,
+    fontSize: fontSize.sm,
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+
+  // ── Timeline (expanded) ─────────────────────────────────────────────────────
+  stepList: {
+    marginTop: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: spacing.lg,
+  },
+  timelineRow: { flexDirection: 'row', gap: 12 },
+  timelineConnector: { alignItems: 'center', width: 22 },
+  timelineDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timelineDotDone: { backgroundColor: colors.statusCompleted, borderColor: colors.statusCompleted },
+  timelineDotActive: { backgroundColor: colors.white, borderColor: colors.primary, borderWidth: 2 },
+  timelineDotInner: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: colors.primary },
+  timelineLine: {
+    flex: 1,
+    width: 2,
+    backgroundColor: colors.border,
+    marginVertical: 2,
+    minHeight: 24,
+  },
+  timelineLineDone: { backgroundColor: colors.statusCompleted },
+
+  timelineContent: { flex: 1, paddingBottom: 18, gap: 4 },
+  timelineTop: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+  timelineStepName: {
+    fontFamily: fonts.semibold,
+    fontSize: fontSize.sm,
+    color: colors.textPrimary,
+    flex: 1,
+  },
+  timelineStepNameDone: { color: colors.textTertiary },
+  timelineStepNameUpcoming: { color: colors.textMuted, fontFamily: fonts.regular },
+
+  timelineActiveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: `${colors.primary}12`,
+    backgroundColor: `${colors.statusInprogress}14`,
     borderRadius: radius.full,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
   },
-  myStepBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.primary },
-  startBtn: { fontFamily: fonts.semibold, fontSize: fontSize.xs, color: colors.primary },
+  timelineActiveDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.statusInprogress },
+  timelineActiveBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.statusInprogress },
 
-  doneRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  doneStepName: { fontFamily: fonts.medium, fontSize: fontSize.sm, color: colors.textSecondary },
-  doneStepMeta: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: colors.textMuted, marginTop: 1 },
-  agentRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 3 },
-  agentName: { fontFamily: fonts.regular, fontSize: 11, color: colors.textMuted },
-  agentNameMine: { fontFamily: fonts.semibold, color: colors.primary },
-  anomalyBadge: {
+  timelineAnomalyBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
     backgroundColor: `${colors.statusAnomaly}14`,
     borderRadius: radius.sm,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    marginTop: 2,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
   },
-  anomalyBadgeText: { fontFamily: fonts.semibold, fontSize: 11, color: colors.statusAnomaly },
+  timelineAnomalyText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.statusAnomaly },
 
-  upcomingRow: { opacity: 0.5 },
-  upcomingStepName: { fontFamily: fonts.regular, fontSize: fontSize.sm, color: colors.textTertiary },
+  timelineMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  timelineAgent: { fontFamily: fonts.regular, fontSize: 11, color: colors.textMuted },
+  timelineMeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: `${colors.primary}12`,
+    borderRadius: radius.full,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+  },
+  timelineMeBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.primary },
+  timelineValidatedAt: { fontFamily: fonts.regular, fontSize: 11, color: colors.textMuted },
 })

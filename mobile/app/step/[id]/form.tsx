@@ -5,8 +5,9 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { ArrowLeft, CheckSquare, AlertCircle } from 'lucide-react-native'
+import { CheckSquare, AlertCircle } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 import { markTaskDone } from '../../../lib/stepState'
 
 type FieldType = 'number' | 'text' | 'textarea' | 'select'
@@ -91,16 +92,11 @@ export default function FormScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={8}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>Réception entrepôt</Text>
-          <Text style={s.headerSub}>Collecte maïs — Campagne nov. 2025</Text>
-        </View>
-      </View>
+      <AppHeader
+        title="Réception entrepôt"
+        subtitle="Collecte maïs — Campagne nov. 2025"
+        onBack={() => router.back()}
+      />
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -218,20 +214,7 @@ export default function FormScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backBtn: { padding: 4 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
   scroll: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
 

@@ -22,7 +22,8 @@ export const qrCodes: QRCode[] = Array.from({ length: 48 }, (_, i) => {
     n <= 45 ? 1 :
     2  // bloqués à l'étape 2
 
-  const status: QRCode['status'] = 'active'
+  // Sacs 046-048 : anomalies signalées (bloqués, non conformes)
+  const status: QRCode['status'] = n >= 46 ? 'anomaly' : 'active'
 
   // 041-045 et 048 sans producteur attribué (agent pas encore identifié)
   const isAssigned = !(n >= 41 && n <= 45) && n !== 48

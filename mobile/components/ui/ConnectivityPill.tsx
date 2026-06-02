@@ -26,14 +26,17 @@ const s = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: radius.full,
+    borderWidth: 1,
   },
   pillOnline: {
-    backgroundColor: 'rgba(22, 163, 74, 0.18)',
+    backgroundColor: colors.white,
+    borderColor: colors.border,
   },
   pillOffline: {
-    backgroundColor: 'rgba(234, 88, 12, 0.18)',
+    backgroundColor: colors.white,
+    borderColor: colors.border,
   },
   text: {
     fontFamily: fonts.medium,

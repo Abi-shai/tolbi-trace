@@ -38,14 +38,14 @@ export default function SuccessScreen() {
         </View>
 
         <Text style={s.note}>
-          Les données ont été enregistrées et seront synchronisées dès la prochaine connexion réseau.
+          Tes données sont enregistrées. Sync automatique au retour du réseau.
         </Text>
       </View>
 
       <View style={s.footer}>
         <TouchableOpacity style={s.homeBtn} onPress={() => router.replace('/')} activeOpacity={0.8}>
           <House size={18} color={colors.white} />
-          <Text style={s.homeBtnText}>Retour à mes tâches</Text>
+          <Text style={s.homeBtnText}>Retour aux missions</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -53,7 +53,7 @@ export default function SuccessScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
   body: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
   iconWrap: {
     width: 96, height: 96, borderRadius: radius.full,

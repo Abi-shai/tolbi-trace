@@ -20,7 +20,7 @@
           <div class="min-w-0 flex-1">
             <div class="flex items-center justify-between gap-2">
               <p class="text-sm font-semibold text-text-primary leading-tight">{{ agent.name }}</p>
-              <span class="flex items-center gap-1 text-[11px] text-text-muted shrink-0">
+              <span class="flex items-center gap-1 text-[11px] text-text-quaternary shrink-0">
                 <Clock :size="9" />
                 {{ agent.lastSeen }}
               </span>

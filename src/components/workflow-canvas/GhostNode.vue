@@ -13,7 +13,7 @@
             : 'w-[56px] h-[56px] border-border hover:border-primary hover:bg-brand-50/40',
         )"
       >
-        <Plus :size="data.isEmpty ? 22 : 16" class="text-text-muted group-hover:text-primary transition-colors" />
+        <Plus :size="data.isEmpty ? 22 : 16" class="text-text-quaternary group-hover:text-primary transition-colors" />
       </button>
 
       <div
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <span v-if="data.isEmpty" class="text-sm text-text-muted select-none pointer-events-none whitespace-nowrap">
+    <span v-if="data.isEmpty" class="text-sm text-text-quaternary select-none pointer-events-none whitespace-nowrap">
       Ajouter une première étape…
     </span>
   </div>

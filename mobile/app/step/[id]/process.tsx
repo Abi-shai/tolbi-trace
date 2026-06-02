@@ -2,8 +2,9 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
-import { ArrowLeft, CheckCircle2, Circle, User, AlertTriangle } from 'lucide-react-native'
+import { CheckCircle2, Circle, User, AlertTriangle } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 
 type StepStatus = 'done' | 'active' | 'upcoming' | 'blocked'
 
@@ -52,21 +53,19 @@ export default function ProcessScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={8}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>Vue du processus</Text>
-          <Text style={s.headerSub}>{process.campaign}</Text>
-        </View>
-        <View style={s.readOnlyBadge}>
-          <Text style={s.readOnlyText}>Lecture seule</Text>
-        </View>
-      </View>
+      <AppHeader
+        title="Vue du processus"
+        subtitle={process.campaign}
+        onBack={() => router.back()}
+        right={
+          <View style={s.readOnlyBadge}>
+            <Text style={s.readOnlyText}>Lecture seule</Text>
+          </View>
+        }
+      />
 
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={s.sectionLabel}>SÉQUENCE DU WORKFLOW · {process.steps.length} ÉTAPES</Text>
+        <Text style={s.sectionLabel}>DÉROULEMENT · {process.steps.length} ÉTAPES</Text>
 
         {process.steps.map((step, idx) => {
           const isLast   = idx === process.steps.length - 1
@@ -119,10 +118,17 @@ export default function ProcessScreen() {
                 </View>
 
                 <View style={s.stepMeta}>
-                  <User size={11} color={isMe ? colors.primary : colors.textMuted} />
-                  <Text style={[s.agentName, isMe && s.agentNameMe]}>
-                    {isMe ? 'Toi' : step.agent}
-                  </Text>
+                  {isMe ? (
+                    <View style={s.meBadge}>
+                      <User size={11} color={colors.primary} />
+                      <Text style={s.meBadgeText}>Toi</Text>
+                    </View>
+                  ) : (
+                    <>
+                      <User size={11} color={colors.textMuted} />
+                      <Text style={s.agentName}>{step.agent}</Text>
+                    </>
+                  )}
                   {step.validatedAt && (
                     <Text style={s.validatedAt}> · {step.validatedAt}</Text>
                   )}
@@ -141,27 +147,17 @@ export default function ProcessScreen() {
 const DOT = 24
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backBtn: { padding: 8 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
   readOnlyBadge: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: colors.surfaceAlt,
     borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
-  readOnlyText: { fontFamily: fonts.medium, fontSize: 10, color: 'rgba(255,255,255,0.85)' },
+  readOnlyText: { fontFamily: fonts.medium, fontSize: 10, color: colors.textTertiary },
 
   scroll: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
 
@@ -244,13 +240,13 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: `${colors.primary}12`,
+    backgroundColor: `${colors.statusInprogress}14`,
     borderRadius: radius.full,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
   activeBadgeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.statusInprogress },
-  activeBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.primary },
+  activeBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.statusInprogress },
 
   anomalyBadge: {
     flexDirection: 'row',
@@ -265,6 +261,15 @@ const s = StyleSheet.create({
 
   stepMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   agentName: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted },
-  agentNameMe: { fontFamily: fonts.semibold, color: colors.primary },
+  meBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: `${colors.primary}12`,
+    borderRadius: radius.full,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+  },
+  meBadgeText: { fontFamily: fonts.semibold, fontSize: 10, color: colors.primary },
   validatedAt: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted },
 })

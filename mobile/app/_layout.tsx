@@ -10,6 +10,7 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins'
 import { AuthProvider, useAuth } from '../context/AuthContext'
+import { ExplorationProvider } from '../context/ExplorationContext'
 
 function RootLayoutNav() {
   const { isLoggedIn } = useAuth()
@@ -43,9 +44,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       {/* @ts-ignore — backgroundColor is valid on expo-status-bar but typing lags */}
-      <StatusBar style="light" backgroundColor="#056033" />
+      <StatusBar style="dark" backgroundColor="#f2f4f7" />
       <AuthProvider>
-        <RootLayoutNav />
+        <ExplorationProvider>
+          <RootLayoutNav />
+        </ExplorationProvider>
       </AuthProvider>
     </SafeAreaProvider>
   )

@@ -11,7 +11,7 @@
 
     <!-- Drag handle -->
     <div class="drag-handle flex items-center justify-center py-2 border-b border-border cursor-grab active:cursor-grabbing hover:bg-surface transition-colors">
-      <GripHorizontal :size="14" class="text-text-muted" />
+      <GripHorizontal :size="14" class="text-text-quaternary" />
     </div>
 
     <div class="nodrag p-4">
@@ -26,7 +26,7 @@
       </div>
 
       <div v-if="agentName" class="flex items-start gap-2 mb-3">
-        <User :size="12" class="text-text-muted shrink-0 mt-0.5" />
+        <User :size="12" class="text-text-quaternary shrink-0 mt-0.5" />
         <div class="min-w-0">
           <p class="text-xs text-text-secondary leading-4 font-medium truncate">{{ agentName }}</p>
         </div>

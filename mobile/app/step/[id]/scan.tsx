@@ -6,8 +6,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
-import { ArrowLeft, CheckCircle2, AlertTriangle, X, CheckSquare } from 'lucide-react-native'
+import { CheckCircle2, AlertTriangle, X, CheckSquare } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 import { markTaskDone } from '../../../lib/stepState'
 import { consumePendingAnomaly } from '../../../lib/anomalyQueue'
 import { PressableScale } from '../../../components/ui/PressableScale'
@@ -196,16 +197,14 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <SafeAreaView style={s.screen} edges={['top']}>
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={12}>
-            <ArrowLeft size={22} color={colors.white} />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Scanner les QR codes</Text>
-        </View>
+        <AppHeader
+          title="Scanner les QR codes"
+          onBack={() => router.back()}
+        />
         <View style={s.permissionBox}>
           <Text style={s.permissionTitle}>Accès à la caméra requis</Text>
           <Text style={s.permissionSub}>
-            Tolbi a besoin de la caméra pour lire les QR codes des sacs.
+            Autorise l'accès à la caméra pour scanner les QR codes des sacs.
           </Text>
           <TouchableOpacity style={s.permBtn} onPress={requestPermission}>
             <Text style={s.permBtnText}>Autoriser la caméra</Text>
@@ -217,20 +216,17 @@ export default function ScanScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={12}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>{STEP_NAME}</Text>
-          <Text style={s.headerSub}>{PROCESS_NAME}</Text>
-        </View>
-        <View style={s.counter}>
-          <Text style={s.counterText}>{scanned.length}/{EXPECTED}</Text>
-          <Text style={s.counterLabel}>sacs</Text>
-        </View>
-      </View>
+      <AppHeader
+        title={STEP_NAME}
+        subtitle={PROCESS_NAME}
+        onBack={() => router.back()}
+        right={
+          <View style={s.counter}>
+            <Text style={s.counterText}>{scanned.length}/{EXPECTED}</Text>
+            <Text style={s.counterLabel}>sacs</Text>
+          </View>
+        }
+      />
 
       {/* Camera */}
       <View style={s.cameraWrap}>
@@ -247,7 +243,7 @@ export default function ScanScreen() {
           <View style={[s.corner, s.bl]} />
           <View style={[s.corner, s.br]} />
         </Animated.View>
-        <Text style={s.cameraHint}>Pointez vers un QR code</Text>
+        <Text style={s.cameraHint}>Pointe vers un QR code</Text>
         <TouchableOpacity style={s.pauseBtn} onPress={() => setScanning((v) => !v)}>
           <Text style={s.pauseBtnText}>{scanning ? 'Pause' : '▶ Reprendre'}</Text>
         </TouchableOpacity>
@@ -298,7 +294,7 @@ export default function ScanScreen() {
           <View style={s.listSection}>
             <View style={s.listHeader}>
               <Text style={s.listTitle}>
-                {scanned.length} sac{scanned.length > 1 ? 's' : ''} scannés
+                {scanned.length} sac{scanned.length > 1 ? 's' : ''} enregistré{scanned.length > 1 ? 's' : ''}
                 {anomalies > 0 ? ` · ${anomalies} anomalie${anomalies > 1 ? 's' : ''}` : ''}
               </Text>
             </View>
@@ -350,21 +346,17 @@ const BORDER = 3
 
 const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#000' },
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 14,
-    flexDirection: 'row',
+  counter: {
     alignItems: 'center',
-    gap: 12,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
-  backBtn: { padding: 8 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
-  counter: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: radius.md, paddingHorizontal: 10, paddingVertical: 4 },
-  counterText: { fontFamily: fonts.bold, fontSize: fontSize.md, color: colors.white },
-  counterLabel: { fontFamily: fonts.regular, fontSize: 9, color: 'rgba(255,255,255,0.7)', marginTop: -2 },
+  counterText: { fontFamily: fonts.bold, fontSize: fontSize.md, color: colors.textPrimary },
+  counterLabel: { fontFamily: fonts.regular, fontSize: 9, color: colors.textTertiary, marginTop: -2 },
 
   cameraWrap: { height: 260, position: 'relative', justifyContent: 'center', alignItems: 'center' },
   flashOverlay: { backgroundColor: '#fff', zIndex: 10 },

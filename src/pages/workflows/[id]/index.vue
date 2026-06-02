@@ -1,6 +1,6 @@
 <template>
   <div v-if="!workflow" class="flex flex-col flex-1 min-h-0 overflow-hidden items-center justify-center">
-    <div class="text-sm text-text-muted">Chargement…</div>
+    <div class="text-sm text-text-quaternary">Chargement…</div>
   </div>
 
   <div v-else class="flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -24,7 +24,7 @@
       <ClientOnly>
         <WorkflowCanvas :steps="steps" />
         <template #fallback>
-          <div class="flex-1 flex items-center justify-center text-sm text-text-muted bg-surface">
+          <div class="flex-1 flex items-center justify-center text-sm text-text-quaternary bg-surface">
             Chargement du canvas…
           </div>
         </template>

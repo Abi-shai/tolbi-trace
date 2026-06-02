@@ -5,7 +5,7 @@
         <h2 class="text-sm font-semibold text-text-primary">Progression par étape</h2>
         <p class="text-xs text-text-tertiary mt-0.5">QR codes validés et en cours</p>
       </div>
-      <span class="text-[11px] text-text-muted shrink-0">Sync il y a 2 min</span>
+      <span class="text-[11px] text-text-quaternary shrink-0">Sync il y a 2 min</span>
     </div>
 
     <div class="divide-y divide-border">

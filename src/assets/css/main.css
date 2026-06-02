@@ -1,110 +1,75 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #101828;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: 'Poppins', system-ui, sans-serif;
-  --font-mono: 'Inter', ui-monospace, monospace;
+  --font-sans: var(--ds-typography-font-family-poppins);
+  --font-mono: var(--ds-typography-font-family-inter);
 }
 
 @theme {
   /* ── Brand ────────────────────────────────────────────── */
-  --color-primary:       #056033;
-  --color-primary-hover: #044b28;
-  --color-brand-50:      #e6f0eb;
-  --color-brand-700:     #044b28;
-
-  /* ── Topbar ───────────────────────────────────────────── */
-  --color-topbar: rgba(6, 105, 56, 0.95);
+  --color-primary:       var(--ds-semantic-bg-brand-solid);
+  --color-primary-hover: var(--ds-semantic-bg-brand-solid-hover);
+  --color-topbar:        var(--ds-color-brand-600);
 
   /* ── Texte ────────────────────────────────────────────── */
-  --color-text-primary:     #101828;
-  --color-text-secondary:   #344054;
-  --color-text-tertiary:    #475467;
-  --color-text-quaternary:  #667085;
-  --color-text-muted:       #667085;
-  --color-text-placeholder: #667085;
-  --color-text-disabled:    #d0d5dd;
-  --color-text-nav-hover:   #182230;
-  --color-text-on-brand:    #ffffff;
+  --color-text-primary:     var(--ds-semantic-text-primary);
+  --color-text-secondary:   var(--ds-semantic-text-secondary);
+  --color-text-tertiary:    var(--ds-semantic-text-tertiary);
+  --color-text-quaternary:  var(--ds-semantic-text-quarterary);
+  --color-text-muted:       var(--ds-semantic-text-quarterary);
+  --color-text-placeholder: var(--ds-semantic-text-placeholder);
+  --color-text-disabled:    var(--ds-color-gray-light-300);
+  --color-text-nav-hover:   var(--ds-color-gray-light-800);
+  --color-text-on-brand:    var(--ds-semantic-fg-white);
 
-  /* ── Tooltip / overlay ────────────────────────────────── */
-  --color-overlay:       #101828;
-  --color-modal-overlay: #0c111d;
+  /* ── Overlay ──────────────────────────────────────────── */
+  --color-overlay:       var(--ds-color-gray-light-900);
+  --color-modal-overlay: var(--ds-color-gray-light-950);
 
-  /* ── Backgrounds ──────────────────────────────────────── */
-  --color-surface:        #f9fafb;
-  --color-surface-alt:    #f2f4f7;
-  --color-surface-active: #f9fafb;
+  /* ── Backgrounds ─────────────────────────────────────── */
+  --color-surface:        var(--ds-semantic-bg-secondary);
+  --color-surface-alt:    var(--ds-semantic-bg-tertiary);
+  --color-surface-active: var(--ds-semantic-bg-active);
 
-  /* ── Borders ──────────────────────────────────────────── */
-  --color-border:        #eaecf0;
-  --color-border-strong: #d0d5dd;
+  /* ── Borders ─────────────────────────────────────────── */
+  --color-border:        var(--ds-semantic-border-secondary);
+  --color-border-strong: var(--ds-semantic-border-primary);
 
   /* ── Warning ──────────────────────────────────────────── */
-  --color-warning-bg:     #fffaeb;
-  --color-warning-border: #fedf89;
-  --color-warning-text:   #b54708;
+  --color-warning-bg:     var(--ds-semantic-bg-warning-primary);
+  --color-warning-border: var(--ds-color-warning-200);
+  --color-warning-text:   var(--ds-color-warning-700);
 
-  /* ── Statuts sac ──────────────────────────────────────── */
-  --color-status-completed:  #16a34a;
-  --color-status-inprogress: #ea580c;
-  --color-status-pending:    #9ca3af;
-  --color-status-anomaly:    #d92d20;
-  --color-status-offline:    #d0d5dd;
+  /* ── Statuts sac ─────────────────────────────────────── */
+  --color-status-completed:  var(--ds-color-success-600);
+  --color-status-inprogress: var(--ds-color-warning-600);
+  --color-status-pending:    var(--ds-color-gray-light-400);
+  --color-status-anomaly:    var(--ds-color-error-600);
+  --color-status-offline:    var(--ds-color-gray-light-300);
 
-  /* ── Spacing (Figma scale) ────────────────────────────── */
-  --spacing-xs:  0.25rem;
-  --spacing-sm:  0.375rem;
-  --spacing-md:  0.5rem;
-  --spacing-lg:  0.75rem;
-  --spacing-xl:  1rem;
-  --spacing-2xl: 1.25rem;
-  --spacing-3xl: 1.5rem;
-  --spacing-4xl: 2rem;
+  /* ── Brand palette ───────────────────────────────────── */
+  --color-brand-50:  var(--ds-color-brand-50);
+  --color-brand-700: var(--ds-color-brand-700);
 
-  /* ── Border radius (Figma scale) ─────────────────────── */
-  --radius-sm:   0.375rem;
-  --radius-md:   0.5rem;
-  --radius-lg:   0.75rem;
-  --radius-xl:   1rem;
-  --radius-4xl:  1.5rem;
-  --radius-full: 9999px;
+  /* ── Border radius ───────────────────────────────────── */
+  --radius-sm:   var(--ds-radius-sm);
+  --radius-md:   var(--ds-radius-md);
+  --radius-lg:   var(--ds-radius-xl);
+  --radius-xl:   var(--ds-radius-2xl);
+  --radius-4xl:  var(--ds-radius-4xl);
+  --radius-full: var(--ds-radius-full);
 
-  /* ── Shadows (Figma — Untitled UI scale) ─────────────── */
-  --shadow-xs: 0px 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-sm: 0px 1px 3px rgba(16, 24, 40, 0.10),
-               0px 1px 2px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.10),
-               0px 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
-               0px 4px 6px -2px rgba(16, 24, 40, 0.03);
-
-  /* ── Typographie ──────────────────────────────────────── */
-  --text-display-sm: 1.875rem;
-  --text-display-xs: 1.5rem;
-  --text-body-lg:    1.125rem;
-  --text-body-md:    1rem;
-  --text-body-sm:    0.875rem;
-  --text-body-xs:    0.75rem;
-
-  --leading-display-sm: 2.375rem;
-  --leading-display-xs: 2rem;
-  --leading-body-lg:    1.75rem;
-  --leading-body-md:    1.5rem;
-  --leading-body-sm:    1.25rem;
-  --leading-body-xs:    1.125rem;
+  /* ── Shadows ─────────────────────────────────────────── */
+  --shadow-xs: var(--ds-shadow-xs);
+  --shadow-sm: var(--ds-shadow-sm);
+  --shadow-md: var(--ds-shadow-md);
+  --shadow-lg: var(--ds-shadow-lg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Poppins', system-ui, sans-serif;
+  background: var(--ds-semantic-bg-primary);
+  color: var(--ds-semantic-text-primary);
+  font-family: var(--ds-typography-font-family-poppins);
 }
 
 /* Dragged step: float above others, slight opacity */

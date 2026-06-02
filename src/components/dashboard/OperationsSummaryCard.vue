@@ -2,11 +2,11 @@
   <div class="bg-white border border-border rounded-xl overflow-hidden">
     <div class="px-4 py-3 border-b border-border flex items-center gap-2">
       <span class="text-sm font-semibold text-text-primary flex-1">Résumé global</span>
-      <span class="text-xs text-text-muted">{{ lastRefreshed }}</span>
+      <span class="text-xs text-text-quaternary">{{ lastRefreshed }}</span>
       <button
         @click="handleRefresh"
         title="Actualiser"
-        class="flex items-center justify-center w-6 h-6 rounded-md text-text-muted hover:text-text-secondary hover:bg-surface transition-colors"
+        class="flex items-center justify-center w-6 h-6 rounded-md text-text-quaternary hover:text-text-secondary hover:bg-surface transition-colors"
       >
         <RefreshCw :size="12" :class="spinning && 'animate-spin'" />
       </button>
@@ -16,18 +16,18 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <p class="text-2xl font-bold tabular-nums text-text-primary leading-tight">{{ activeWorkflows.length }}</p>
-          <p class="text-xs text-text-muted mt-0.5">processus actif{{ activeWorkflows.length > 1 ? 's' : '' }}</p>
+          <p class="text-xs text-text-quaternary mt-0.5">processus actif{{ activeWorkflows.length > 1 ? 's' : '' }}</p>
         </div>
         <div>
           <p class="text-2xl font-bold tabular-nums text-primary leading-tight">{{ avgCompletion }}%</p>
-          <p class="text-xs text-text-muted mt-0.5">taux d'achèvement moyen</p>
+          <p class="text-xs text-text-quaternary mt-0.5">taux d'achèvement moyen</p>
         </div>
       </div>
       <div class="space-y-1">
         <div class="h-1.5 bg-surface rounded-full overflow-hidden">
           <div class="h-full bg-primary rounded-full transition-all duration-500" :style="{ width: `${avgCompletion}%` }" />
         </div>
-        <p class="text-[11px] text-text-muted">
+        <p class="text-[11px] text-text-quaternary">
           {{ activeBagsCompleted }} / {{ activeBagsTotal }} QR codes complétés sur les processus actifs
         </p>
       </div>

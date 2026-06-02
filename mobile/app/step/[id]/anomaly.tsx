@@ -5,8 +5,9 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { ArrowLeft, AlertTriangle, CheckSquare } from 'lucide-react-native'
+import { AlertTriangle, CheckSquare } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 import { setPendingAnomaly } from '../../../lib/anomalyQueue'
 
 interface Category {
@@ -52,18 +53,16 @@ export default function AnomalyScreen() {
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
       {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={8}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle}>Signaler une anomalie</Text>
-          <Text style={s.headerSub} numberOfLines={1}>{bagCode}</Text>
-        </View>
-        <View style={s.headerBadge}>
-          <AlertTriangle size={14} color={colors.statusAnomaly} />
-        </View>
-      </View>
+      <AppHeader
+        title="Signaler une anomalie"
+        subtitle={bagCode}
+        onBack={() => router.back()}
+        right={
+          <View style={s.headerBadge}>
+            <AlertTriangle size={14} color={colors.statusAnomaly} />
+          </View>
+        }
+      />
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -81,7 +80,7 @@ export default function AnomalyScreen() {
               <Text style={s.bagCodeText}>{bagCode}</Text>
             </View>
             <Text style={s.bagHint}>
-              Le sac sera marqué comme anomalie. Cette information sera visible par le responsable.
+              Ce sac sera signalé en anomalie. Ton responsable sera notifié lors de la sync.
             </Text>
           </View>
 
@@ -112,7 +111,7 @@ export default function AnomalyScreen() {
             style={s.textarea}
             value={note}
             onChangeText={setNote}
-            placeholder="Décrivez l'anomalie observée…"
+            placeholder="Décris l'anomalie observée…"
             placeholderTextColor={colors.textMuted}
             multiline
             numberOfLines={4}
@@ -139,25 +138,13 @@ export default function AnomalyScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backBtn: { padding: 4 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
   headerBadge: {
     width: 32,
     height: 32,
     borderRadius: radius.full,
-    backgroundColor: `${colors.statusAnomaly}25`,
+    backgroundColor: `${colors.statusAnomaly}14`,
     alignItems: 'center',
     justifyContent: 'center',
   },

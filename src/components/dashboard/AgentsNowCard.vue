@@ -34,7 +34,7 @@
                 <p class="text-sm font-semibold text-text-primary leading-tight">{{ agent.name }}</p>
                 <p class="text-xs text-text-tertiary truncate mt-0.5">{{ agent.currentStep }}</p>
               </div>
-              <div :class="cn('flex items-center gap-1 shrink-0 text-[11px]', statusOf(agent.lastSeen) === 'silent' ? 'text-orange-600 font-semibold' : 'text-text-muted')">
+              <div :class="cn('flex items-center gap-1 shrink-0 text-[11px]', statusOf(agent.lastSeen) === 'silent' ? 'text-orange-600 font-semibold' : 'text-text-quaternary')">
                 <Clock :size="10" />
                 {{ agent.lastSeen }}
               </div>
@@ -49,7 +49,7 @@
 
             <div class="mt-2.5 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="text-[11px] text-text-muted">{{ agent.bagsScanned }} / {{ agent.bagsTarget }} QR codes aujourd'hui</span>
+                <span class="text-[11px] text-text-quaternary">{{ agent.bagsScanned }} / {{ agent.bagsTarget }} QR codes aujourd'hui</span>
                 <span :class="cn('text-[11px] font-semibold', pct(agent) >= 75 ? 'text-primary' : pct(agent) >= 50 ? 'text-text-secondary' : 'text-orange-500')">
                   {{ pct(agent) }}%
                 </span>

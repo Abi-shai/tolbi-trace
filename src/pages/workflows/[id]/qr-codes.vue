@@ -1,6 +1,6 @@
 <template>
   <div v-if="!workflow" class="flex flex-col flex-1 items-center justify-center">
-    <p class="text-sm text-text-muted">Processus introuvable.</p>
+    <p class="text-sm text-text-quaternary">Processus introuvable.</p>
   </div>
   <QRCodesClient v-else :initial-codes="codes" :workflow-id="id" />
 </template>
