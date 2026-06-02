@@ -19,20 +19,17 @@ export default defineNuxtConfig({
   },
 
   css: [
-    resolve('./node_modules/@abi-shai/tolbi-design-system/dist/tokens/index.css'),
+    '@abi-shai/tolbi-design-system/dist/tokens/index.css',
     '~/assets/css/main.css',
-    resolve('./node_modules/@abi-shai/tolbi-design-system/dist/index.css'),
+    '@abi-shai/tolbi-design-system/dist/index.css',
   ],
+
+  dir: {
+    public: 'public',
+  },
 
   vite: {
     plugins: [tailwindcss()],
-    publicDir: resolve('./public'),
-  },
-
-  nitro: {
-    publicAssets: [
-      { baseURL: '/', dir: resolve('./public') },
-    ],
   },
 
   components: [
