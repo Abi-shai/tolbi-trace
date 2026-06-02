@@ -12,23 +12,18 @@
             {{ step.order }}
           </span>
           <span class="text-sm font-semibold text-text-primary truncate flex-1 min-w-0">{{ step.name }}</span>
-          <button
-            @click="builder.selectStep(null)"
-            class="flex items-center justify-center p-1.5 rounded-md text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors shrink-0"
-          >
-            <X :size="16" />
-          </button>
+          <DsCloseButton @click="builder.selectStep(null)" />
         </div>
 
         <div class="flex-1 overflow-y-auto">
 
           <div class="px-5 py-5 space-y-4">
 
-            <Input
+            <DsInputField
               label="Nom de l'étape"
               type="text"
-              :value="step.name"
-              @input="(e: Event) => builder.updateStep(step!.id, { name: (e.target as HTMLInputElement).value })"
+              :model-value="step.name"
+              @update:model-value="(val: string) => builder.updateStep(step!.id, { name: val })"
               placeholder="Nom de l'étape"
             />
 
@@ -50,7 +45,7 @@
                 </option>
               </select>
 
-              <div v-else class="px-3 py-2.5 border border-dashed border-border rounded-lg bg-surface text-xs text-text-muted">
+              <div v-else class="px-3 py-2.5 border border-dashed border-border rounded-lg bg-surface text-xs text-text-quaternary">
                 Aucun agent dans l'équipe pour l'instant.
               </div>
 
@@ -68,40 +63,32 @@
               <label class="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
                 Type de validation
               </label>
-              <div class="flex rounded-lg border border-border overflow-hidden">
-                <button
-                  v-for="val in (['form', 'code'] as ValidationType[])"
-                  :key="val"
-                  @click="builder.updateStep(step!.id, { validationType: val })"
-                  :class="cn(
-                    'flex-1 py-2 text-xs font-semibold transition-colors',
-                    step.validationType === val
-                      ? 'bg-primary text-white'
-                      : 'bg-white text-text-tertiary hover:text-text-secondary hover:bg-surface',
-                  )"
-                >
-                  {{ val === 'form' ? 'Formulaire' : 'Code de validation' }}
-                </button>
-              </div>
-              <p class="text-[11px] text-text-muted mt-1 leading-4">
+              <DsButtonGroup aria-label="Type de validation">
+                <DsButtonGroupItem
+                  label="Formulaire"
+                  :active="step.validationType === 'form'"
+                  @click="builder.updateStep(step!.id, { validationType: 'form' })"
+                />
+                <DsButtonGroupItem
+                  label="Code de validation"
+                  :active="step.validationType === 'code'"
+                  @click="builder.updateStep(step!.id, { validationType: 'code' })"
+                />
+              </DsButtonGroup>
+              <p class="text-[11px] text-text-quaternary mt-1 leading-4">
                 {{ step.validationType === 'form'
                   ? 'L\'agent remplit les champs définis ci-dessous.'
                   : 'L\'agent saisit un code unique pour valider l\'étape.' }}
               </p>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
-                Description <span class="font-normal normal-case text-text-muted">(optionnel)</span>
-              </label>
-              <textarea
-                :value="step.description ?? ''"
-                @input="(e: Event) => builder.updateStep(step!.id, { description: (e.target as HTMLTextAreaElement).value })"
-                rows="2"
-                class="w-full px-3 py-2 text-sm text-text-primary border border-border-strong rounded-lg placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
-                placeholder="Description courte de cette étape"
-              />
-            </div>
+            <DsTextareaField
+              label="Description"
+              hint="Optionnel"
+              :model-value="step.description ?? ''"
+              @update:model-value="(val: string) => builder.updateStep(step!.id, { description: val })"
+              placeholder="Description courte de cette étape"
+            />
           </div>
 
           <div class="h-px bg-border" />
@@ -110,21 +97,19 @@
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                 Questions
-                <span class="ml-1.5 px-1.5 py-0.5 bg-surface rounded text-text-muted font-normal normal-case">
+                <span class="ml-1.5 px-1.5 py-0.5 bg-surface rounded text-text-quaternary font-normal normal-case">
                   {{ step.questions.length }}
                 </span>
               </h3>
-              <Button variant="primary" :icon="Plus" size="sm" @click="builder.addQuestion(step!.id, 'texte')">
-                Ajouter
-              </Button>
+              <DsButton label="Ajouter" icon-leading="plus" variant="primary" size="sm" @click="builder.addQuestion(step!.id, 'texte')" />
             </div>
 
             <div v-if="step.questions.length === 0" class="py-10 flex flex-col items-center text-center">
               <div class="w-8 h-8 rounded-full bg-surface flex items-center justify-center mb-3">
-                <Plus :size="14" class="text-text-muted" />
+                <Plus :size="14" class="text-text-quaternary" />
               </div>
               <p class="text-sm font-medium text-text-secondary mb-1">Aucune question</p>
-              <p class="text-xs text-text-muted leading-4 max-w-[200px]">
+              <p class="text-xs text-text-quaternary leading-4 max-w-[200px]">
                 Cliquez sur « Ajouter » pour définir les données à collecter.
               </p>
             </div>
@@ -135,7 +120,7 @@
                 :key="q.id"
                 class="group flex items-start gap-2 p-3 border border-border rounded-lg bg-white hover:border-border-strong transition-colors"
               >
-                <GripVertical :size="14" class="text-text-muted mt-[9px] shrink-0 cursor-grab" />
+                <GripVertical :size="14" class="text-text-quaternary mt-[9px] shrink-0 cursor-grab" />
                 <span class="flex items-center justify-center w-5 h-5 rounded-full bg-surface border border-border text-[10px] font-bold text-text-tertiary shrink-0 mt-[9px]">
                   {{ i + 1 }}
                 </span>
@@ -156,13 +141,13 @@
                     :value="q.label"
                     @input="(e: Event) => builder.updateQuestion(step!.id, q.id, { label: (e.target as HTMLInputElement).value })"
                     :placeholder="`Libellé — ex. &quot;${QUESTION_TYPE_LABELS[q.type]}&quot;`"
-                    class="w-full px-2.5 py-1.5 text-xs text-text-primary border border-border-strong rounded-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                    class="w-full px-2.5 py-1.5 text-xs text-text-primary border border-border-strong rounded-md placeholder:text-text-quaternary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                   />
                 </div>
 
                 <button
                   @click="builder.removeQuestion(step!.id, q.id)"
-                  class="p-1.5 rounded-md text-text-muted hover:text-status-anomaly hover:bg-red-50 transition-colors shrink-0 mt-0.5 opacity-0 group-hover:opacity-100"
+                  class="p-1.5 rounded-md text-text-quaternary hover:text-status-anomaly hover:bg-red-50 transition-colors shrink-0 mt-0.5 opacity-0 group-hover:opacity-100"
                 >
                   <Trash2 :size="13" />
                 </button>
@@ -175,7 +160,7 @@
         <div class="shrink-0 px-5 py-4 border-t border-border">
           <button
             @click="confirmDelete = true"
-            class="flex items-center gap-1.5 text-xs text-text-muted hover:text-status-anomaly transition-colors"
+            class="flex items-center gap-1.5 text-xs text-text-quaternary hover:text-status-anomaly transition-colors"
           >
             <Trash2 :size="13" />
             Supprimer l'étape
@@ -200,15 +185,15 @@
                 </div>
                 <div>
                   <p class="text-sm font-semibold text-text-primary">Supprimer cette étape ?</p>
-                  <p class="text-xs text-text-muted mt-0.5">« {{ step.name }} »</p>
+                  <p class="text-xs text-text-quaternary mt-0.5">« {{ step.name }} »</p>
                 </div>
               </div>
               <p class="text-xs text-text-secondary leading-5">
                 Cette action est irréversible. Les questions configurées et l'agent assigné seront supprimés avec l'étape.
               </p>
               <div class="flex gap-2 pt-1">
-                <Button variant="secondary" :fullWidth="true" @click="confirmDelete = false">Annuler</Button>
-                <Button variant="danger" :fullWidth="true" @click="handleDelete">Supprimer</Button>
+                <DsButton label="Annuler" variant="secondary-gray" class="flex-1" @click="confirmDelete = false" />
+                <DsButton label="Supprimer" variant="danger" class="flex-1" @click="handleDelete" />
               </div>
             </div>
           </div>
@@ -222,13 +207,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { X, Trash2, Plus, GripVertical, Users, AlertTriangle } from 'lucide-vue-next'
+import { Trash2, GripVertical, Users, AlertTriangle } from 'lucide-vue-next'
 import { useWorkflowBuilderStore } from '~/stores/workflow-builder'
 import { useAgentsStore } from '~/stores/agents'
 import { QUESTION_TYPE_LABELS, type QuestionType, type ValidationType } from '~/types/workflow-step'
-import { cn } from '~/lib/utils'
-import Button from '~/components/ui/Button.vue'
-import Input from '~/components/ui/Input.vue'
 
 const QUESTION_TYPE_OPTIONS: { value: QuestionType; label: string }[] = [
   { value: 'qr_batch',   label: 'Scan QR (rafale)' },

@@ -18,7 +18,11 @@ export default defineNuxtConfig({
     download: true,
   },
 
-  css: ['~/assets/css/main.css'],
+  css: [
+    resolve('./node_modules/@abi-shai/tolbi-design-system/dist/tokens/index.css'),
+    '~/assets/css/main.css',
+    resolve('./node_modules/@abi-shai/tolbi-design-system/dist/index.css'),
+  ],
 
   vite: {
     plugins: [tailwindcss()],

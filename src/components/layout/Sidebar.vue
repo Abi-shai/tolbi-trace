@@ -5,25 +5,32 @@
       class="flex shrink-0 h-full bg-white border-r border-border overflow-hidden sidebar-width-transition"
       :style="{ width: collapsed ? `${W.collapsed}px` : `${W.expanded}px` }"
     >
-      <!-- Icon rail (always 80px wide) -->
+      <!-- Icon rail (always 80px wide) — layout persistant, bouton animé en hauteur -->
       <div :class="cn('relative flex flex-col w-[80px] shrink-0 pt-4', !collapsed && 'border-r border-border')">
 
-        <!-- Expand btn + module icon + divider -->
-        <div class="flex flex-col items-center gap-4 px-2 mb-6">
-          <IconBtn
-            tooltip="Afficher la navigation"
-            :class="['transition-opacity duration-150', collapsed ? 'opacity-100' : 'opacity-0 pointer-events-none']"
-            @click="uiStore.toggleSidebar()"
+        <div class="flex flex-col items-center px-2 mb-6">
+          <!-- Expand btn : se replie en hauteur quand la sidebar est ouverte -->
+          <div
+            class="w-full flex justify-center overflow-hidden"
+            :style="{
+              transition: 'max-height 0.22s cubic-bezier(0.4,0,0.2,1), opacity 0.15s ease, padding-bottom 0.22s cubic-bezier(0.4,0,0.2,1)',
+              maxHeight: collapsed ? '56px' : '0px',
+              paddingTop: '4px',
+              paddingBottom: collapsed ? '16px' : '0px',
+              opacity: collapsed ? 1 : 0,
+              pointerEvents: collapsed ? 'auto' : 'none',
+            }"
           >
-            <ChevronsRight :size="20" />
-          </IconBtn>
-          <img :src="'/icons/trace-module.svg'" alt="Trace" width="48" height="48" class="shrink-0" />
-          <div class="w-full h-px bg-border" />
+            <IconBtn tooltip="Afficher la navigation" @click="uiStore.toggleSidebar()">
+              <ChevronsRight :size="20" />
+            </IconBtn>
+          </div>
+          <DsModuleIcon module="Source" :size="48" class="shrink-0" />
+          <div class="w-full h-px bg-border mt-4" />
         </div>
 
-        <!-- Nav icons zone: two layers overlapping via absolute -->
+        <!-- Icônes nav : crossfade entre collapsed (toutes) et expanded (retour seul) -->
         <div class="relative flex-1">
-          <!-- Collapsed: all nav icons -->
           <div
             class="absolute inset-x-0 top-0 flex flex-col gap-2 px-4 transition-opacity duration-150"
             :style="{ opacity: collapsed ? 1 : 0, pointerEvents: collapsed ? 'auto' : 'none' }"
@@ -39,8 +46,6 @@
               />
             </template>
           </div>
-
-          <!-- Expanded: Route (back) icon only -->
           <div
             class="absolute inset-x-0 top-0 flex flex-col gap-2 px-4 transition-opacity duration-150"
             :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
@@ -89,41 +94,50 @@
   </template>
 
   <!-- ── Outside a workflow ─────────────────────────────────────────────── -->
+  <!-- Même structure que l'inside : rail 80px persistant + panel texte qui fade -->
   <aside
     v-else
-    class="relative flex flex-col shrink-0 h-full bg-white border-r border-border overflow-hidden sidebar-width-transition"
+    class="flex shrink-0 h-full bg-white border-r border-border overflow-hidden sidebar-width-transition"
     :style="{ width: collapsed ? `${W.collapsed}px` : `${W.expanded}px` }"
   >
-    <!-- Collapsed layer -->
-    <div
-      class="absolute inset-0 flex flex-col py-4 gap-6 transition-opacity duration-150"
-      :style="{ opacity: collapsed ? 1 : 0, pointerEvents: collapsed ? 'auto' : 'none' }"
-    >
-      <div class="flex flex-col items-center gap-4 px-2">
-        <IconBtn tooltip="Afficher la navigation" @click="uiStore.toggleSidebar()">
-          <ChevronsRight :size="20" />
-        </IconBtn>
-        <img :src="'/icons/trace-module.svg'" alt="Trace" width="48" height="48" class="shrink-0" />
-        <div class="w-full h-px bg-border" />
+    <!-- Icon rail (80px) — même logique que l'inside -->
+    <div :class="cn('relative flex flex-col w-[80px] shrink-0 pt-4', !collapsed && 'border-r border-border')">
+      <div class="flex flex-col items-center px-2 mb-6">
+        <div
+          class="w-full flex justify-center overflow-hidden"
+          :style="{
+            transition: 'max-height 0.22s cubic-bezier(0.4,0,0.2,1), opacity 0.15s ease, padding-bottom 0.22s cubic-bezier(0.4,0,0.2,1)',
+            maxHeight: collapsed ? '56px' : '0px',
+            paddingTop: '4px',
+            paddingBottom: collapsed ? '16px' : '0px',
+            opacity: collapsed ? 1 : 0,
+            pointerEvents: collapsed ? 'auto' : 'none',
+          }"
+        >
+          <IconBtn tooltip="Afficher la navigation" @click="uiStore.toggleSidebar()">
+            <ChevronsRight :size="20" />
+          </IconBtn>
+        </div>
+        <DsModuleIcon module="Source" :size="48" class="shrink-0" />
+        <div class="w-full h-px bg-border mt-4" />
       </div>
       <div class="flex flex-col gap-2 px-4">
         <NavIconBtn :icon="Route" label="Processus" :active="processusActive" @click="router.push('/workflows')" />
       </div>
     </div>
 
-    <!-- Expanded layer -->
+    <!-- Panel texte (fade in quand expanded) — équivalent du subnav de l'inside -->
     <div
-      class="absolute inset-0 flex flex-col py-4 gap-6 transition-opacity duration-150"
+      class="flex flex-col flex-1 min-w-0 px-4 py-4 gap-6 overflow-y-auto transition-opacity duration-200"
       :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
     >
-      <div class="flex items-center gap-3 px-4">
-        <img :src="'/icons/trace-module.svg'" alt="Trace" width="48" height="48" class="shrink-0" />
-        <span class="flex-1 text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">Trace</span>
+      <div class="flex items-center justify-between gap-2 shrink-0">
+        <p class="text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">Source</p>
         <IconBtn tooltip="Réduire" @click="uiStore.toggleSidebar()">
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
-      <nav class="px-4">
+      <nav>
         <NavTextBtn :icon="Route" label="Processus" :active="processusActive" @click="router.push('/workflows')" />
       </nav>
     </div>
@@ -151,7 +165,7 @@ const IconBtn = defineComponent({
     return () => h('div', { class: 'group relative flex items-center justify-center' }, [
       h('button', {
         onClick: () => emit('click'),
-        class: 'flex items-center justify-center p-2 rounded-lg border border-border text-text-muted hover:bg-surface transition-colors shrink-0',
+        class: 'flex items-center justify-center p-2 rounded-lg border border-border text-text-quaternary hover:bg-surface transition-colors shrink-0',
       }, slots.default?.()),
       h('div', { class: 'absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 flex items-center gap-1.5' }, [
         h('div', { style: 'flex-shrink:0;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid #101828' }),
@@ -176,7 +190,7 @@ const NavIconBtn = defineComponent({
         onClick: () => emit('click'),
         class: cn(
           'flex items-center justify-center w-12 h-12 rounded-[6px] transition-colors',
-          props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-muted hover:bg-surface hover:text-text-nav-hover',
+          props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-quaternary hover:bg-surface hover:text-text-nav-hover',
         ),
       }, [h(props.icon as any, { size: 24 })]),
       h('div', { class: 'absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 flex items-center gap-1.5' }, [
@@ -204,7 +218,7 @@ const NavTextBtn = defineComponent({
         props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-secondary hover:bg-surface hover:text-text-nav-hover',
       ),
     }, [
-      h(props.icon as any, { size: 24, class: props.active ? 'text-text-secondary' : 'text-text-muted' }),
+      h(props.icon as any, { size: 24, class: props.active ? 'text-text-secondary' : 'text-text-quaternary' }),
       props.label,
     ])
   },
@@ -243,6 +257,7 @@ const navGroups = computed(() => {
       label: 'Observer',
       items: [
         { href: `${base}/graphe`,   label: 'Traçabilité', icon: Network },
+
         { href: `${base}/qr-codes`, label: 'QR codes',    icon: QrCode  },
       ],
     },

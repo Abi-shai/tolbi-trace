@@ -5,9 +5,7 @@
       description="Agents terrain assignés à ce processus. Ils exécutent leurs étapes depuis l'application mobile."
     >
       <template #actions>
-        <Button variant="primary" :icon="UserPlus" @click="panelOpen = true">
-          Ajouter un agent
-        </Button>
+        <DsButton label="Ajouter un agent" variant="primary" @click="panelOpen = true" />
       </template>
     </Header>
 
@@ -16,7 +14,9 @@
 
         <!-- Search -->
         <div class="w-[260px]">
-          <Input :leading-icon="Search" type="text" v-model="search" placeholder="Rechercher un agent..." />
+          <DsInputField v-model="search" placeholder="Rechercher un agent...">
+            <template #icon-leading><Search :size="16" /></template>
+          </DsInputField>
         </div>
 
         <!-- Table -->
@@ -33,12 +33,12 @@
           <!-- Empty state -->
           <div v-if="filtered.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
             <div class="w-12 h-12 rounded-full bg-surface flex items-center justify-center mb-4">
-              <Users :size="22" class="text-text-muted" />
+              <Users :size="22" class="text-text-quaternary" />
             </div>
             <p class="text-sm font-semibold text-text-secondary mb-1">
               {{ search ? 'Aucun résultat' : "Aucun agent dans l'équipe" }}
             </p>
-            <p class="text-xs text-text-muted leading-5 max-w-xs">
+            <p class="text-xs text-text-quaternary leading-5 max-w-xs">
               {{ search
                 ? 'Essayez un autre terme de recherche.'
                 : 'Ajoutez les agents terrain qui participeront à ce processus.' }}
@@ -52,7 +52,7 @@
             class="grid grid-cols-[2fr_180px_1fr_80px] border-b border-border last:border-b-0 hover:bg-surface transition-colors"
           >
             <div class="px-6 py-2 flex items-center gap-3">
-              <Avatar :name="agent.name" size="md" />
+              <DsAvatar :initials="getInitials(agent.name)" size="md" />
               <span class="text-sm font-medium text-text-primary">{{ agent.name }}</span>
             </div>
             <div class="px-6 py-4 flex items-center">
@@ -62,7 +62,7 @@
               <ProgressBar :value="agent.progress ?? 0" :show-label="true" />
             </div>
             <div class="px-4 py-2 flex items-center justify-center">
-              <button class="p-2.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-surface transition-colors">
+              <button class="p-2.5 rounded-lg text-text-quaternary hover:text-text-secondary hover:bg-surface transition-colors">
                 <Eye :size="16" />
               </button>
             </div>
@@ -114,14 +114,18 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { UserPlus, Search, Eye, Users, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Eye, Users, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { useAgentsStore } from '~/stores/agents'
 import Header from '~/components/layout/Header.vue'
 import NewAgentPanel from './NewAgentPanel.vue'
-import Button from '~/components/ui/Button.vue'
-import Avatar from '~/components/ui/Avatar.vue'
 import ProgressBar from '~/components/ui/ProgressBar.vue'
-import Input from '~/components/ui/Input.vue'
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(' ')
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : name.slice(0, 2).toUpperCase()
+}
 
 const PAGE_SIZE = 10
 
