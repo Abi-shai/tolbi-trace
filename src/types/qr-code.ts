@@ -1,4 +1,4 @@
-export type QRCodeStatus = 'active'
+export type QRCodeStatus = 'active' | 'anomaly'
 
 export interface QRCode {
   id: string

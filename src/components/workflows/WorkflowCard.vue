@@ -6,7 +6,7 @@
     <!-- Titre + badge -->
     <div class="flex items-start justify-between gap-4 mb-2">
       <h2 class="text-sm font-semibold text-text-primary leading-5 min-w-0 truncate">{{ workflow.name }}</h2>
-      <Badge :variant="STATUS_CONFIG[workflow.status].variant">{{ STATUS_CONFIG[workflow.status].label }}</Badge>
+      <DsBadge :color="STATUS_CONFIG[workflow.status].color" :label="STATUS_CONFIG[workflow.status].label" size="sm" />
     </div>
 
     <!-- Description -->
@@ -16,11 +16,11 @@
     <div class="flex items-center justify-between text-xs text-text-tertiary">
       <div class="flex items-center gap-4">
         <span class="flex items-center gap-1.5">
-          <Layers :size="13" class="text-text-muted" />
+          <Layers :size="13" class="text-text-quaternary" />
           {{ workflow.stepCount }} étape{{ workflow.stepCount > 1 ? 's' : '' }}
         </span>
       </div>
-      <span class="text-text-muted">Créé le {{ formatDate(workflow.createdAt) }}</span>
+      <span class="text-text-quaternary">Créé le {{ formatDate(workflow.createdAt) }}</span>
     </div>
   </NuxtLink>
 </template>
@@ -28,13 +28,12 @@
 <script setup lang="ts">
 import { Layers } from 'lucide-vue-next'
 import type { Workflow, WorkflowStatus } from '~/types/workflow'
-import Badge from '~/components/ui/Badge.vue'
 
 defineProps<{ workflow: Workflow }>()
 
-const STATUS_CONFIG: Record<WorkflowStatus, { label: string; variant: 'success' | 'neutral' }> = {
-  active: { label: 'Actif',     variant: 'success'  },
-  draft:  { label: 'Brouillon', variant: 'neutral'  },
+const STATUS_CONFIG: Record<WorkflowStatus, { label: string; color: string }> = {
+  active: { label: 'Actif',     color: 'success' },
+  draft:  { label: 'Brouillon', color: 'gray'    },
 }
 
 function formatDate(iso: string) {

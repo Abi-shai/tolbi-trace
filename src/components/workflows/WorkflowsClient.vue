@@ -2,9 +2,7 @@
   <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
     <Header title="Processus" description="Créez et gérez vos processus de traçabilité terrain.">
       <template #actions>
-        <Button variant="primary" :icon="Plus" @click="panelOpen = true">
-          Nouveau processus
-        </Button>
+        <DsButton label="Nouveau processus" icon-leading="plus" variant="primary" @click="panelOpen = true" />
       </template>
     </Header>
 
@@ -27,12 +25,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Plus } from 'lucide-vue-next'
 import { useWorkflowsStore } from '~/stores/workflows'
 import Header from '~/components/layout/Header.vue'
 import WorkflowCard from './WorkflowCard.vue'
 import NewWorkflowPanel from './NewWorkflowPanel.vue'
-import Button from '~/components/ui/Button.vue'
 
 const router    = useRouter()
 const store     = useWorkflowsStore()

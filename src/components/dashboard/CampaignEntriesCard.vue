@@ -9,7 +9,7 @@
       </div>
       <button
         @click="handleRefresh"
-        class="flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text-secondary hover:bg-surface transition-colors shrink-0"
+        class="flex items-center justify-center w-7 h-7 rounded-lg text-text-quaternary hover:text-text-secondary hover:bg-surface transition-colors shrink-0"
       >
         <RefreshCw :size="13" :class="spinning && 'animate-spin'" />
       </button>
@@ -19,7 +19,7 @@
     <div class="flex items-center gap-0 px-5 pt-3 border-b border-border overflow-x-auto">
       <button
         @click="activeStepId = 'all'"
-        :class="cn('shrink-0 px-3 pb-3 text-xs font-semibold border-b-2 transition-colors', activeStepId === 'all' ? 'text-primary border-primary' : 'text-text-muted border-transparent hover:text-text-secondary')"
+        :class="cn('shrink-0 px-3 pb-3 text-xs font-semibold border-b-2 transition-colors', activeStepId === 'all' ? 'text-primary border-primary' : 'text-text-quaternary border-transparent hover:text-text-secondary')"
       >
         Tous
         <span class="ml-1.5 px-1.5 py-0.5 bg-surface rounded text-[10px] text-text-tertiary font-normal">
@@ -30,7 +30,7 @@
         v-for="(step, i) in stepProgress"
         :key="step.stepId"
         @click="activeStepId = step.stepId"
-        :class="cn('shrink-0 px-3 pb-3 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5', activeStepId === step.stepId ? 'text-primary border-primary' : 'text-text-muted border-transparent hover:text-text-secondary')"
+        :class="cn('shrink-0 px-3 pb-3 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5', activeStepId === step.stepId ? 'text-primary border-primary' : 'text-text-quaternary border-transparent hover:text-text-secondary')"
       >
         {{ SHORT_NAMES[i] }}
         <span v-if="step.bagsInProgress > 0" class="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -51,11 +51,11 @@
           <p class="text-xs font-semibold text-text-primary truncate">{{ event.bagCode }}</p>
           <p class="text-[11px] text-text-tertiary truncate">{{ event.agentName }} · {{ event.stepName }}</p>
         </div>
-        <span class="text-[11px] text-text-muted shrink-0 tabular-nums">{{ event.time }}</span>
+        <span class="text-[11px] text-text-quaternary shrink-0 tabular-nums">{{ event.time }}</span>
       </div>
 
       <div v-if="filtered.length === 0" class="px-5 py-8 text-center">
-        <p class="text-sm text-text-muted">Aucune activité pour cette étape</p>
+        <p class="text-sm text-text-quaternary">Aucune activité pour cette étape</p>
       </div>
     </div>
   </div>

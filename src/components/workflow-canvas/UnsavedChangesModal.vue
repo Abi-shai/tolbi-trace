@@ -13,21 +13,12 @@
               Vous avez des modifications non enregistrées. Voulez-vous les enregistrer avant de quitter ?
             </p>
           </div>
-          <button
-            @click="$emit('cancel')"
-            class="absolute top-3 right-3 flex items-center justify-center w-11 h-11 rounded-lg text-text-tertiary hover:bg-surface transition-colors"
-          >
-            <X :size="20" />
-          </button>
+          <DsCloseButton @click="$emit('cancel')" size="md" class="absolute top-3 right-3" />
         </div>
 
         <div class="border-t border-border px-6 py-4 flex items-center justify-end gap-3">
-          <Button variant="secondary" @click="$emit('discard')">
-            Quitter sans enregistrer
-          </Button>
-          <Button variant="primary" @click="$emit('save')">
-            Enregistrer
-          </Button>
+          <DsButton label="Quitter sans enregistrer" variant="secondary-gray" @click="$emit('discard')" />
+          <DsButton label="Enregistrer" variant="primary" @click="$emit('save')" />
         </div>
       </div>
     </div>
@@ -35,9 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { X } from 'lucide-vue-next'
-import Button from '~/components/ui/Button.vue'
-
 defineEmits<{
   save:    []
   discard: []

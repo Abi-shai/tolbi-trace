@@ -28,7 +28,7 @@
             'flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-colors',
             stepState(i, bag.currentStep) === 'done'    && 'bg-primary text-white',
             stepState(i, bag.currentStep) === 'current' && 'bg-primary text-white ring-2 ring-primary/30',
-            stepState(i, bag.currentStep) === 'pending' && 'bg-surface-alt text-text-muted border border-border',
+            stepState(i, bag.currentStep) === 'pending' && 'bg-surface-alt text-text-quaternary border border-border',
           )"
         >
           {{ i }}
@@ -83,14 +83,14 @@
                   v-else
                   class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white border-2 border-border"
                 >
-                  <Circle :size="10" class="text-text-muted" />
+                  <Circle :size="10" class="text-text-quaternary" />
                 </div>
               </div>
 
               <div class="flex-1 min-w-0">
                 <div :class="cn('flex items-center justify-between gap-2 mb-1', stepState(i + 1, bag.currentStep) === 'pending' && 'opacity-40')">
                   <p class="text-sm font-semibold text-text-primary">{{ STEP_NAMES[i] }}</p>
-                  <span v-if="getEvent(i + 1)" class="text-xs text-text-muted shrink-0">{{ getEvent(i + 1)!.timestamp }}</span>
+                  <span v-if="getEvent(i + 1)" class="text-xs text-text-quaternary shrink-0">{{ getEvent(i + 1)!.timestamp }}</span>
                 </div>
 
                 <div v-if="getEvent(i + 1)" class="bg-white border border-border rounded-lg px-4 py-3">
@@ -107,9 +107,9 @@
                   </dl>
                 </div>
                 <div v-else-if="stepState(i + 1, bag.currentStep) !== 'pending'" class="bg-white border border-border rounded-lg px-4 py-3">
-                  <p class="text-xs text-text-muted">En cours de traitement…</p>
+                  <p class="text-xs text-text-quaternary">En cours de traitement…</p>
                 </div>
-                <p v-else class="text-xs text-text-muted mt-0.5">Non atteinte</p>
+                <p v-else class="text-xs text-text-quaternary mt-0.5">Non atteinte</p>
               </div>
             </li>
           </ol>

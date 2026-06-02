@@ -14,7 +14,7 @@
       <!-- Filtres -->
       <div class="flex items-center gap-3">
         <div class="relative w-[260px]">
-          <Search :size="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+          <Search :size="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-quaternary pointer-events-none" />
           <input
             v-model="search"
             type="text"
@@ -31,7 +31,7 @@
           <option v-for="n in 5" :key="n" :value="n">Étape {{ n }}</option>
         </select>
 
-        <span class="text-xs text-text-muted ml-auto">
+        <span class="text-xs text-text-quaternary ml-auto">
           {{ filtered.length }} résultat{{ filtered.length > 1 ? 's' : '' }}
         </span>
       </div>
@@ -65,11 +65,11 @@
               </td>
               <td class="px-4 py-3">
                 <span v-if="qr.producerName" class="text-sm text-text-primary">{{ qr.producerName }}</span>
-                <span v-else class="text-sm text-text-muted">—</span>
+                <span v-else class="text-sm text-text-quaternary">—</span>
               </td>
               <td class="px-4 py-3">
                 <span v-if="qr.cooperativeName" class="text-xs text-text-tertiary">{{ qr.cooperativeName }}</span>
-                <span v-else class="text-sm text-text-muted">—</span>
+                <span v-else class="text-sm text-text-quaternary">—</span>
               </td>
               <td class="px-4 py-3">
                 <StepDots :current-step="qr.currentStep" />
@@ -92,9 +92,9 @@
 
             <tr v-if="filtered.length === 0">
               <td colspan="6" class="px-4 py-12 text-center">
-                <QrCode :size="24" class="mx-auto text-text-muted mb-2" />
+                <QrCode :size="24" class="mx-auto text-text-quaternary mb-2" />
                 <p class="text-sm font-medium text-text-secondary">Aucun QR code trouvé</p>
-                <p class="text-xs text-text-muted mt-1">Modifiez les filtres pour affiner la recherche.</p>
+                <p class="text-xs text-text-quaternary mt-1">Modifiez les filtres pour affiner la recherche.</p>
               </td>
             </tr>
           </tbody>

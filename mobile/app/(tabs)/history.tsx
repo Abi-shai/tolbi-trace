@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { CheckCircle2, AlertTriangle, QrCode, FileText } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../lib/tokens'
 import { ConnectivityPill } from '../../components/ui/ConnectivityPill'
+import { AppHeader } from '../../components/ui/AppHeader'
 import { useConnectivity } from '../../context/ConnectivityContext'
 
 type EntryStatus = 'validated' | 'anomaly'
@@ -60,15 +61,11 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      <View style={s.header}>
-        <View style={s.headerRow}>
-          <View>
-            <Text style={s.headerTitle}>Historique</Text>
-            <Text style={s.headerSub}>Mes validations passées</Text>
-          </View>
-          <ConnectivityPill online={online} />
-        </View>
-      </View>
+      <AppHeader
+        title="Historique"
+        subtitle="Mes saisies et validations"
+        right={<ConnectivityPill online={online} />}
+      />
 
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} stickyHeaderIndices={[0]}>
 
@@ -158,17 +155,7 @@ export default function HistoryScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.xl, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
   scroll: { flex: 1 },
 

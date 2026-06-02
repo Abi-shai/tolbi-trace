@@ -1,10 +1,12 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Wifi, WifiOff, LogOut, ChevronRight } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../lib/tokens'
 import { ConnectivityPill } from '../../components/ui/ConnectivityPill'
+import { AppHeader } from '../../components/ui/AppHeader'
 import { useConnectivity } from '../../context/ConnectivityContext'
 import { useAuth } from '../../context/AuthContext'
+import { useExploration } from '../../context/ExplorationContext'
 
 const AGENT = {
   initials: 'MD',
@@ -16,15 +18,14 @@ const AGENT = {
 export default function MenuScreen() {
   const { online, setOnline, pendingSync } = useConnectivity()
   const { logout } = useAuth()
+  const { explorationEnabled, setExplorationEnabled } = useExploration()
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      <View style={s.header}>
-        <View style={s.headerRow}>
-          <Text style={s.headerTitle}>Menu</Text>
-          <ConnectivityPill online={online} />
-        </View>
-      </View>
+      <AppHeader
+        title="Mon profil"
+        right={<ConnectivityPill online={online} />}
+      />
 
       <View style={s.body}>
         {/* Agent card */}
@@ -68,9 +69,25 @@ export default function MenuScreen() {
             <ChevronRight size={16} color={colors.textMuted} />
           </TouchableOpacity>
           <TouchableOpacity style={[s.menuRow, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
-            <Text style={s.menuLabel}>Aide & support</Text>
+            <Text style={s.menuLabel}>Aide et support</Text>
             <ChevronRight size={16} color={colors.textMuted} />
           </TouchableOpacity>
+        </View>
+
+        {/* Exploration */}
+        <View style={s.menuSection}>
+          <View style={[s.menuRow, { borderBottomWidth: 0 }]}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={s.menuLabel}>Explorer les cas d'expérience</Text>
+              <Text style={s.menuSub}>Simuler différents profils d'agent</Text>
+            </View>
+            <Switch
+              value={explorationEnabled}
+              onValueChange={setExplorationEnabled}
+              trackColor={{ false: colors.border, true: `${colors.primary}80` }}
+              thumbColor={explorationEnabled ? colors.primary : colors.textMuted}
+            />
+          </View>
         </View>
 
         <TouchableOpacity style={s.logoutBtn} activeOpacity={0.8} onPress={logout}>
@@ -83,20 +100,7 @@ export default function MenuScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 18,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.xl, color: colors.white },
-
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
   body: { flex: 1, paddingHorizontal: 16, paddingTop: 20, gap: 12 },
 
   agentCard: {
@@ -151,6 +155,7 @@ const s = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   menuLabel: { fontFamily: fonts.regular, fontSize: fontSize.sm, color: colors.textPrimary },
+  menuSub: { fontFamily: fonts.regular, fontSize: 11, color: colors.textMuted },
 
   logoutBtn: {
     flexDirection: 'row',

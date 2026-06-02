@@ -5,8 +5,9 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { ArrowLeft, CheckSquare, AlertCircle } from 'lucide-react-native'
+import { CheckSquare, AlertCircle } from 'lucide-react-native'
 import { colors, radius, fontSize, fonts } from '../../../lib/tokens'
+import { AppHeader } from '../../../components/ui/AppHeader'
 import { markTaskDone } from '../../../lib/stepState'
 
 const VALID_CODE = 'AGRO-2025'
@@ -31,7 +32,7 @@ export default function CodeScreen() {
         markTaskDone(id, 'code')
         router.back()
       } else {
-        setError('Code incorrect. Vérifiez avec votre responsable.')
+        setError('Code incorrect. Vérifie avec ton responsable.')
         setLoading(false)
       }
     }, 500)
@@ -39,15 +40,11 @@ export default function CodeScreen() {
 
   return (
     <SafeAreaView style={s.screen} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={8}>
-          <ArrowLeft size={22} color={colors.white} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>Pesée et contrôle humidité</Text>
-          <Text style={s.headerSub}>Collecte sorgho — Campagne oct. 2025</Text>
-        </View>
-      </View>
+      <AppHeader
+        title="Pesée et contrôle humidité"
+        subtitle="Collecte sorgho — Campagne oct. 2025"
+        onBack={() => router.back()}
+      />
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -99,20 +96,7 @@ export default function CodeScreen() {
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-
-  header: {
-    backgroundColor: colors.topbar,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backBtn: { padding: 8 },
-  headerTitle: { fontFamily: fonts.semibold, fontSize: fontSize.sm, color: colors.white },
-  headerSub: { fontFamily: fonts.regular, fontSize: fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
+  screen: { flex: 1, backgroundColor: colors.surfaceAlt },
 
   body: {
     flex: 1,

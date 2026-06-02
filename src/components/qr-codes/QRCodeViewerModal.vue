@@ -15,12 +15,7 @@
               Étape {{ qrCode.currentStep }}/5 · {{ stepLabel }}
             </p>
           </div>
-          <button
-            @click="$emit('close')"
-            class="p-1.5 rounded-md text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors"
-          >
-            <X :size="16" />
-          </button>
+          <DsCloseButton @click="$emit('close')" />
         </div>
 
         <!-- QR Code -->
@@ -38,12 +33,14 @@
 
         <!-- Footer -->
         <div class="flex items-center gap-2 px-5 py-4 border-t border-border">
-          <Button variant="secondary" :icon="copied ? Check : Copy" @click="handleCopy" :fullWidth="true">
-            {{ copied ? 'Copié !' : 'Copier le code' }}
-          </Button>
-          <Button variant="primary" :icon="Download" :fullWidth="true">
-            Télécharger
-          </Button>
+          <DsButton
+            :label="copied ? 'Copié !' : 'Copier le code'"
+            :icon-leading="copied ? 'check' : undefined"
+            variant="secondary-gray"
+            class="flex-1"
+            @click="handleCopy"
+          />
+          <DsButton label="Télécharger" icon-leading="download-01" variant="primary" class="flex-1" />
         </div>
       </div>
     </div>
@@ -52,10 +49,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { X, Download, Copy, Check } from 'lucide-vue-next'
 import QrcodeVue from 'qrcode.vue'
 import type { QRCode as QRCodeType } from '~/types/qr-code'
-import Button from '~/components/ui/Button.vue'
 
 const STEP_LABELS = [
   'Collecte chez le producteur',

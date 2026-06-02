@@ -14,8 +14,8 @@
         <span v-if="activeFilters.length > 0" class="text-[10px] font-semibold px-1.5 py-0.5 bg-brand-50 text-primary border border-primary/20 rounded-full">
           {{ activeFilters.length }} filtre{{ activeFilters.length > 1 ? 's' : '' }}
         </span>
-        <span class="text-xs text-text-muted">{{ filtered.length }} év.</span>
-        <ChevronDown :size="14" :class="cn('text-text-muted transition-transform', expanded && 'rotate-180')" />
+        <span class="text-xs text-text-quaternary">{{ filtered.length }} év.</span>
+        <ChevronDown :size="14" :class="cn('text-text-quaternary transition-transform', expanded && 'rotate-180')" />
       </div>
     </button>
 
@@ -36,7 +36,7 @@
             <option value="validated">Validé</option>
             <option value="started">Démarré</option>
           </select>
-          <button v-if="activeFilters.length > 0" @click="clearAll" class="text-xs text-text-muted hover:text-text-secondary transition-colors ml-auto">
+          <button v-if="activeFilters.length > 0" @click="clearAll" class="text-xs text-text-quaternary hover:text-text-secondary transition-colors ml-auto">
             Effacer
           </button>
         </div>
@@ -44,7 +44,7 @@
 
       <!-- Feed -->
       <div v-if="filtered.length === 0" class="px-5 py-8 text-center">
-        <p class="text-sm text-text-muted">Aucun événement correspondant</p>
+        <p class="text-sm text-text-quaternary">Aucun événement correspondant</p>
       </div>
       <ul v-else class="divide-y divide-border">
         <li v-for="event in filtered" :key="event.id" class="flex items-start gap-3 px-5 py-3">
@@ -54,7 +54,7 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-mono font-semibold text-text-primary">{{ event.bagCode }}</span>
-              <span class="text-xs text-text-muted shrink-0">{{ event.timestamp }}</span>
+              <span class="text-xs text-text-quaternary shrink-0">{{ event.timestamp }}</span>
             </div>
             <p class="text-xs text-text-secondary mt-0.5">{{ ACTION_LABELS[event.action] }} — {{ event.stepName }}</p>
             <p class="text-xs text-text-tertiary">par {{ event.agentName }}</p>

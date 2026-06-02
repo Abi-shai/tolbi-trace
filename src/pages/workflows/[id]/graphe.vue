@@ -1,8 +1,8 @@
 <template>
   <div v-if="!workflow" class="flex flex-col flex-1 items-center justify-center">
-    <p class="text-sm text-text-muted">Processus introuvable.</p>
+    <p class="text-sm text-text-quaternary">Processus introuvable.</p>
   </div>
-  <GraphPageClient v-else :nodes="graphNodes" :edges="graphEdges" />
+  <GraphPageClient v-else :nodes="graphNodes" :edges="graphEdges" :workflow-id="String(route.params.id)" />
 </template>
 
 <script setup lang="ts">

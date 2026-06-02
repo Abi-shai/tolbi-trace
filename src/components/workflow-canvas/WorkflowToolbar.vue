@@ -11,7 +11,7 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="text-sm font-semibold text-text-primary leading-5">{{ displayName }}</h1>
-          <Badge :variant="STATUS_BADGE_VARIANT[status]">{{ STATUS_LABELS[status] }}</Badge>
+          <DsBadge :color="STATUS_BADGE_COLOR[status]" :label="STATUS_LABELS[status]" size="sm" />
         </div>
         <p class="text-xs text-text-tertiary leading-4">
           {{ count }} étape{{ count > 1 ? 's' : '' }}
@@ -20,27 +20,38 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <Button v-if="status === 'active'" variant="secondary" :icon="Share2" size="sm" @click="builder.openSharePanel()">
-        Partager
-      </Button>
-
-      <Button v-if="status === 'draft'" variant="primary" :icon="Rocket" size="sm" @click="showPublishModal = true">
-        Publier
-      </Button>
-
-      <Button variant="secondary" :icon="Pencil" size="sm" @click="builder.openSettings()">
-        Modifier
-      </Button>
-
-      <Button
-        :variant="builder.hasUnsavedChanges ? 'primary' : 'secondary'"
-        :icon="builder.hasUnsavedChanges ? undefined : Check"
+      <DsButton
+        v-if="status === 'active'"
+        label="Partager"
+        variant="secondary-gray"
         size="sm"
-        @click="builder.markSaved()"
+        @click="builder.openSharePanel()"
+      />
+
+      <DsButton
+        v-if="status === 'draft'"
+        label="Publier"
+        variant="primary"
+        size="sm"
+        @click="showPublishModal = true"
+      />
+
+      <DsButton
+        label="Modifier"
+        icon-leading="edit-01"
+        variant="secondary-gray"
+        size="sm"
+        @click="builder.openSettings()"
+      />
+
+      <DsButton
+        :variant="builder.hasUnsavedChanges ? 'primary' : 'secondary-gray'"
+        :icon-leading="builder.hasUnsavedChanges ? undefined : 'check'"
+        :label="builder.hasUnsavedChanges ? 'Enregistrer' : 'Enregistré'"
+        size="sm"
         :disabled="!builder.hasUnsavedChanges"
-      >
-        {{ builder.hasUnsavedChanges ? 'Enregistrer' : 'Enregistré' }}
-      </Button>
+        @click="builder.markSaved()"
+      />
     </div>
   </div>
 
@@ -61,18 +72,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, Check, Pencil, Share2, Rocket } from 'lucide-vue-next'
+import { ArrowLeft } from 'lucide-vue-next'
 import { useWorkflowBuilderStore } from '~/stores/workflow-builder'
 import { useWorkflowsStore } from '~/stores/workflows'
 import UnsavedChangesModal from './UnsavedChangesModal.vue'
 import PublishConfirmModal from './PublishConfirmModal.vue'
-import Button from '~/components/ui/Button.vue'
-import Badge from '~/components/ui/Badge.vue'
 import type { WorkflowStatus } from '~/types/workflow'
 
-const STATUS_BADGE_VARIANT: Record<WorkflowStatus, 'success' | 'neutral'> = {
+const STATUS_BADGE_COLOR: Record<WorkflowStatus, string> = {
   active: 'success',
-  draft:  'neutral',
+  draft:  'gray',
 }
 
 const STATUS_LABELS: Record<WorkflowStatus, string> = {

@@ -6,14 +6,12 @@
     >
       <template #actions>
         <div class="relative">
-          <Button
+          <DsButton
+            label="Exporter"
+            icon-leading="download-01"
             variant="primary"
-            :icon="Download"
-            :icon-right="ChevronDown"
             @click="showExport = !showExport"
-          >
-            Exporter
-          </Button>
+          />
           <template v-if="showExport">
             <div class="fixed inset-0 z-10" @click="showExport = false" />
             <div class="absolute right-0 top-[calc(100%+4px)] bg-white border border-border rounded-lg shadow-lg overflow-hidden z-20 w-44">
@@ -24,7 +22,7 @@
                 class="flex flex-col items-start w-full px-3 py-2.5 text-left hover:bg-surface transition-colors border-b border-border last:border-0"
               >
                 <span class="text-xs font-semibold text-text-primary">{{ opt.label }}</span>
-                <span class="text-[10px] text-text-muted">{{ opt.desc }}</span>
+                <span class="text-[10px] text-text-quaternary">{{ opt.desc }}</span>
               </button>
             </div>
           </template>
@@ -44,7 +42,7 @@
               @click="switchToWorkflow"
               :class="cn(
                 'flex-1 flex items-center justify-center gap-1.5 h-9 px-3 rounded-md text-sm font-semibold whitespace-nowrap transition-colors',
-                mode === 'workflow' ? 'bg-white text-text-secondary shadow-sm' : 'text-text-muted hover:text-text-secondary',
+                mode === 'workflow' ? 'bg-white text-text-secondary shadow-sm' : 'text-text-quaternary hover:text-text-secondary',
               )"
             >
               <Network :size="14" />
@@ -54,7 +52,7 @@
               @click="switchToFocus"
               :class="cn(
                 'flex-1 flex items-center justify-center gap-1.5 h-9 px-3 rounded-md text-sm font-semibold whitespace-nowrap transition-colors',
-                mode === 'focus' ? 'bg-white text-text-secondary shadow-sm' : isBagSelected ? 'text-text-muted hover:text-text-secondary' : 'text-text-muted cursor-not-allowed',
+                mode === 'focus' ? 'bg-white text-text-secondary shadow-sm' : isBagSelected ? 'text-text-quaternary hover:text-text-secondary' : 'text-text-quaternary cursor-not-allowed',
               )"
             >
               <Package :size="14" />
@@ -134,9 +132,18 @@
                 <div v-if="i < bagDetail.events.length - 1" class="absolute left-[4px] top-[14px] bottom-0 w-px bg-border" />
                 <p class="text-[11px] font-semibold text-text-primary leading-snug">{{ event.stepName }}</p>
                 <p class="text-[10px] text-text-secondary mt-0.5">{{ event.agentName }}</p>
-                <p class="text-[10px] text-text-muted">{{ event.timestamp }}</p>
+                <p class="text-[10px] text-text-quaternary">{{ event.timestamp }}</p>
               </li>
             </ol>
+          <!-- Lien vers détail complet -->
+          <div class="px-4 pb-4 shrink-0">
+            <NuxtLink
+              :to="`/workflows/${props.workflowId}/sacs/${bagDetail.qrId}`"
+              class="flex items-center justify-center w-full gap-1.5 py-2 px-3 text-xs font-semibold text-primary border border-border rounded-lg hover:bg-surface transition-colors"
+            >
+              Voir le détail complet
+            </NuxtLink>
+          </div>
           </div>
         </div>
       </aside>
@@ -150,7 +157,7 @@
           <span class="text-xs text-text-secondary">
             Focus · <span class="font-mono font-semibold text-text-primary">{{ bagDetail?.code }}</span>
           </span>
-          <button @click="handleNodeSelect(null)" class="text-xs text-text-muted hover:text-text-secondary transition-colors ml-1">✕</button>
+          <button @click="handleNodeSelect(null)" class="text-xs text-text-quaternary hover:text-text-secondary transition-colors ml-1">✕</button>
         </div>
 
         <GraphLoader
@@ -168,9 +175,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Download, ChevronDown, Network, Package } from 'lucide-vue-next'
+import { Network, Package } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
-import Button from '~/components/ui/Button.vue'
 import GraphLoader from './GraphLoader.vue'
 import { cn } from '~/lib/utils'
 import type { GraphNode, GraphEdge } from '~/data/graph'
@@ -181,6 +187,7 @@ import { getBagEvents } from '~/data/bag-events'
 const props = defineProps<{
   nodes: GraphNode[]
   edges: GraphEdge[]
+  workflowId: string
 }>()
 
 const LEGEND_NODES = [
