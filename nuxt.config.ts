@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   },
 
   css: [
+    '~/assets/css/design-system.css',
     '~/assets/css/main.css',
   ],
 
@@ -33,6 +34,10 @@ export default defineNuxtConfig({
   components: [
     { path: '~/components', pathPrefix: false },
   ],
+
+  experimental: {
+    inlineSSRStyles: false,
+  },
 
   devtools: { enabled: true },
 
