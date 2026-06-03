@@ -1,34 +1,19 @@
 <template>
-  <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div class="absolute inset-0 bg-modal-overlay/70 backdrop-blur-sm" @click="$emit('cancel')" />
-
-      <div class="relative bg-white rounded-xl w-full max-w-[480px] overflow-hidden shadow-lg">
-        <div class="px-6 pt-6 pb-5 relative">
-          <div class="pr-8">
-            <h2 class="text-lg font-semibold text-text-primary leading-7">
-              Modifications non enregistrées
-            </h2>
-            <p class="text-sm text-text-tertiary leading-5 mt-1">
-              Vous avez des modifications non enregistrées. Voulez-vous les enregistrer avant de quitter ?
-            </p>
-          </div>
-          <DsCloseButton @click="$emit('cancel')" size="md" class="absolute top-3 right-3" />
-        </div>
-
-        <div class="border-t border-border px-6 py-4 flex items-center justify-end gap-3">
-          <DsButton label="Quitter sans enregistrer" variant="secondary-gray" @click="$emit('discard')" />
-          <DsButton label="Enregistrer" variant="primary" @click="$emit('save')" />
-        </div>
-      </div>
-    </div>
-  </Teleport>
+  <Modal
+    :model-value="true"
+    title="Modifications non enregistrées"
+    description="Vous avez des modifications non enregistrées. Voulez-vous les enregistrer avant de quitter ?"
+    @update:model-value="$emit('cancel')"
+  >
+    <template #footer>
+      <DsButton label="Quitter sans enregistrer" variant="secondary-gray" @click="$emit('discard')" />
+      <DsButton label="Enregistrer" variant="primary" @click="$emit('save')" />
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
-defineEmits<{
-  save:    []
-  discard: []
-  cancel:  []
-}>()
+import Modal from '~/components/ui/Modal.vue'
+
+defineEmits<{ save: []; discard: []; cancel: [] }>()
 </script>
