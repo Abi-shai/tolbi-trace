@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useUIStore = defineStore('ui', {
   state: () => ({
-    sidebarCollapsed: false,
+    sidebarCollapsed:  false,
+    moduleTransition:  false,
   }),
 
   actions: {
@@ -11,5 +12,5 @@ export const useUIStore = defineStore('ui', {
     },
   },
 
-  persist: true,
+  persist: { pick: ['sidebarCollapsed'] },
 })

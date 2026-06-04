@@ -1,11 +1,17 @@
 <template>
-  <ImportMatching v-if="step === 'matching'" @back="step = 'import'" @next="step = 'done'" @add="$emit('add')" @cancel="step = 'import'" />
+  <ScreenTransition :show="showFinalizing">
+    <img :src="tolbiLogoAnimation" alt="" class="size-[150px] object-contain pointer-events-none" />
+  </ScreenTransition>
+
+  <ImportMatching v-if="step === 'matching'" @back="step = 'import'" @add="$emit('add')" @cancel="step = 'import'" @finalize-start="onFinalizeStart" />
 
   <Transition name="step-reveal">
     <ImportFichiers v-if="step === 'import'" @back="step = 'empty'" @next="step = 'matching'" @add="$emit('add')" />
   </Transition>
 
-  <div v-if="step === 'empty' || step === 'done'" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+  <FournisseursListe v-if="step === 'done'" @add="$emit('add')" />
+
+  <div v-if="step === 'empty'" class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
     <Header title="Fournisseurs">
       <template #actions>
@@ -106,13 +112,24 @@ import { ref, watch, onUnmounted } from 'vue'
 import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
+import FournisseursListe from '~/components/id/FournisseursListe.vue'
 import manualIllustration from '~/assets/images/upload-ways/manual-illustration.png'
+import tolbiLogoAnimation from '~/assets/images/tolbi-logo-animation.gif'
 import { useScenarioStore } from '~/stores/scenario'
 
 defineEmits<{ add: []; collect: []; manual: [] }>()
 
-const step     = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
-const scenario = useScenarioStore()
+const step          = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
+const showFinalizing = ref(false)
+const scenario      = useScenarioStore()
+let finalizeTimer: ReturnType<typeof setTimeout>
+
+function onFinalizeStart() {
+  showFinalizing.value = true
+  step.value = 'done'
+  clearTimeout(finalizeTimer)
+  finalizeTimer = setTimeout(() => { showFinalizing.value = false }, 2000)
+}
 
 watch(step, (val, old) => {
   if (val === 'matching') {
@@ -140,6 +157,7 @@ watch(() => scenario.activeId, (newId) => {
 onUnmounted(() => {
   scenario.unregisterScope('matching')
   scenario.unregisterScope('import')
+  clearTimeout(finalizeTimer)
 })
 </script>
 

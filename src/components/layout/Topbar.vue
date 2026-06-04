@@ -20,6 +20,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useWorkflowsStore } from '~/stores/workflows'
+import { useUIStore } from '~/stores/ui'
 
 interface Crumb { label: string; href?: string }
 
@@ -100,15 +101,38 @@ const dsBreadcrumbs = computed(() =>
   }))
 )
 
-function handleModuleSelect(mod: { name: string }) {
-  if (mod.name === 'Source') router.push('/workflows')
-  if (mod.name === 'ID')     router.push('/id')
+const uiStore = useUIStore()
+
+async function handleModuleSelect(mod: { name: string }) {
+  const target = mod.name === 'Source' ? '/workflows' : mod.name === 'ID' ? '/id' : null
+  if (!target || route.path.startsWith(target)) return
+  uiStore.moduleTransition = true
+  await Promise.all([
+    router.push(target),
+    new Promise<void>(r => setTimeout(r, 2000)),
+  ])
+  uiStore.moduleTransition = false
 }
 
-function handleHome() {
+async function handleHome() {
   const seg = route.path.split('/').filter(Boolean)
-  if (seg[0] === 'workflows') router.push(seg.length > 1 ? '/workflows' : '/')
-  else if (seg[0] === 'id')   router.push(seg.length > 1 ? '/id' : '/')
-  else router.push('/')
+  const inWorkflows = seg[0] === 'workflows'
+  const inId        = seg[0] === 'id'
+
+  if ((inWorkflows || inId) && seg.length > 1) {
+    // Intra-module: go to module root — no transition
+    router.push(inWorkflows ? '/workflows' : '/id')
+    return
+  }
+
+  if (inWorkflows || inId) {
+    // Module exit: go to home — fire transition
+    uiStore.moduleTransition = true
+    await Promise.all([router.push('/'), new Promise<void>(r => setTimeout(r, 2000))])
+    uiStore.moduleTransition = false
+    return
+  }
+
+  router.push('/')
 }
 </script>
