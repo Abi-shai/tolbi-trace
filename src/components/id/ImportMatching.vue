@@ -85,7 +85,7 @@
               <!-- Footer -->
               <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
                 <DsButton label="Annuler" variant="secondary-gray" @click="showFinalizeModal = false" />
-                <DsButton label="Finaliser l'import" variant="primary" @click="$emit('next'); showFinalizeModal = false" />
+                <DsButton label="Finaliser l'import" variant="primary" @click="onFinalize" />
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@
               <!-- Footer -->
               <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
                 <DsButton label="Annuler" variant="secondary-gray" @click="showFinalizeWarningsModal = false" />
-                <DsButton label="Finaliser quand même" variant="primary" @click="$emit('next'); showFinalizeWarningsModal = false" />
+                <DsButton label="Finaliser quand même" variant="primary" @click="onFinalize" />
               </div>
             </div>
           </div>
@@ -509,6 +509,7 @@
     </Transition>
   </Teleport>
 
+
 </template>
 
 <script setup lang="ts">
@@ -519,8 +520,6 @@ import ScrollArea from '~/components/ui/ScrollArea.vue'
 import { onClickOutside } from '@vueuse/core'
 import { useScenarioStore } from '~/stores/scenario'
 import type { MatchingResult, RowMatchingResult } from '~/types/scenario'
-
-defineEmits<{ back: []; next: []; add: []; cancel: [] }>()
 
 const scenario = useScenarioStore()
 
@@ -607,6 +606,14 @@ function startProcessing() {
 }
 
 watch(() => scenario.activeId, () => { startProcessing() })
+
+const emit = defineEmits<{ back: []; add: []; cancel: []; 'finalize-start': [] }>()
+
+function onFinalize() {
+  showFinalizeModal.value = false
+  showFinalizeWarningsModal.value = false
+  emit('finalize-start')
+}
 
 function onRetry() {
   showRetryModal.value = false
