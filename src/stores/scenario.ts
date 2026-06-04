@@ -4,9 +4,10 @@ import { SCENARIOS } from '~/scenarios'
 
 export const useScenarioStore = defineStore('__ux', {
   state: () => ({
-    activeId:  null as string | null,
-    panelOpen: false,
-    enabled:   false,
+    activeId:     null as string | null,
+    panelOpen:    false,
+    enabled:      false,
+    activeScopes: [] as string[],
   }),
 
   getters: {
@@ -32,5 +33,7 @@ export const useScenarioStore = defineStore('__ux', {
     togglePanel()         { this.panelOpen = !this.panelOpen },
     activate(id: string)  { this.activeId = id; this.panelOpen = false },
     reset()               { this.activeId = null },
+    registerScope(scope: string)   { if (!this.activeScopes.includes(scope)) { this.activeScopes.push(scope); this.panelOpen = true } },
+    unregisterScope(scope: string) { this.activeScopes = this.activeScopes.filter(s => s !== scope) },
   },
 })

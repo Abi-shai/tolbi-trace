@@ -59,8 +59,43 @@
                   <Info :size="16" class="text-text-quaternary" />
                 </div>
 
+                <!-- GeoJSON / KML — état erreur scénario -->
+                <template v-if="showGeoError">
+                  <div class="relative flex gap-3 items-start p-4 bg-white border-2 border-[#d92d20] rounded-xl w-full">
+                    <div class="relative size-[40px] shrink-0">
+                      <div class="absolute inset-[0_10%]">
+                        <img :src="shpPage" class="absolute block inset-0 max-w-none size-full" alt="" />
+                        <div class="absolute inset-[1.25%_1.56%_70%_62.5%]">
+                          <div class="absolute" style="inset:0 -6.52% -6.52% 0">
+                            <img :src="shpEarmark" class="block max-w-none size-full" alt="" />
+                          </div>
+                        </div>
+                        <img :src="shpUnion" class="absolute -translate-x-1/2" style="height:12px;left:calc(50% + 0.5px);top:19px;width:13.2px" alt="" />
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1 min-w-0">
+                      <div class="flex flex-col">
+                        <p class="text-sm font-medium text-text-secondary leading-5 truncate" style="font-family: var(--ds-typography-font-family-inter)">Producteurs.shp</p>
+                        <p class="text-sm text-[#d92d20] leading-5" style="font-family: var(--ds-typography-font-family-poppins)">Le chargement a échoué suite à une erreur technique.</p>
+                      </div>
+                      <button
+                        class="text-sm font-semibold text-text-tertiary leading-5 text-left w-fit hover:text-text-secondary transition-colors"
+                        style="font-family: var(--ds-typography-font-family-poppins)"
+                        @click="geoUploadError = false"
+                      >
+                        Réessayer
+                      </button>
+                    </div>
+                    <button class="absolute top-2 right-2 p-2 rounded-lg text-text-quaternary hover:bg-surface transition-colors" @click="geoUploadError = false">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.5 2.5H12.5M2.5 5H17.5M15.833 5L15.111 15.117C15.05 15.988 14.322 16.667 13.449 16.667H6.551C5.678 16.667 4.95 15.988 4.889 15.117L4.167 5M8.333 9.167V13.333M11.667 9.167V13.333" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </template>
+
                 <!-- GeoJSON / KML -->
-                <template v-if="!geoUpload">
+                <template v-else-if="!geoUpload">
                   <label
                     class="flex flex-col items-center gap-3 p-6 border rounded-xl cursor-pointer transition-colors duration-150 hover:bg-[var(--ds-semantic-bg-primary-hover)]"
                     :class="isInvalidGeo
@@ -197,11 +232,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Info, ChevronDown } from 'lucide-vue-next'
 import Header            from '~/components/layout/Header.vue'
 import FileItem          from '~/components/id/FileItem.vue'
 import BackConfirmModal  from '~/components/id/BackConfirmModal.vue'
+import { useScenarioStore } from '~/stores/scenario'
 import shpPage    from '~/assets/images/upload-ways/shp-page.svg'
 import shpEarmark from '~/assets/images/upload-ways/shp-earmark.svg'
 import shpUnion   from '~/assets/images/upload-ways/shp-union.svg'
@@ -219,6 +255,10 @@ function getExt(filename: string) {
   return '.' + (filename.split('.').pop() ?? '').toLowerCase()
 }
 
+const scenario       = useScenarioStore()
+const geoUploadError = ref(false)
+const showGeoError   = computed(() => geoUploadError.value)
+
 const showBackModal = ref(false)
 
 function handleBack() {
@@ -235,20 +275,40 @@ const excelUpload = ref<FileUpload | null>(null)
 const isDraggingGeo   = ref(false)
 const isDraggingExcel = ref(false)
 const isInvalidGeo    = ref(false)
+
+watch(
+  () => scenario.fournisseurs?.fileUploadError,
+  (willError) => {
+    if (willError && (geoUpload.value?.progress ?? 0) >= 100) {
+      geoUpload.value      = null
+      geoUploadError.value = true
+    } else if (!willError) {
+      geoUploadError.value = false
+    }
+  },
+)
 const isInvalidExcel  = ref(false)
 
-const hasFiles = computed(() =>
-  (geoUpload.value?.progress ?? 0) >= 100 ||
-  (excelUpload.value?.progress ?? 0) >= 100,
-)
+const hasFiles = computed(() => {
+  if (geoUploadError.value) return false
+  return (geoUpload.value?.progress ?? 0) >= 100 || (excelUpload.value?.progress ?? 0) >= 100
+})
 
-function startUpload(target: typeof geoUpload | typeof excelUpload, file: File) {
+function startUpload(target: typeof geoUpload | typeof excelUpload, file: File, isGeo = false) {
+  const shouldFail = isGeo && (scenario.fournisseurs?.fileUploadError ?? false)
+  const ceiling    = shouldFail ? Math.round(40 + Math.random() * 35) : 100
+
   target.value = { file, progress: 0 }
   const iv = setInterval(() => {
     if (!target.value) { clearInterval(iv); return }
-    const next = Math.min(100, target.value.progress + Math.round(Math.random() * 15 + 8))
+    const next = Math.min(ceiling, target.value.progress + Math.round(Math.random() * 15 + 8))
     target.value = { ...target.value, progress: next }
-    if (next >= 100) clearInterval(iv)
+    if (next >= ceiling) {
+      clearInterval(iv)
+      if (shouldFail) {
+        setTimeout(() => { target.value = null; geoUploadError.value = true }, 350)
+      }
+    }
   }, 180)
 }
 
@@ -261,14 +321,14 @@ function handleFileGeo(e: Event) {
   const f = (e.target as HTMLInputElement).files?.[0]
   if (!f) return
   if (!GEO_EXTS.includes(getExt(f.name))) { flashInvalid(isInvalidGeo); return }
-  startUpload(geoUpload, f)
+  startUpload(geoUpload, f, true)
 }
 function handleDropGeo(e: DragEvent) {
   isDraggingGeo.value = false
   const f = e.dataTransfer?.files[0]
   if (!f) return
   if (!GEO_EXTS.includes(getExt(f.name))) { flashInvalid(isInvalidGeo); return }
-  startUpload(geoUpload, f)
+  startUpload(geoUpload, f, true)
 }
 function handleFileExcel(e: Event) {
   const f = (e.target as HTMLInputElement).files?.[0]
