@@ -1,11 +1,98 @@
 import type { Scenario } from '~/types/scenario'
 
+const STANDARD_COLUMNS = [
+  { yourColumn: 'code_nat_producteur',            tolbiColumn: 'CODE NAT PRODUCTEUR' },
+  { yourColumn: 'code_coop',                      tolbiColumn: 'CODE COOP PRODUCTEUR' },
+  { yourColumn: 'code_producteur',                tolbiColumn: 'CODE PRODUCTEUR PARTENAIRE' },
+  { yourColumn: 'nom_et_prénom',                  tolbiColumn: 'NOM ET PRENOM' },
+  { yourColumn: 'genre',                          tolbiColumn: 'GENRE' },
+  { yourColumn: 'age',                            tolbiColumn: 'AGE' },
+  { yourColumn: 'préfecture',                     tolbiColumn: 'PREFECTURE' },
+  { yourColumn: 'sous_préfecture',                tolbiColumn: 'SOUS PREFECTURE' },
+  { yourColumn: 'sections',                       tolbiColumn: 'SECTIONS' },
+  { yourColumn: 'localités',                      tolbiColumn: 'LOCALITES' },
+  { yourColumn: 'villages',                       tolbiColumn: 'VILLAGES' },
+  { yourColumn: 'cni',                            tolbiColumn: 'PIECES IDENTITEES CNI/AUTRES' },
+  { yourColumn: 'téléphone',                      tolbiColumn: 'TELEPHONE PRODUCTEUR' },
+  { yourColumn: 'cultures_pratiquées',            tolbiColumn: 'CULTURES PRATIQUEES' },
+  { yourColumn: "superficie_de_l'exploitation",   tolbiColumn: "SURPERFICIE DE L'EXPLOITATION" },
+]
+
 export const fournisseursScenarios: Scenario[] = [
   {
-    id:          'fournisseurs-erreur-concordance',
-    label:       'Erreur de concordance',
-    description: '1 colonne manquante après traitement',
+    id:          'fournisseurs-chargement-succes',
+    label:       'Chargement réussi',
+    description: 'Les deux fichiers se chargent normalement',
     group:       'Fournisseurs',
+    folder:      'Loading cases',
+    scope:       'import',
+    state: {
+      fournisseurs: {},
+    },
+  },
+
+  {
+    id:          'fournisseurs-erreur-chargement-fichier',
+    label:       'Erreur de chargement fichier',
+    description: 'Échec du chargement du fichier .shp',
+    group:       'Fournisseurs',
+    folder:      'Loading cases',
+    scope:       'import',
+    state: {
+      fournisseurs: {
+        fileUploadError: true,
+      },
+    },
+  },
+
+  {
+    id:          'fournisseurs-succes-clean',
+    label:       'Succès — tout est bon',
+    description: 'Toutes les colonnes matchées, aucune anomalie',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      fournisseurs: {
+        matchingResult: {
+          totalMatched:  2400,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          columns:       STANDARD_COLUMNS,
+        },
+      },
+    },
+  },
+
+  {
+    id:          'fournisseurs-succes-extra-colonnes',
+    label:       'Succès avec données supplémentaires',
+    description: '1 colonne supplémentaire détectée',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      fournisseurs: {
+        matchingResult: {
+          totalMatched:  2400,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          columns: [
+            { yourColumn: 'couleur_sac_récolte', tolbiColumn: '', isNewEntry: true },
+            ...STANDARD_COLUMNS,
+          ],
+        },
+      },
+    },
+  },
+
+  {
+    id:          'fournisseurs-erreurs-combinees',
+    label:       'Erreurs combinées',
+    description: '1 colonne manquante + 4 erreurs + 2 avertissements',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
     state: {
       fournisseurs: {
         matchingResult: {
@@ -28,6 +115,247 @@ export const fournisseursScenarios: Scenario[] = [
             { yourColumn: 'téléphone',                      tolbiColumn: 'TELEPHONE PRODUCTEUR' },
             { yourColumn: 'cultures_pratiquées',            tolbiColumn: 'CULTURES PRATIQUEES' },
             { yourColumn: "superficie_de_l'exploitation",   tolbiColumn: "SURPERFICIE DE L'EXPLOITATION" },
+          ],
+        },
+        rowMatchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          errorCount:    4,
+          warningCount:  2,
+          geoColumns:    ['FID', 'CODE_WAYPT', 'SURF_HA', 'DATE_GPS', 'PR_GPS', 'WKT_GEOM'],
+          excelColumns:  ['ID_INTERNE', 'Ref_Waypoint', 'Nom', 'Prénom', 'Village', 'CNI'],
+          rows: [
+            { index: 0, geoCells: [{ value: '0' }, { value: 'ZN1_WP042' }, { value: '2.45' }, { value: '17541992012', hasError: true }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-042' }, { value: 'Champ vide', hasWarning: true }, { value: 'Diop' }, { value: 'Moussa' }, { value: 'Tivaouane' }, { value: '17420011' }] },
+            { index: 1, geoCells: [{ value: '1' }, { value: 'ZN1_WP043' }, { value: '1.80' }, { value: '17541992012', hasError: true }, { value: '0.9m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-043' }, { value: 'Champ vide', hasWarning: true }, { value: 'Ndiaye' }, { value: 'Fatou' }, { value: 'Tivaouane' }, { value: '17420012' }] },
+            { index: 2, geoCells: [{ value: '2' }, { value: 'ZN1_WP044' }, { value: '3.10' }, { value: '17541992012', hasError: true }, { value: '1.5m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-044' }, { value: 'ZN1_WP044' }, { value: 'Cissé' }, { value: 'Babacar' }, { value: 'Kolda' }, { value: '17420013' }] },
+            { index: 3, geoCells: [{ value: '3' }, { value: 'ZN1_WP045' }, { value: '0.95' }, { value: '17541992012', hasError: true }, { value: '2.1m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-045' }, { value: 'ZN1_WP045' }, { value: 'Diallo' }, { value: 'Ibrahim' }, { value: 'Kolda' }, { value: '17420014' }] },
+            { index: 4, geoCells: [{ value: '4' }, { value: 'ZN1_WP046' }, { value: '5.00' }, { value: '-16.9850, 14.6937' }, { value: '1.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-046' }, { value: 'ZN1_WP046' }, { value: 'Kouassi' }, { value: 'Jean' }, { value: 'Kolda' }, { value: '17420015' }] },
+            { index: 5, geoCells: [{ value: '5' }, { value: 'ZN1_WP047' }, { value: '2.10' }, { value: '-16.9850, 14.5937' }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-047' }, { value: 'ZN1_WP047' }, { value: 'Sene' }, { value: 'Mohamed' }, { value: 'Kolda' }, { value: '17420016' }] },
+            { index: 6, geoCells: [{ value: '6' }, { value: 'ZN1_WP048' }, { value: '1.50' }, { value: '-16.4790, 14.5937' }, { value: '2.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-048' }, { value: 'ZN1_WP048' }, { value: 'Ba' }, { value: 'Aminata' }, { value: 'Kolda' }, { value: '17420017' }] },
+          ],
+        },
+      },
+    },
+  },
+  {
+    id:          'fournisseurs-erreur-fichiers',
+    label:       'Avertissements fichiers',
+    description: '2 avertissements dans le fichier Excel',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      fournisseurs: {
+        rowMatchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          errorCount:    0,
+          warningCount:  2,
+          geoColumns:    ['FID', 'CODE_WAYPT', 'SURF_HA', 'DATE_GPS', 'PR_GPS', 'WKT_GEOM'],
+          excelColumns:  ['ID_INTERNE', 'Ref_Waypoint', 'Nom', 'Prénom', 'Village', 'CNI'],
+          rows: [
+            {
+              index: 0,
+              geoCells: [
+                { value: '0' },
+                { value: 'ZN1_WP042' },
+                { value: '2.45' },
+                { value: '17541992012' },
+                { value: '1.2m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-042' },
+                { value: 'Champ vide', hasWarning: true },
+                { value: 'Diop' },
+                { value: 'Moussa' },
+                { value: 'Tivaouane' },
+                { value: '17420011' },
+              ],
+            },
+            {
+              index: 1,
+              geoCells: [
+                { value: '1' },
+                { value: 'ZN1_WP043' },
+                { value: '1.80' },
+                { value: '17541992012' },
+                { value: '0.9m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-043' },
+                { value: 'Champ vide', hasWarning: true },
+                { value: 'Ndiaye' },
+                { value: 'Fatou' },
+                { value: 'Tivaouane' },
+                { value: '17420012' },
+              ],
+            },
+            {
+              index: 2,
+              geoCells: [
+                { value: '2' },
+                { value: 'ZN1_WP044' },
+                { value: '3.10' },
+                { value: '-16.4790, 14.5937' },
+                { value: '1.5m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-044' },
+                { value: 'ZN1_WP044' },
+                { value: 'Cissé' },
+                { value: 'Babacar' },
+                { value: 'Kolda' },
+                { value: '17420013' },
+              ],
+            },
+            {
+              index: 3,
+              geoCells: [
+                { value: '3' },
+                { value: 'ZN1_WP045' },
+                { value: '0.95' },
+                { value: '-16.9201, 14.7012' },
+                { value: '2.1m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-045' },
+                { value: 'ZN1_WP045' },
+                { value: 'Diallo' },
+                { value: 'Ibrahim' },
+                { value: 'Kolda' },
+                { value: '17420014' },
+              ],
+            },
+            {
+              index: 4,
+              geoCells: [
+                { value: '4' },
+                { value: 'ZN1_WP046' },
+                { value: '5.00' },
+                { value: '-16.9850, 14.6937' },
+                { value: '1.0m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-046' },
+                { value: 'ZN1_WP046' },
+                { value: 'Kouassi' },
+                { value: 'Jean' },
+                { value: 'Kolda' },
+                { value: '17420015' },
+              ],
+            },
+            {
+              index: 5,
+              geoCells: [
+                { value: '5' },
+                { value: 'ZN1_WP047' },
+                { value: '2.10' },
+                { value: '-16.9850, 14.5937' },
+                { value: '1.2m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-047' },
+                { value: 'ZN1_WP047' },
+                { value: 'Sene' },
+                { value: 'Mohamed' },
+                { value: 'Kolda' },
+                { value: '17420016' },
+              ],
+            },
+            {
+              index: 6,
+              geoCells: [
+                { value: '6' },
+                { value: 'ZN1_WP048' },
+                { value: '1.50' },
+                { value: '-16.4790, 14.5937' },
+                { value: '2.0m' },
+                { value: 'POLYGON((' },
+              ],
+              excelCells: [
+                { value: 'AGRI-048' },
+                { value: 'ZN1_WP048' },
+                { value: 'Ba' },
+                { value: 'Aminata' },
+                { value: 'Kolda' },
+                { value: '17420017' },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  },
+
+  {
+    id:          'fournisseurs-erreur-traitement',
+    label:       'Erreur de traitement',
+    description: 'Erreur inattendue lors de l\'analyse des données',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      fournisseurs: {
+        processingError: true,
+      },
+    },
+  },
+
+  {
+    id:          'fournisseurs-erreur-concordance',
+    label:       'Erreur de concordance',
+    description: '1 colonne manquante après traitement',
+    group:       'Fournisseurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      fournisseurs: {
+        matchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          columns: [
+            { yourColumn: null,                             tolbiColumn: 'CODE NAT PRODUCTEUR' },
+            { yourColumn: 'code_coop',                      tolbiColumn: 'CODE COOP PRODUCTEUR' },
+            { yourColumn: 'code_producteur',                tolbiColumn: 'CODE PRODUCTEUR PARTENAIRE' },
+            { yourColumn: 'nom_et_prénom',                  tolbiColumn: 'NOM ET PRENOM' },
+            { yourColumn: 'genre',                          tolbiColumn: 'GENRE' },
+            { yourColumn: 'age',                            tolbiColumn: 'AGE' },
+            { yourColumn: 'préfecture',                     tolbiColumn: 'PREFECTURE' },
+            { yourColumn: 'sous_préfecture',                tolbiColumn: 'SOUS PREFECTURE' },
+            { yourColumn: 'sections',                       tolbiColumn: 'SECTIONS' },
+            { yourColumn: 'localités',                      tolbiColumn: 'LOCALITES' },
+            { yourColumn: 'villages',                       tolbiColumn: 'VILLAGES' },
+            { yourColumn: 'cni',                            tolbiColumn: 'PIECES IDENTITEES CNI/AUTRES' },
+            { yourColumn: 'téléphone',                      tolbiColumn: 'TELEPHONE PRODUCTEUR' },
+            { yourColumn: 'cultures_pratiquées',            tolbiColumn: 'CULTURES PRATIQUEES' },
+            { yourColumn: "superficie_de_l'exploitation",   tolbiColumn: "SURPERFICIE DE L'EXPLOITATION" },
+          ],
+        },
+        rowMatchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          errorCount:    0,
+          warningCount:  0,
+          geoColumns:    ['FID', 'CODE_WAYPT', 'SURF_HA', 'DATE_GPS', 'PR_GPS', 'WKT_GEOM'],
+          excelColumns:  ['ID_INTERNE', 'Ref_Waypoint', 'Nom', 'Prénom', 'Village', 'CNI'],
+          rows: [
+            { index: 0, geoCells: [{ value: '0' }, { value: 'ZN1_WP042' }, { value: '2.45' }, { value: '-16.9850, 14.6937' }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-042' }, { value: 'ZN1_WP042' }, { value: 'Diop' }, { value: 'Moussa' }, { value: 'Tivaouane' }, { value: '17420011' }] },
+            { index: 1, geoCells: [{ value: '1' }, { value: 'ZN1_WP043' }, { value: '1.80' }, { value: '-16.9850, 14.5937' }, { value: '0.9m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-043' }, { value: 'ZN1_WP043' }, { value: 'Ndiaye' }, { value: 'Fatou' }, { value: 'Tivaouane' }, { value: '17420012' }] },
+            { index: 2, geoCells: [{ value: '2' }, { value: 'ZN1_WP044' }, { value: '3.10' }, { value: '-16.4790, 14.5937' }, { value: '1.5m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-044' }, { value: 'ZN1_WP044' }, { value: 'Cissé' }, { value: 'Babacar' }, { value: 'Kolda' }, { value: '17420013' }] },
+            { index: 3, geoCells: [{ value: '3' }, { value: 'ZN1_WP045' }, { value: '0.95' }, { value: '-16.9201, 14.7012' }, { value: '2.1m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-045' }, { value: 'ZN1_WP045' }, { value: 'Diallo' }, { value: 'Ibrahim' }, { value: 'Kolda' }, { value: '17420014' }] },
+            { index: 4, geoCells: [{ value: '4' }, { value: 'ZN1_WP046' }, { value: '5.00' }, { value: '-16.9850, 14.6937' }, { value: '1.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-046' }, { value: 'ZN1_WP046' }, { value: 'Kouassi' }, { value: 'Jean' }, { value: 'Kolda' }, { value: '17420015' }] },
+            { index: 5, geoCells: [{ value: '5' }, { value: 'ZN1_WP047' }, { value: '2.10' }, { value: '-16.9850, 14.5937' }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-047' }, { value: 'ZN1_WP047' }, { value: 'Sene' }, { value: 'Mohamed' }, { value: 'Kolda' }, { value: '17420016' }] },
+            { index: 6, geoCells: [{ value: '6' }, { value: 'ZN1_WP048' }, { value: '1.50' }, { value: '-16.4790, 14.5937' }, { value: '2.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-048' }, { value: 'ZN1_WP048' }, { value: 'Ba' }, { value: 'Aminata' }, { value: 'Kolda' }, { value: '17420017' }] },
           ],
         },
       },

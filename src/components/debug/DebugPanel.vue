@@ -33,21 +33,58 @@
         <template v-if="scenario.groups.size > 0">
           <div v-for="[group, items] in scenario.groups" :key="group" class="debug-group">
             <p class="debug-group__label">{{ group }}</p>
-            <button
-              v-for="s in items"
-              :key="s.id"
-              class="debug-scenario"
-              :class="scenario.activeId === s.id ? 'debug-scenario--active' : ''"
-              @click="scenario.activate(s.id)"
-            >
-              <div class="debug-scenario__check">
-                <Check v-if="scenario.activeId === s.id" :size="10" />
+
+            <template v-for="({ ungrouped, folders }) in [splitGroup(items)]" :key="group + '-split'">
+
+              <!-- Ungrouped scenarios -->
+              <button
+                v-for="s in ungrouped"
+                :key="s.id"
+                class="debug-scenario"
+                :class="scenario.activeId === s.id ? 'debug-scenario--active' : ''"
+                @click="scenario.activate(s.id)"
+              >
+                <div class="debug-scenario__check">
+                  <Check v-if="scenario.activeId === s.id" :size="10" />
+                </div>
+                <div class="debug-scenario__text">
+                  <span class="debug-scenario__label">{{ s.label }}</span>
+                  <span v-if="s.description" class="debug-scenario__desc">{{ s.description }}</span>
+                </div>
+              </button>
+
+              <!-- Folders -->
+              <div v-for="[folder, folderItems] in folders" :key="folder" class="debug-folder">
+                <button
+                  class="debug-folder__header"
+                  :class="openFolders.has(group + ':' + folder) ? 'debug-folder__header--open' : ''"
+                  @click="toggleFolder(group + ':' + folder)"
+                >
+                  <ChevronRight :size="11" class="debug-folder__chevron" />
+                  <Folder :size="12" class="debug-folder__icon" />
+                  <span class="debug-folder__name">{{ folder }}</span>
+                  <span class="debug-folder__count">{{ folderItems.length }}</span>
+                </button>
+                <div v-if="openFolders.has(group + ':' + folder)" class="debug-folder__body">
+                  <button
+                    v-for="s in folderItems"
+                    :key="s.id"
+                    class="debug-scenario debug-scenario--indented"
+                    :class="scenario.activeId === s.id ? 'debug-scenario--active' : ''"
+                    @click="scenario.activate(s.id)"
+                  >
+                    <div class="debug-scenario__check">
+                      <Check v-if="scenario.activeId === s.id" :size="10" />
+                    </div>
+                    <div class="debug-scenario__text">
+                      <span class="debug-scenario__label">{{ s.label }}</span>
+                      <span v-if="s.description" class="debug-scenario__desc">{{ s.description }}</span>
+                    </div>
+                  </button>
+                </div>
               </div>
-              <div class="debug-scenario__text">
-                <span class="debug-scenario__label">{{ s.label }}</span>
-                <span v-if="s.description" class="debug-scenario__desc">{{ s.description }}</span>
-              </div>
-            </button>
+
+            </template>
           </div>
         </template>
 
@@ -82,10 +119,34 @@
 </template>
 
 <script setup lang="ts">
-import { Settings, Bug, X, Check } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { Settings, Bug, X, Check, ChevronRight, Folder } from 'lucide-vue-next'
 import { useScenarioStore } from '~/stores/scenario'
+import type { Scenario } from '~/types/scenario'
 
 const scenario = useScenarioStore()
+
+const openFolders = ref(new Set<string>())
+
+function toggleFolder(key: string) {
+  if (openFolders.value.has(key)) openFolders.value.delete(key)
+  else openFolders.value.add(key)
+}
+
+function splitGroup(items: Scenario[]) {
+  const visible = items.filter(s => !s.scope || scenario.activeScopes.includes(s.scope))
+  const ungrouped: Scenario[] = []
+  const folders = new Map<string, Scenario[]>()
+  for (const s of visible) {
+    if (s.folder) {
+      if (!folders.has(s.folder)) folders.set(s.folder, [])
+      folders.get(s.folder)!.push(s)
+    } else {
+      ungrouped.push(s)
+    }
+  }
+  return { ungrouped, folders }
+}
 </script>
 
 <style scoped>
@@ -275,6 +336,61 @@ kbd {
   font-size: 11px;
   line-height: 1.4;
 }
+
+/* ── Folder ── */
+.debug-folder { margin-bottom: 2px; }
+
+.debug-folder__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s, border-color 0.1s;
+  color: #71717a;
+}
+.debug-folder__header:hover {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #a1a1aa;
+}
+.debug-folder__header--open { color: #a1a1aa; }
+.debug-folder__chevron {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.debug-folder__header--open .debug-folder__chevron { transform: rotate(90deg); }
+.debug-folder__icon { flex-shrink: 0; }
+.debug-folder__name {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.debug-folder__count {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 999px;
+  color: #52525b;
+  flex-shrink: 0;
+}
+.debug-folder__body {
+  margin-left: 8px;
+  border-left: 1px solid #3f3f46;
+  padding-left: 4px;
+  margin-bottom: 2px;
+}
+.debug-scenario--indented { }
 
 /* ── Empty state ── */
 .debug-empty {

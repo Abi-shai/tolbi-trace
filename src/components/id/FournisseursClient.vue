@@ -102,15 +102,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
 import manualIllustration from '~/assets/images/upload-ways/manual-illustration.png'
+import { useScenarioStore } from '~/stores/scenario'
 
 defineEmits<{ add: []; collect: []; manual: [] }>()
 
-const step = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
+const step     = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
+const scenario = useScenarioStore()
+
+watch(step, (val, old) => {
+  if (val === 'matching') {
+    scenario.registerScope('matching')
+    if (!scenario.active || scenario.active.scope !== 'matching')
+      scenario.activeId = 'fournisseurs-succes-clean'
+  }
+  if (old === 'matching') scenario.unregisterScope('matching')
+  if (val === 'import') {
+    scenario.registerScope('import')
+    if (!scenario.active || scenario.active.scope !== 'import')
+      scenario.activeId = 'fournisseurs-chargement-succes'
+  }
+  if (old === 'import')   scenario.unregisterScope('import')
+})
+
+watch(() => scenario.activeId, (newId) => {
+  if (!newId) return
+  const s = scenario.active
+  if (!s?.scope) return
+  if (s.scope === 'import' && step.value !== 'import')     step.value = 'import'
+  else if (s.scope === 'matching' && step.value !== 'matching') step.value = 'matching'
+})
+
+onUnmounted(() => {
+  scenario.unregisterScope('matching')
+  scenario.unregisterScope('import')
+})
 </script>
 
 <style scoped>
