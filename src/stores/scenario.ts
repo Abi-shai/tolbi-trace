@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Scenario, FournisseursState } from '~/types/scenario'
+import type { Scenario, ProducteursState } from '~/types/scenario'
 import { SCENARIOS } from '~/scenarios'
 
 export const useScenarioStore = defineStore('__ux', {
@@ -14,8 +14,8 @@ export const useScenarioStore = defineStore('__ux', {
     active: (state): Scenario | null =>
       SCENARIOS.find(s => s.id === state.activeId) ?? null,
 
-    fournisseurs(): FournisseursState | null {
-      return this.active?.state.fournisseurs ?? null
+    producteurs(): ProducteursState | null {
+      return this.active?.state.producteurs ?? null
     },
 
     groups(): Map<string, Scenario[]> {

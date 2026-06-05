@@ -101,7 +101,7 @@
             v-for="bag in filtered"
             :key="bag.id"
             class="hover:bg-surface transition-colors cursor-pointer"
-            @click="$router.push(`/workflows/${workflowId}/sacs/${bag.id}`)"
+            @click="$router.push(`/source/workflows/${workflowId}/sacs/${bag.id}`)"
           >
             <td class="px-6 py-3.5">
               <span class="font-mono font-semibold text-text-primary">{{ bag.code }}</span>

@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
-    <Header title="Fournisseurs">
+    <Header title="Producteurs">
       <template #actions>
-        <DsButton label="Ajouter des fournisseurs" variant="primary" icon-leading="user-plus-01" @click="$emit('add')" />
+        <DsButton label="Ajouter des producteurs" variant="primary" icon-leading="user-plus-01" @click="$emit('add')" />
       </template>
     </Header>
 
@@ -12,7 +12,7 @@
 
         <!-- Métriques -->
         <div class="flex gap-4">
-          <MetricCard :icon="Users" label="Nombres de fournisseurs" :value="stats.count.toLocaleString('fr-FR')" />
+          <MetricCard :icon="Users" label="Nombre de producteurs" :value="stats.count.toLocaleString('fr-FR')" />
           <MetricCard :icon="MapPin" label="Nombre de parcelles" :value="stats.parcelles.toLocaleString('fr-FR')" />
           <MetricCard :icon="Layers" label="Surface totale (Hectares)" :value="stats.surfaceHa.toLocaleString('fr-FR') + ' ha'" />
         </div>
@@ -180,11 +180,11 @@ import { ref, computed } from 'vue'
 import { Users, MapPin, Layers, Search, Map, LayoutGrid, MoreVertical, Pencil, Trash2, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
 import MetricCard from '~/components/ui/MetricCard.vue'
-import { fournisseursMock, fournisseursStats } from '~/data/fournisseurs'
+import { producteursMock, producteurStats } from '~/data/producteurs'
 
 defineEmits<{ add: [] }>()
 
-const stats     = fournisseursStats
+const stats     = producteurStats
 const activeTab = ref<'profils' | 'polygones'>('profils')
 const search    = ref('')
 const currentPage = 1
@@ -193,8 +193,8 @@ const visiblePages = [1, 2, 3, '...', 8, 9, 10]
 
 const filteredRows = computed(() => {
   const q = search.value.trim().toLowerCase()
-  if (!q) return fournisseursMock
-  return fournisseursMock.filter(f =>
+  if (!q) return producteursMock
+  return producteursMock.filter(f =>
     `${f.prenom} ${f.nom}`.toLowerCase().includes(q) ||
     f.codeParcelles.toLowerCase().includes(q) ||
     f.ina.toLowerCase().includes(q) ||

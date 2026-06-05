@@ -138,7 +138,7 @@
           <!-- Lien vers détail complet -->
           <div class="px-4 pb-4 shrink-0">
             <NuxtLink
-              :to="`/workflows/${props.workflowId}/sacs/${bagDetail.qrId}`"
+              :to="`/source/workflows/${props.workflowId}/sacs/${bagDetail.qrId}`"
               class="flex items-center justify-center w-full gap-1.5 py-2 px-3 text-xs font-semibold text-primary border border-border rounded-lg hover:bg-surface transition-colors"
             >
               Voir le détail complet

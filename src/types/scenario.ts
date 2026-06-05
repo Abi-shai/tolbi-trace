@@ -34,7 +34,7 @@ export interface RowMatchingResult {
   rows:          DataRow[]
 }
 
-export interface FournisseursState {
+export interface ProducteursState {
   matchingResult?:    MatchingResult
   rowMatchingResult?: RowMatchingResult
   processingError?:   boolean
@@ -42,7 +42,7 @@ export interface FournisseursState {
 }
 
 export interface ScenarioState {
-  fournisseurs?: FournisseursState
+  producteurs?: ProducteursState
 }
 
 export interface Scenario {

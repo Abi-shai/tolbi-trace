@@ -1,4 +1,4 @@
-export interface Fournisseur {
+export interface Producteur {
   id:            string
   prenom:        string
   nom:           string
@@ -8,7 +8,7 @@ export interface Fournisseur {
   cooperative:   string
 }
 
-export interface FournisseursListeStats {
+export interface ProducteursListeStats {
   count:     number
   parcelles: number
   surfaceHa: number

@@ -18,42 +18,42 @@ const STANDARD_COLUMNS = [
   { yourColumn: "superficie_de_l'exploitation",   tolbiColumn: "SURPERFICIE DE L'EXPLOITATION" },
 ]
 
-export const fournisseursScenarios: Scenario[] = [
+export const producteurScenarios: Scenario[] = [
   {
-    id:          'fournisseurs-chargement-succes',
+    id:          'producteurs-chargement-succes',
     label:       'Chargement réussi',
     description: 'Les deux fichiers se chargent normalement',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Loading cases',
     scope:       'import',
     state: {
-      fournisseurs: {},
+      producteurs: {},
     },
   },
 
   {
-    id:          'fournisseurs-erreur-chargement-fichier',
+    id:          'producteurs-erreur-chargement-fichier',
     label:       'Erreur de chargement fichier',
     description: 'Échec du chargement du fichier .shp',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Loading cases',
     scope:       'import',
     state: {
-      fournisseurs: {
+      producteurs: {
         fileUploadError: true,
       },
     },
   },
 
   {
-    id:          'fournisseurs-succes-clean',
+    id:          'producteurs-succes-clean',
     label:       'Succès — tout est bon',
     description: 'Toutes les colonnes matchées, aucune anomalie',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         matchingResult: {
           totalMatched:  2400,
           totalExpected: 2400,
@@ -65,14 +65,14 @@ export const fournisseursScenarios: Scenario[] = [
   },
 
   {
-    id:          'fournisseurs-succes-extra-colonnes',
+    id:          'producteurs-succes-extra-colonnes',
     label:       'Succès avec données supplémentaires',
     description: '1 colonne supplémentaire détectée',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         matchingResult: {
           totalMatched:  2400,
           totalExpected: 2400,
@@ -87,14 +87,14 @@ export const fournisseursScenarios: Scenario[] = [
   },
 
   {
-    id:          'fournisseurs-erreurs-combinees',
+    id:          'producteurs-erreurs-combinees',
     label:       'Erreurs combinées',
     description: '1 colonne manquante + 4 erreurs + 2 avertissements',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         matchingResult: {
           totalMatched:  2394,
           totalExpected: 2400,
@@ -139,14 +139,14 @@ export const fournisseursScenarios: Scenario[] = [
     },
   },
   {
-    id:          'fournisseurs-erreur-fichiers',
+    id:          'producteurs-erreur-fichiers',
     label:       'Avertissements fichiers',
     description: '2 avertissements dans le fichier Excel',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         rowMatchingResult: {
           totalMatched:  2394,
           totalExpected: 2400,
@@ -296,28 +296,28 @@ export const fournisseursScenarios: Scenario[] = [
   },
 
   {
-    id:          'fournisseurs-erreur-traitement',
+    id:          'producteurs-erreur-traitement',
     label:       'Erreur de traitement',
     description: 'Erreur inattendue lors de l\'analyse des données',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         processingError: true,
       },
     },
   },
 
   {
-    id:          'fournisseurs-erreur-concordance',
+    id:          'producteurs-erreur-concordance',
     label:       'Erreur de concordance',
     description: '1 colonne manquante après traitement',
-    group:       'Fournisseurs',
+    group:       'Producteurs',
     folder:      'Files treatment scenarios',
     scope:       'matching',
     state: {
-      fournisseurs: {
+      producteurs: {
         matchingResult: {
           totalMatched:  2394,
           totalExpected: 2400,

@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
-    <Header title="Fournisseurs">
+    <Header title="Producteurs">
       <template #actions>
         <DsButton
-          label="Ajouter des fournisseurs"
+          label="Ajouter des producteurs"
           variant="primary"
           icon-leading="user-plus-01"
           @click="$emit('add')"
@@ -121,7 +121,7 @@
                     </div>
                     <div class="flex flex-col gap-1 items-center text-center">
                       <p class="text-sm font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-5">Zones d'approvisionnement (GeoJSON ou KML)</p>
-                      <p class="text-xs text-text-tertiary leading-[18px]">Périmètres géographiques de vos bassins de collecte et parcelles fournisseurs.</p>
+                      <p class="text-xs text-text-tertiary leading-[18px]">Périmètres géographiques de vos bassins de collecte et parcelles producteurs.</p>
                     </div>
                   </label>
                 </template>
@@ -175,8 +175,8 @@
                       </div>
                     </div>
                     <div class="flex flex-col gap-1 items-center text-center">
-                      <p class="text-sm font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-5">Liste des fournisseurs (Excel)</p>
-                      <p class="text-xs text-text-tertiary leading-[18px]">Déposez le fichier Excel de vos fournisseurs avec leurs identifiants uniques.</p>
+                      <p class="text-sm font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-5">Liste des producteurs (Excel)</p>
+                      <p class="text-xs text-text-tertiary leading-[18px]">Déposez le fichier Excel de vos producteurs avec leurs identifiants uniques.</p>
                     </div>
                   </label>
                 </template>
@@ -277,7 +277,7 @@ const isDraggingExcel = ref(false)
 const isInvalidGeo    = ref(false)
 
 watch(
-  () => scenario.fournisseurs?.fileUploadError,
+  () => scenario.producteurs?.fileUploadError,
   (willError) => {
     if (willError && (geoUpload.value?.progress ?? 0) >= 100) {
       geoUpload.value      = null
@@ -295,7 +295,7 @@ const hasFiles = computed(() => {
 })
 
 function startUpload(target: typeof geoUpload | typeof excelUpload, file: File, isGeo = false) {
-  const shouldFail = isGeo && (scenario.fournisseurs?.fileUploadError ?? false)
+  const shouldFail = isGeo && (scenario.producteurs?.fileUploadError ?? false)
   const ceiling    = shouldFail ? Math.round(40 + Math.random() * 35) : 100
 
   target.value = { file, progress: 0 }

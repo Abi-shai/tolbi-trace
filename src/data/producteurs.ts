@@ -1,12 +1,12 @@
-import type { Fournisseur, FournisseursListeStats } from '~/types/fournisseur'
+import type { Producteur, ProducteursListeStats } from '~/types/producteur'
 
-export const fournisseursStats: FournisseursListeStats = {
+export const producteurStats: ProducteursListeStats = {
   count:     2400,
   parcelles: 2400,
   surfaceHa: 537,
 }
 
-export const fournisseursMock: Fournisseur[] = [
+export const producteursMock: Producteur[] = [
   { id: '1',  prenom: 'Ousmane',      nom: 'Diop',     codeParcelles: 'KLK-0042', ina: '20054112', telephone: '773971370', cooperative: 'Kaolack Maïs' },
   { id: '2',  prenom: 'Baye',         nom: 'Sow',      codeParcelles: 'KLK-0043', ina: '20054113', telephone: '774561230', cooperative: 'Kaolack Maïs' },
   { id: '3',  prenom: 'Ameth',        nom: 'Thiam',    codeParcelles: 'KLK-0044', ina: '20054114', telephone: '771234560', cooperative: 'Kaolack Maïs' },

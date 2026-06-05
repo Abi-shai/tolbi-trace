@@ -39,6 +39,6 @@ store.init()
 function handleCreate(name: string, description: string) {
   const id = store.createWorkflow(name, description)
   panelOpen.value = false
-  router.push(`/workflows/${id}`)
+  router.push(`/source/workflows/${id}`)
 }
 </script>

@@ -50,7 +50,7 @@
               </div>
 
               <NuxtLink
-                :to="`/workflows/${workflowId}/agents`"
+                :to="`/source/workflows/${workflowId}/agents`"
                 class="flex items-center gap-1 mt-1.5 text-xs text-primary hover:underline"
               >
                 <Users :size="11" />
@@ -226,7 +226,7 @@ const route   = useRoute()
 const builder = useWorkflowBuilderStore()
 const agentsStore = useAgentsStore()
 
-const workflowId = computed(() => route.path.match(/^\/workflows\/([^/]+)/)?.[1] ?? '')
+const workflowId = computed(() => route.path.match(/^\/source\/workflows\/([^/]+)/)?.[1] ?? '')
 
 const confirmDelete = ref(false)
 

@@ -57,7 +57,7 @@
             >
               <td class="px-4 py-3">
                 <NuxtLink
-                  :to="`/workflows/${workflowId}/sacs/${qr.id}`"
+                  :to="`/source/workflows/${workflowId}/sacs/${qr.id}`"
                   class="font-mono text-sm font-medium text-text-primary hover:text-primary hover:underline transition-colors"
                 >
                   {{ qr.code }}
