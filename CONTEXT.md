@@ -10,8 +10,9 @@ Tolbi Trace is the web platform for managing and tracing agricultural supply cha
 A farmer registered in the KYF module, linked to a cooperative. Represents one row in an imported file.
 _Avoid_: fournisseur (different profile — see below), agriculteur, supplier
 
-**Fournisseur**:
-A distinct user profile in the product — not a farmer. _(Definition to be completed.)_
+**Fournisseur** (EN: Buyer):
+The agroindustrial organization (e.g. AgroSénégal SA) that receives agricultural sacs at the warehouse end and uses the platform to observe and verify the supply chain. A Fournisseur is the tenant of a workspace — not a graph node. All data in a workspace (Coopératives, Producteurs, Sacs, workflows) implicitly belongs to its Fournisseur. The users who log in (Responsable ops, Admin) work on behalf of the Fournisseur.
+_Avoid_: client, acheteur (in domain context), producteur
 
 **Coopérative**:
 The organization that submits producteur data to the platform on behalf of its members.
@@ -20,12 +21,28 @@ _Avoid_: client, partenaire (in domain context)
 ### Modules & Features
 
 **Module Tolbi**:
-A self-contained business capability within the Tolbi platform (ex: KYF, Source). Each module has a distinct domain and entry point. Operators navigate between modules from the top navigation bar.
+A self-contained business capability within Tolbi OS (ex: ID, Source, Trace). Each module has a distinct domain and entry point. Operators navigate between modules from the top navigation bar.
 _Avoid_: section, onglet, page
 
+**Tolbi OS**:
+The full product platform — 11 modules covering the agricultural value chain from farmer identity to carbon credits. Sold to three segments: Coopératives, Agroindustriels, and Hedge Funds/Banques (via API).
+_Avoid_: app, plateforme (trop générique)
+
+**TOLBI ID** (ex: KYF — Know Your Farmer):
+The foundation module. Creates digital identities for producteurs and maps the link between each farmer and their land. Required by all other modules — no other module works without it.
+_Avoid_: KYF (internal/legacy name), fournisseur module
+
+**TOLBI Source** (ex: Procurement):
+The "premier kilomètre" operations module. Makes every field-side transaction visible, tamper-proof and compliant — from weighing to producer payment. Built around configurable workflows, QR-coded sacs, and mobile offline execution by field agents.
+_Avoid_: Trace (that is a different module), procurement
+
+**TOLBI Trace** (ex: EUDR):
+The compliance module. Automatically analyses deforestation risk on parcelles to guarantee access to the European market (EUDR regulation). Distinct from Source — Trace analyses the data, Source collects it.
+_Avoid_: confusing with Source; they are different modules with different purposes_
+
 **KYF (Know Your Farmer)**:
-The Tolbi module that stores, manages, and traces producteurs. The ID module is the entry point for populating KYF.
-_Avoid_: ID module (that is the UI section name, not the domain concept)
+Legacy internal name for what is now TOLBI ID. Still used in code and database references.
+_Avoid_: using in new UI copy or documentation — use "TOLBI ID" or "producteurs" instead
 
 **Liste de producteurs de KYF**:
 The populated state of KYF — the full list of producteurs registered after one or more imports. What an operator consults to view, search, and manage their producteur base.

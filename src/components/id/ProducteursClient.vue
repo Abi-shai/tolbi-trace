@@ -9,14 +9,14 @@
     <ImportFichiers v-if="step === 'import'" @back="step = 'empty'" @next="step = 'matching'" @add="$emit('add')" />
   </Transition>
 
-  <FournisseursListe v-if="step === 'done'" @add="$emit('add')" />
+  <ProducteursListe v-if="step === 'done'" @add="$emit('add')" />
 
   <div v-if="step === 'empty'" class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
-    <Header title="Fournisseurs">
+    <Header title="Producteurs">
       <template #actions>
         <DsButton
-          label="Ajouter des fournisseurs"
+          label="Ajouter des producteurs"
           variant="primary"
           icon-leading="user-plus-01"
           @click="$emit('add')"
@@ -31,7 +31,7 @@
         <!-- Title + subtitle -->
         <div class="flex flex-col items-center gap-2 text-center">
           <p class="text-2xl font-semibold text-text-primary leading-8">
-            Ajouter des fournisseurs
+            Ajouter des producteurs
           </p>
           <p class="text-base text-text-tertiary leading-6 max-w-lg">
             Trois méthodes d'intégration. Choisissez selon votre source de données.
@@ -70,7 +70,7 @@
                 Lancer une collecte terrain
               </p>
               <p class="text-sm text-text-tertiary leading-5">
-                Déployez vos agents pour géolocaliser les parcelles et enregistrer chaque fournisseur.
+                Déployez vos agents pour géolocaliser les parcelles et enregistrer chaque producteur.
               </p>
             </div>
           </button>
@@ -95,7 +95,7 @@
                 Ajouter manuellement
               </p>
               <p class="text-sm text-text-tertiary leading-5">
-                Renseignez leurs informations, puis cartographiez leurs parcelles. Un fournisseur à la fois.
+                Renseignez leurs informations, puis cartographiez leurs parcelles. Un producteur à la fois.
               </p>
             </div>
           </button>
@@ -112,7 +112,7 @@ import { ref, watch, onUnmounted } from 'vue'
 import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
-import FournisseursListe from '~/components/id/FournisseursListe.vue'
+import ProducteursListe from '~/components/id/ProducteursListe.vue'
 import manualIllustration from '~/assets/images/upload-ways/manual-illustration.png'
 import tolbiLogoAnimation from '~/assets/images/tolbi-logo-animation.gif'
 import { useScenarioStore } from '~/stores/scenario'
@@ -135,13 +135,13 @@ watch(step, (val, old) => {
   if (val === 'matching') {
     scenario.registerScope('matching')
     if (!scenario.active || scenario.active.scope !== 'matching')
-      scenario.activeId = 'fournisseurs-succes-clean'
+      scenario.activeId = 'producteurs-succes-clean'
   }
   if (old === 'matching') scenario.unregisterScope('matching')
   if (val === 'import') {
     scenario.registerScope('import')
     if (!scenario.active || scenario.active.scope !== 'import')
-      scenario.activeId = 'fournisseurs-chargement-succes'
+      scenario.activeId = 'producteurs-chargement-succes'
   }
   if (old === 'import')   scenario.unregisterScope('import')
 })

@@ -3,5 +3,5 @@ definePageMeta({ layout: 'id' })
 </script>
 
 <template>
-  <FournisseursClient />
+  <ProducteursClient />
 </template>

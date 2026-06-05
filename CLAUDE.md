@@ -2,9 +2,15 @@
 
 Lis ce fichier en entier avant de commencer à travailler.
 
-**Pour toute tâche UI ou fonctionnelle, lis aussi ces deux fichiers avant d'écrire du code :**
-- `.claude/context/product.md` — vision produit, principes de design, scénario de démo
+**Avant toute tâche UI ou fonctionnelle, identifie :**
+1. Sur quel module Tolbi OS on travaille (ID, Source, Trace, Yield…)
+2. Quels profils utilisateurs verront ces écrans (Responsable ops ? Agent terrain ? Admin ?)
+
+**Puis lis ces quatre fichiers avant d'écrire du code :**
+- `.claude/context/product.md` — vision produit, architecture fonctionnelle, principes de design, scénario de démo
 - `.claude/context/design-system.md` — catalogue complet des composants `Ds*`, tokens CSS, règles d'usage
+- `.claude/context/design-philosophy.md` — motion, densité, patterns d'interaction, états de feedback
+- `.claude/context/voice-and-tone.md` — voix Tolbi, règles de rédaction UI, modulation par situation
 
 ---
 

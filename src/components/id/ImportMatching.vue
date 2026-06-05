@@ -2,9 +2,9 @@
 
   <!-- ── Phase: traitement en cours ─────────────────── -->
   <div v-if="phase === 'processing'" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-    <Header title="Fournisseurs">
+    <Header title="Producteurs">
       <template #actions>
-        <DsButton label="Ajouter des fournisseurs" variant="primary" icon-leading="user-plus-01" @click="$emit('add')" />
+        <DsButton label="Ajouter des producteurs" variant="primary" icon-leading="user-plus-01" @click="$emit('add')" />
       </template>
     </Header>
 
@@ -73,7 +73,7 @@
               <div class="px-6 pt-6">
                 <p class="text-[18px] font-semibold text-text-primary leading-7" style="font-family: var(--ds-typography-font-family-poppins)">Finaliser l'import</p>
                 <p class="mt-1 text-sm text-text-secondary leading-5" style="font-family: var(--ds-typography-font-family-poppins)">
-                  {{ totalMatched.toLocaleString('fr-FR') }} fournisseurs seront ajoutés à votre base KYF. Cette action est irréversible.
+                  {{ totalMatched.toLocaleString('fr-FR') }} producteurs seront ajoutés à votre base KYF. Cette action est irréversible.
                 </p>
               </div>
               <button
@@ -174,7 +174,7 @@
           <div v-if="!isProcessingError && !isRetrying" class="flex items-center justify-between mx-6 mt-4 p-4 bg-surface rounded-xl shrink-0">
             <p class="text-base leading-6" style="font-family: var(--ds-typography-font-family-inter)">
               <span class="font-semibold text-text-primary" style="font-family: var(--ds-typography-font-family-poppins)">
-                {{ totalMatched.toLocaleString('fr-FR') }} fournisseurs
+                {{ totalMatched.toLocaleString('fr-FR') }} producteurs
               </span>
               {{ ' ' }}correctement matchés sur {{ totalExpected.toLocaleString('fr-FR') }}.
             </p>
@@ -481,7 +481,7 @@
             </div>
             <div class="bg-[#f9fafb] p-2 rounded-2xl">
               <div class="flex flex-col gap-1 px-4 py-2 bg-[#f2f4f7] rounded-xl w-[217px]">
-                <span class="text-sm font-medium text-text-secondary" style="font-family: var(--ds-typography-font-family-inter)">Fournisseurs répertoriés</span>
+                <span class="text-sm font-medium text-text-secondary" style="font-family: var(--ds-typography-font-family-inter)">Producteurs répertoriés</span>
                 <span class="text-sm font-semibold text-text-primary" style="font-family: var(--ds-typography-font-family-poppins)">{{ totalMatched.toLocaleString('fr-FR') }}</span>
               </div>
             </div>
@@ -566,14 +566,14 @@ const DEFAULT_RESULT: MatchingResult = {
   ],
 }
 
-const isProcessingError = computed(() => scenario.fournisseurs?.processingError ?? false)
+const isProcessingError = computed(() => scenario.producteurs?.processingError ?? false)
 
 const rowResult = computed<RowMatchingResult | null>(() =>
-  scenario.fournisseurs?.rowMatchingResult ?? null,
+  scenario.producteurs?.rowMatchingResult ?? null,
 )
 
 const result = computed<MatchingResult>(() =>
-  scenario.fournisseurs?.matchingResult ?? DEFAULT_RESULT,
+  scenario.producteurs?.matchingResult ?? DEFAULT_RESULT,
 )
 
 const totalMatched  = computed(() => rowResult.value?.totalMatched  ?? result.value.totalMatched)

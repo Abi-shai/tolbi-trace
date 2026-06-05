@@ -5,7 +5,7 @@
     <div class="flex items-start justify-between px-6 pt-6 pb-5 border-b border-border bg-surface shrink-0">
       <div class="flex items-start gap-4">
         <NuxtLink
-          :to="`/workflows/${workflowId}/qr-codes`"
+          :to="`/source/workflows/${workflowId}/qr-codes`"
           class="flex items-center justify-center w-8 h-8 rounded-lg border border-border text-text-tertiary hover:bg-white hover:text-text-secondary transition-colors mt-0.5 shrink-0"
         >
           <ArrowLeft :size="15" />

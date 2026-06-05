@@ -1,3 +1,3 @@
 <script setup lang="ts">
-await navigateTo('/id/fournisseurs', { replace: true })
+await navigateTo('/id/producteurs', { replace: true })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    :to="`/workflows/${workflow.id}`"
+    :to="`/source/workflows/${workflow.id}`"
     class="block bg-white border border-border rounded-lg p-5 hover:border-border-strong hover:shadow-[0px_1px_4px_rgba(16,24,40,0.08)] transition-all cursor-pointer"
   >
     <!-- Titre + badge -->

@@ -57,7 +57,6 @@ const store   = useWorkflowsStore()
 const agents  = useAgentsStore()
 const builder = useWorkflowBuilderStore()
 
-// Init synchrone : disponible côté serveur ET client
 store.init()
 agents.init()
 

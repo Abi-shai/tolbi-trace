@@ -1,5 +1,5 @@
-import { fournisseursScenarios } from './fournisseurs'
+import { producteurScenarios } from './producteurs'
 
 export const SCENARIOS = [
-  ...fournisseursScenarios,
+  ...producteurScenarios,
 ]

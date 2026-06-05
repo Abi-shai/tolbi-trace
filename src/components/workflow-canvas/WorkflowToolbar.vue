@@ -58,7 +58,7 @@
   <UnsavedChangesModal
     v-if="showUnsavedModal"
     @save="handleSaveAndLeave"
-    @discard="router.push('/workflows')"
+    @discard="router.push('/source/workflows')"
     @cancel="showUnsavedModal = false"
   />
 
@@ -113,13 +113,13 @@ function handleBackClick() {
   if (builder.hasUnsavedChanges) {
     showUnsavedModal.value = true
   } else {
-    router.push('/workflows')
+    router.push('/source/workflows')
   }
 }
 
 function handleSaveAndLeave() {
   builder.markSaved()
-  router.push('/workflows')
+  router.push('/source/workflows')
 }
 
 function handlePublishConfirm() {
