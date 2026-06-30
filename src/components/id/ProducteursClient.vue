@@ -62,9 +62,9 @@
           <!-- Card: Lancer une collecte terrain -->
           <button
             class="flex flex-col items-center gap-4 p-4 bg-white rounded-lg w-[276px] h-full text-center overflow-hidden cursor-pointer shadow-[0_0_0_4px_rgba(152,162,179,0.2)] hover:shadow-[0_0_0_4px_rgba(29,158,117,0.25)] hover:bg-[var(--ds-semantic-bg-brand-primary)] transition duration-150"
-            @click="$emit('collect')"
+            @click="goToDataOs"
           >
-            <DsModuleIcon module="Survey" :size="48" class="shrink-0" />
+            <DsModuleIcon module="Data" :size="48" class="shrink-0" />
             <div class="flex flex-col gap-1 items-center text-center">
               <p class="text-lg font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-7">
                 Lancer une collecte terrain
@@ -109,6 +109,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
@@ -116,8 +117,23 @@ import ProducteursListe from '~/components/id/ProducteursListe.vue'
 import manualIllustration from '~/assets/images/upload-ways/manual-illustration.png'
 import tolbiLogoAnimation from '~/assets/images/tolbi-logo-animation.gif'
 import { useScenarioStore } from '~/stores/scenario'
+import { useUIStore } from '~/stores/ui'
 
 defineEmits<{ add: []; collect: []; manual: [] }>()
+
+const router  = useRouter()
+const uiStore = useUIStore()
+
+// « Lancer une collecte terrain » → on entre dans le module Data OS,
+// avec la transition d'écran utilisée lors d'un changement de module.
+async function goToDataOs() {
+  uiStore.moduleTransition = true
+  await Promise.all([
+    router.push('/dataos'),
+    new Promise<void>((r) => setTimeout(r, 2000)),
+  ])
+  uiStore.moduleTransition = false
+}
 
 const step          = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
 const showFinalizing = ref(false)

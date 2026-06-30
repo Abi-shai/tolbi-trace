@@ -84,20 +84,23 @@ body {
   transition: transform 140ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Slide panel transition */
-.slide-panel-enter-active,
+/* Slide panel transition — motion from the Design System.
+   Enters from the right (decelerate), exits to the right (accelerate). */
+.slide-panel-enter-active {
+  transition: transform var(--ds-motion-duration-enter) var(--ds-motion-easing-out);
+}
 .slide-panel-leave-active {
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform var(--ds-motion-duration-moderate) var(--ds-motion-easing-in);
 }
 .slide-panel-enter-from,
 .slide-panel-leave-to {
   transform: translateX(100%);
 }
 
-/* Fade transition */
+/* Fade transition — Design System motion */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.18s ease;
+  transition: opacity var(--ds-motion-duration-moderate) var(--ds-motion-easing-default);
 }
 .fade-enter-from,
 .fade-leave-to {
@@ -107,4 +110,32 @@ body {
 /* Sidebar width transition */
 .sidebar-width-transition {
   transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cartes de liste (TransitionGroup) — apparition d'un nouvel élément,
+   sortie à la suppression, glissement au réordonnancement. Motion du DS. */
+.card-pop-enter-active {
+  transition: opacity var(--ds-motion-duration-process) var(--ds-motion-easing-out),
+              transform var(--ds-motion-duration-process) var(--ds-motion-easing-out);
+}
+.card-pop-leave-active {
+  transition: opacity var(--ds-motion-duration-moderate) var(--ds-motion-easing-in),
+              transform var(--ds-motion-duration-moderate) var(--ds-motion-easing-in);
+}
+.card-pop-enter-from,
+.card-pop-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.card-pop-move {
+  transition: transform var(--ds-motion-duration-moderate) var(--ds-motion-easing-in-out);
+}
+
+/* Arrivée de contenu de page — léger fondu vers le haut. Motion du DS. */
+@keyframes content-arrive {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.content-arrive {
+  animation: content-arrive var(--ds-motion-duration-process) var(--ds-motion-easing-out);
 }

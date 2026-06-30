@@ -1,21 +1,24 @@
 <template>
-  <!-- Trigger pill -->
-  <button
-    class="debug-trigger"
-    :class="scenario.activeId ? 'debug-trigger--active' : ''"
-    @click="scenario.togglePanel()"
-  >
-    <Settings :size="13" />
-    <span>UX Scénarios</span>
-    <span v-if="scenario.active" class="debug-trigger__dot" />
-  </button>
+  <div ref="rootEl" class="debug-root" :style="rootStyle">
 
-  <!-- Panel -->
-  <Transition name="debug-panel">
-    <div v-if="scenario.panelOpen" class="debug-panel">
+    <!-- Trigger pill (draggable) -->
+    <button
+      class="debug-trigger"
+      :class="scenario.activeId ? 'debug-trigger--active' : ''"
+      @pointerdown="onPointerDown"
+      @click="onTriggerClick"
+    >
+      <Settings :size="13" />
+      <span>UX Scénarios</span>
+      <span v-if="scenario.active" class="debug-trigger__dot" />
+    </button>
 
-      <!-- Header -->
-      <div class="debug-panel__header">
+    <!-- Panel -->
+    <Transition name="debug-panel">
+      <div v-if="scenario.panelOpen" class="debug-panel" :style="panelStyle">
+
+      <!-- Header (drag handle) -->
+      <div class="debug-panel__header" @pointerdown="onPointerDown">
         <div class="debug-panel__title">
           <Bug :size="14" />
           <span>UX Scénarios</span>
@@ -114,17 +117,93 @@
         </button>
       </div>
 
-    </div>
-  </Transition>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { Settings, Bug, X, Check, ChevronRight, Folder } from 'lucide-vue-next'
 import { useScenarioStore } from '~/stores/scenario'
 import type { Scenario } from '~/types/scenario'
 
 const scenario = useScenarioStore()
+
+/* ── Drag & drop : on peut déplacer le panneau de debug ── */
+const POS_KEY = 'debug-panel-pos'
+const rootEl  = ref<HTMLElement | null>(null)
+const pos     = ref<{ left: number; top: number } | null>(loadPos())
+
+const rootStyle = computed(() =>
+  pos.value
+    ? { left: `${pos.value.left}px`, top: `${pos.value.top}px`, right: 'auto', bottom: 'auto' }
+    : {},
+)
+
+// Panneau au-dessus de la pastille par défaut ; en dessous si on est trop près du haut.
+const panelStyle = computed(() =>
+  (pos.value?.top ?? Infinity) < 340
+    ? { top: 'calc(100% + 8px)', bottom: 'auto' }
+    : { bottom: 'calc(100% + 8px)', top: 'auto' },
+)
+
+let startX = 0, startY = 0, originLeft = 0, originTop = 0, moved = false
+
+function onPointerDown(e: PointerEvent) {
+  if (e.button !== 0 || !rootEl.value) return
+  const rect = rootEl.value.getBoundingClientRect()
+  originLeft = rect.left
+  originTop  = rect.top
+  startX = e.clientX
+  startY = e.clientY
+  moved  = false
+  window.addEventListener('pointermove', onPointerMove)
+  window.addEventListener('pointerup', onPointerUp)
+}
+
+function onPointerMove(e: PointerEvent) {
+  const dx = e.clientX - startX
+  const dy = e.clientY - startY
+  if (!moved && Math.hypot(dx, dy) < 4) return
+  moved = true
+  if (!rootEl.value) return
+  const w = rootEl.value.offsetWidth
+  const h = rootEl.value.offsetHeight
+  const left = Math.min(Math.max(0, originLeft + dx), window.innerWidth  - w)
+  const top  = Math.min(Math.max(0, originTop  + dy), window.innerHeight - h)
+  pos.value = { left, top }
+}
+
+function onPointerUp() {
+  window.removeEventListener('pointermove', onPointerMove)
+  window.removeEventListener('pointerup', onPointerUp)
+  if (moved && pos.value) localStorage.setItem(POS_KEY, JSON.stringify(pos.value))
+}
+
+// Distingue un vrai clic d'un drag : on n'ouvre le panneau que si on n'a pas déplacé.
+function onTriggerClick() {
+  if (moved) { moved = false; return }
+  scenario.togglePanel()
+}
+
+function loadPos(): { left: number; top: number } | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(POS_KEY)
+    if (!raw) return null
+    const p = JSON.parse(raw)
+    if (typeof p?.left !== 'number' || typeof p?.top !== 'number') return null
+    // Ignore une position hors écran (résolution changée, etc.)
+    if (p.left < 0 || p.top < 0 || p.left > window.innerWidth - 40 || p.top > window.innerHeight - 40) return null
+    return p
+  } catch { return null }
+}
+
+onBeforeUnmount(() => {
+  window.removeEventListener('pointermove', onPointerMove)
+  window.removeEventListener('pointerup', onPointerUp)
+})
 
 const openFolders = ref(new Set<string>())
 
@@ -150,12 +229,18 @@ function splitGroup(items: Scenario[]) {
 </script>
 
 <style scoped>
+/* ── Root (ancre déplaçable) ── */
+.debug-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
+  width: max-content;
+}
+
 /* ── Trigger ── */
 .debug-trigger {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 9999;
+  position: relative;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -167,9 +252,13 @@ function splitGroup(items: Scenario[]) {
   font-family: ui-monospace, 'Cascadia Code', monospace;
   font-size: 11px;
   font-weight: 500;
-  cursor: pointer;
+  cursor: grab;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
   user-select: none;
+  touch-action: none;
+}
+.debug-trigger:active {
+  cursor: grabbing;
 }
 .debug-trigger:hover {
   background: #27272a;
@@ -190,10 +279,9 @@ function splitGroup(items: Scenario[]) {
 
 /* ── Panel ── */
 .debug-panel {
-  position: fixed;
-  bottom: 52px;
-  right: 16px;
-  z-index: 9998;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
   width: 300px;
   background: #18181b;
   border: 1px solid #3f3f46;
@@ -214,6 +302,9 @@ function splitGroup(items: Scenario[]) {
   padding: 10px 12px;
   border-bottom: 1px solid #3f3f46;
   background: #09090b;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
 }
 .debug-panel__title {
   display: flex;
