@@ -135,9 +135,14 @@ function onRename(projet: Projet) {
 }
 
 function onSubmit(name: string, description: string) {
-  if (editing.value) store.renameProjet(editing.value.id, name, description)
-  else               store.createProjet(name, description)
-  // Pas de fermeture ici : le panneau joue sa sortie animée puis émet `close`.
+  if (editing.value) {
+    store.renameProjet(editing.value.id, name, description)
+    // Renommage : le panneau joue sa sortie animée puis émet `close`.
+  } else {
+    // Création : on entre directement dans le nouveau projet.
+    const projet = store.createProjet(name, description)
+    router.push(`/dataos/projets/${projet.id}`)
+  }
 }
 
 // Appelé après l'animation de sortie du panneau (@close).

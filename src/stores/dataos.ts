@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type {
   Projet, Formulaire, Invitation, MembreRole,
-  Question, QuestionFieldType, FormulaireTemplate,
+  Question, QuestionFieldType, FormulaireTemplate, QuestionSettingsPatch,
 } from '~/types/dataos'
 
 const today = () => new Date().toISOString().slice(0, 10)
@@ -146,6 +146,17 @@ export const useDataOsStore = defineStore('dataos', {
       if (!q) return
       q.fieldType = fieldType
       q.label     = label
+    },
+
+    // Met à jour les réglages d'une question depuis le panneau Paramètres.
+    updateQuestionSettings(formulaireId: string, questionId: string, patch: QuestionSettingsPatch) {
+      const q = this.formulaires.find((f) => f.id === formulaireId)?.questions.find((q) => q.id === questionId)
+      if (!q) return
+      if (patch.label !== undefined)            q.label            = patch.label
+      if (patch.fieldType !== undefined)        q.fieldType        = patch.fieldType
+      if (patch.required !== undefined)         q.required         = patch.required
+      if (patch.hint !== undefined)             q.hint             = patch.hint
+      if (patch.linkedQuestionId !== undefined) q.linkedQuestionId = patch.linkedQuestionId
     },
 
     duplicateQuestion(formulaireId: string, questionId: string) {

@@ -6,7 +6,7 @@
     <!-- Icon rail (80px) -->
     <div :class="cn('relative z-10 flex flex-col w-[80px] shrink-0 pt-4', !collapsed && 'border-r border-border')">
 
-      <!-- Layer collapsed -->
+      <!-- Layer collapsed : module + icônes des formulaires du projet -->
       <div
         class="absolute inset-0 flex flex-col pt-4 transition-opacity duration-150"
         :style="{ opacity: collapsed ? 1 : 0, pointerEvents: collapsed ? 'auto' : 'none' }"
@@ -21,11 +21,19 @@
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
-          <NavIconBtn :icon="Folder" label="Projets" :active="isActive('/dataos/projets')" @click="router.push('/dataos/projets')" />
+          <NavIconBtn :icon="Folder" label="Retour au projet" :active="false" @click="goProject" />
+          <NavIconBtn
+            v-for="tab in allTabs"
+            :key="tab.key"
+            :icon="tab.icon"
+            :label="tab.label"
+            :active="tab.key === activeTab"
+            @click="onTab(tab)"
+          />
         </div>
       </div>
 
-      <!-- Layer expanded -->
+      <!-- Layer expanded : module + retour au projet -->
       <div
         class="absolute inset-0 flex flex-col pt-4 transition-opacity duration-150"
         :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
@@ -35,46 +43,92 @@
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
-          <NavIconBtn :icon="Folder" label="Projets" :active="isActive('/dataos/projets')" @click="router.push('/dataos/projets')" />
+          <NavIconBtn :icon="Folder" label="Retour au projet" :active="false" @click="goProject" />
         </div>
       </div>
     </div>
 
-    <!-- Text panel (expanded) -->
+    <!-- Text panel (expanded) : nom du formulaire + ses onglets de configuration -->
     <div
       class="flex flex-col flex-1 min-w-0 px-4 py-4 gap-6 overflow-y-auto transition-opacity duration-200"
       :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
     >
       <div class="flex items-center justify-between gap-2 shrink-0">
-        <p class="text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">Data OS</p>
+        <p class="text-xl font-semibold text-text-primary leading-[30px] truncate">{{ formulaire?.name ?? 'Formulaire' }}</p>
         <IconBtn tooltip="Réduire" @click="uiStore.toggleSidebar()">
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
-      <nav class="flex flex-col gap-1">
-        <NavTextBtn :icon="Folder" label="Projets" :active="isActive('/dataos/projets')" @click="router.push('/dataos/projets')" />
+      <nav class="flex flex-col gap-6">
+        <div v-for="group in tabGroups" :key="group.label" class="flex flex-col gap-3">
+          <p class="text-base font-medium text-text-tertiary leading-6">{{ group.label }}</p>
+          <div class="flex flex-col gap-1">
+            <NavTextBtn
+              v-for="tab in group.items"
+              :key="tab.key"
+              :icon="tab.icon"
+              :label="tab.label"
+              :active="tab.key === activeTab"
+              @click="onTab(tab)"
+            />
+          </div>
+        </div>
       </nav>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, defineComponent, resolveComponent, h, Teleport, type Component } from 'vue'
+import { reactive, computed, defineComponent, resolveComponent, h, Teleport, ref, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronsLeft, ChevronsRight, Folder } from 'lucide-vue-next'
+import { ChevronsLeft, ChevronsRight, Folder, ListChecks, Users, LayoutDashboard, BarChart3, ShieldCheck } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { useUIStore } from '~/stores/ui'
+import { useDataOsStore } from '~/stores/dataos'
 
 const W       = { collapsed: 80, expanded: 320 } as const
 const route   = useRoute()
 const router  = useRouter()
 const uiStore = useUIStore()
+const store   = useDataOsStore()
+
+// Contexte : la sidebar double accompagne la configuration d'un formulaire.
+const projetId   = computed(() => String(route.params.id ?? ''))
+const formId     = computed(() => String(route.params.formId ?? ''))
+const formulaire = computed(() => store.formulaireById(formId.value))
+
+// Onglets de configuration du formulaire, rangés par section.
+interface FormTab { key: string; label: string; icon: Component }
+const tabGroups: { label: string; items: FormTab[] }[] = [
+  { label: 'Configurer', items: [
+    { key: 'questions', label: 'Questions', icon: ListChecks },
+    { key: 'agents',    label: 'Agents',    icon: Users },
+  ] },
+  { label: 'Observer et corriger', items: [
+    { key: 'dashboard', label: 'Tableau de bord',   icon: LayoutDashboard },
+    { key: 'analytics', label: 'Analytics',         icon: BarChart3 },
+    { key: 'qualite',   label: 'Assurance qualité', icon: ShieldCheck },
+  ] },
+]
+const allTabs = tabGroups.flatMap((g) => g.items)
+
+// Seul l'onglet « Questions » (l'éditeur) est implémenté pour l'instant.
+const activeTab = ref('questions')
+
+function onTab(tab: FormTab) {
+  if (tab.key === 'questions') {
+    router.push(`/dataos/projets/${projetId.value}/formulaires/${formId.value}`)
+  }
+  // Les autres onglets (Agents, Tableau de bord, Analytics, Assurance qualité) auront leurs vues plus tard.
+}
+
+function goProject() {
+  // Sortie du formulaire : sidebar double → simple, on masque le basculement.
+  uiStore.beginTransition()
+  router.push(`/dataos/projets/${projetId.value}`)
+}
 
 const collapsed = computed(() => uiStore.sidebarCollapsed)
-
-function isActive(href: string) {
-  return route.path === href || route.path.startsWith(href + '/')
-}
 
 function makeTooltipHandlers(pos: { top: number; left: number }, isHovered: { value: boolean }) {
   return {

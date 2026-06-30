@@ -30,16 +30,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useUIStore } from '~/stores/ui'
 import { ArrowLeft } from 'lucide-vue-next'
 import QuestionCard from '~/components/dataos/QuestionCard.vue'
 import { formulaireTemplates } from '~/data/dataos'
 import { useDataOsStore } from '~/stores/dataos'
 
-const route  = useRoute()
-const router = useRouter()
-const store  = useDataOsStore()
+const route   = useRoute()
+const router  = useRouter()
+const store   = useDataOsStore()
+const uiStore = useUIStore()
 
 const projetId   = computed(() => String(route.params.id))
 const templateId = computed(() => String(route.params.templateId))
@@ -55,18 +57,15 @@ function goBack() {
   router.push(`/dataos/projets/${projetId.value}`)
 }
 
-// « Utiliser le template » → état de chargement, puis crée le formulaire et ouvre l'éditeur.
+// « Utiliser le template » → overlay plein écran (masque le changement
+// d'architecture sidebar/top-bar), puis crée le formulaire et ouvre l'éditeur.
 const using = ref(false)
-let useTimer: ReturnType<typeof setTimeout>
 
 function useTemplate() {
   if (!template.value || using.value) return
   using.value = true
-  useTimer = setTimeout(() => {
-    const f = store.createFormulaireFromTemplate(projetId.value, template.value!)
-    router.push(`/dataos/projets/${projetId.value}/formulaires/${f.id}`)
-  }, 700)
+  uiStore.beginTransition()
+  const f = store.createFormulaireFromTemplate(projetId.value, template.value)
+  router.push(`/dataos/projets/${projetId.value}/formulaires/${f.id}`)
 }
-
-onBeforeUnmount(() => clearTimeout(useTimer))
 </script>

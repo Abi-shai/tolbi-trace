@@ -1,22 +1,13 @@
 <template>
   <div class="flex flex-col flex-1 min-h-0 overflow-hidden bg-surface content-arrive">
 
-    <!-- En-tête de l'éditeur -->
-    <header class="flex items-center justify-between gap-4 px-4 py-3 bg-white border-b border-border shrink-0">
-      <div class="flex items-center gap-3 min-w-0">
-        <button
-          class="flex items-center justify-center w-9 h-9 rounded-lg text-text-secondary hover:bg-surface transition-colors shrink-0"
-          @click="goBack"
-        >
-          <ArrowLeft :size="20" />
-        </button>
-        <h1 class="text-xl font-semibold text-text-primary truncate">{{ formulaire?.name ?? 'Formulaire' }}</h1>
-      </div>
-      <div class="flex items-center gap-3 shrink-0">
+    <!-- En-tête de page standard : l'onglet courant + les actions d'enregistrement -->
+    <Header title="Questions">
+      <template #actions>
         <DsButton label="Enregistrer comme template" variant="secondary-gray" :disabled="saving" @click="saveAsTemplate" />
         <DsButton label="Enregistrer le formulaire" variant="primary" :loading="saving" @click="save" />
-      </div>
-    </header>
+      </template>
+    </Header>
 
     <!-- Corps : liste des questions -->
     <div class="flex-1 overflow-y-auto">
@@ -33,39 +24,65 @@
         >
           <QuestionCard
             :question="question"
+            :deletable="questions.length > 1"
             @grab="handleGrab = true"
-            @select="onSelect(question, $event)"
+            @rename="store.updateQuestionSettings(formId, question.id, { label: $event })"
             @duplicate="store.duplicateQuestion(formId, question.id)"
-            @remove="store.removeQuestion(formId, question.id)"
+            @remove="deleteTarget = question"
             @settings="onSettings(question)"
             @options="onOptions(question)"
             @add="store.addQuestionAfter(formId, question.id)"
           />
         </div>
 
-        <!-- Ajouter une question -->
+        <!-- Aucune question encore : seul point d'entrée pour démarrer.
+             Dès qu'une question existe, on ajoute via le « + » au survol de chaque carte. -->
         <button
+          v-if="questions.length === 0"
           class="flex items-center justify-center w-10 h-10 rounded-full text-white shadow-md transition-colors self-start bg-[var(--ds-semantic-bg-brand-solid)] hover:bg-[var(--ds-semantic-bg-brand-solid-hover)]"
+          aria-label="Ajouter une question"
           @click="addQuestion"
         >
           <Plus :size="20" />
         </button>
       </div>
     </div>
+
+    <!-- Panneau Paramètres d'une question (slide-over droite) -->
+    <QuestionSettingsPanel
+      v-if="settingsQuestion"
+      :question="settingsQuestion"
+      :other-questions="questions.filter((q) => q.id !== settingsQuestion!.id)"
+      @save="onSaveSettings"
+      @close="settingsQuestion = null"
+    />
+
+    <!-- Confirmation avant suppression d'une question -->
+    <DeleteQuestionModal
+      v-if="deleteTarget"
+      :question="deleteTarget"
+      @confirm="confirmDelete"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, Plus } from 'lucide-vue-next'
+import { Plus } from 'lucide-vue-next'
+import Header from '~/components/layout/Header.vue'
 import QuestionCard from '~/components/dataos/QuestionCard.vue'
+import QuestionSettingsPanel from '~/components/dataos/QuestionSettingsPanel.vue'
+import DeleteQuestionModal from '~/components/dataos/DeleteQuestionModal.vue'
 import { useDataOsStore } from '~/stores/dataos'
-import type { Question, QuestionFieldOption } from '~/types/dataos'
+import { useUIStore } from '~/stores/ui'
+import type { Question, QuestionSettingsPatch } from '~/types/dataos'
 
-const route  = useRoute()
-const router = useRouter()
-const store  = useDataOsStore()
+const route   = useRoute()
+const router  = useRouter()
+const store   = useDataOsStore()
+const uiStore = useUIStore()
 
 const projetId   = computed(() => String(route.params.id))
 const formId     = computed(() => String(route.params.formId))
@@ -77,10 +94,6 @@ onMounted(() => {
   if (!formulaire.value) router.replace(`/dataos/projets/${projetId.value}`)
 })
 
-function goBack() {
-  router.push(`/dataos/projets/${projetId.value}`)
-}
-
 // Les questions sont déjà persistées dans le store au fil des modifications ;
 // on marque un court temps de chargement pour rendre l'action expressive.
 const saving = ref(false)
@@ -89,7 +102,9 @@ let saveTimer: ReturnType<typeof setTimeout>
 function save() {
   if (saving.value) return
   saving.value = true
-  saveTimer = setTimeout(() => router.push(`/dataos/projets/${projetId.value}`), 600)
+  // Retour au projet : l'architecture repasse en sidebar simple → overlay.
+  uiStore.beginTransition()
+  saveTimer = setTimeout(() => router.push(`/dataos/projets/${projetId.value}`), 250)
 }
 
 function saveAsTemplate() {
@@ -100,12 +115,24 @@ function addQuestion() {
   store.addQuestion(formId.value)
 }
 
-function onSelect(question: Question, option: QuestionFieldOption) {
-  store.setQuestionField(formId.value, question.id, option.fieldType, option.label)
+// ── Suppression d'une question (confirmation) ──
+const deleteTarget = ref<Question | null>(null)
+
+function confirmDelete() {
+  if (deleteTarget.value) store.removeQuestion(formId.value, deleteTarget.value.id)
+  deleteTarget.value = null
 }
 
-function onSettings(_question: Question) {
-  // TODO: panneau de réglages de la question.
+// ── Paramètres d'une question (slide-over) ──
+const settingsQuestion = ref<Question | null>(null)
+
+function onSettings(question: Question) {
+  settingsQuestion.value = question
+}
+
+function onSaveSettings(patch: QuestionSettingsPatch) {
+  if (!settingsQuestion.value) return
+  store.updateQuestionSettings(formId.value, settingsQuestion.value.id, patch)
 }
 
 function onOptions(_question: Question) {

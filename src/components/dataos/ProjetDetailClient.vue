@@ -5,7 +5,30 @@
     <Header :title="projet?.name ?? 'Projet'">
       <template #actions>
         <DsButton label="Inviter un utilisateur" variant="secondary-gray" icon-leading="send-01" @click="invitePanelOpen = true" />
-        <DsButton label="Nouveau formulaire" variant="primary" icon-leading="plus" @click="openCreate" />
+
+        <!-- « Ajouter un formulaire » → menu déroulant : créer ou partir d'un modèle -->
+        <div class="relative">
+          <DsButton label="Ajouter un formulaire" variant="primary" icon-leading="plus" @click="addMenuOpen = !addMenuOpen" />
+          <template v-if="addMenuOpen">
+            <div class="fixed inset-0 z-40" @click="addMenuOpen = false" />
+            <div
+              class="absolute right-0 top-full mt-2 z-50 w-[282px] py-2 flex flex-col gap-0.5 bg-white rounded-xl border border-[var(--ds-color-gray-light-100)] shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.08),0px_8px_8px_-4px_rgba(16,24,40,0.03)]"
+            >
+              <button type="button" class="w-full px-2 py-0.5" @click="onMenuCreate">
+                <span
+                  class="flex w-full items-center text-left pl-2.5 pr-2 py-2 rounded-md text-sm font-medium leading-5 text-text-primary hover:bg-surface transition-colors"
+                  style="font-family: var(--ds-typography-font-family-inter)"
+                >Créer un formulaire</span>
+              </button>
+              <button type="button" class="w-full px-2 py-0.5" @click="onMenuTemplate">
+                <span
+                  class="flex w-full items-center text-left pl-2.5 pr-2 py-2 rounded-md text-sm font-medium leading-5 text-text-primary hover:bg-surface transition-colors"
+                  style="font-family: var(--ds-typography-font-family-inter)"
+                >Utiliser un modèle</span>
+              </button>
+            </div>
+          </template>
+        </div>
       </template>
     </Header>
 
@@ -99,11 +122,20 @@ import InviteUserPanel from '~/components/dataos/InviteUserPanel.vue'
 import TemplatePickerPanel from '~/components/dataos/TemplatePickerPanel.vue'
 import FormulaireCard from '~/components/dataos/FormulaireCard.vue'
 import { useDataOsStore } from '~/stores/dataos'
+import { useUIStore } from '~/stores/ui'
 import type { Formulaire, MembreRole, FormulaireTemplate } from '~/types/dataos'
 
-const route  = useRoute()
-const router = useRouter()
-const store  = useDataOsStore()
+const route   = useRoute()
+const router  = useRouter()
+const store   = useDataOsStore()
+const uiStore = useUIStore()
+
+// Entrer dans un formulaire change l'architecture (sidebar simple → double) :
+// on masque le basculement par l'overlay plein écran.
+function enterFormulaire(formId: string) {
+  uiStore.beginTransition()
+  router.push(`/dataos/projets/${projetId.value}/formulaires/${formId}`)
+}
 
 const projetId = computed(() => String(route.params.id))
 const projet   = computed(() => store.projetById(projetId.value))
@@ -118,6 +150,7 @@ const search           = ref('')
 const panelOpen         = ref(false)
 const invitePanelOpen   = ref(false)
 const templatePanelOpen = ref(false)
+const addMenuOpen       = ref(false)
 const editing           = ref<Formulaire | null>(null)
 
 const formulaires = computed(() => store.formulairesFor(projetId.value))
@@ -137,6 +170,16 @@ function openTemplates() {
   templatePanelOpen.value = true
 }
 
+function onMenuCreate() {
+  addMenuOpen.value = false
+  openCreate()
+}
+
+function onMenuTemplate() {
+  addMenuOpen.value = false
+  openTemplates()
+}
+
 // Clic sur un template → aperçu du template (vue dédiée, en lecture seule).
 function onOpenTemplate(template: FormulaireTemplate) {
   router.push(`/dataos/projets/${projetId.value}/templates/${template.id}`)
@@ -153,7 +196,7 @@ function onSubmit(name: string, description: string) {
   } else {
     // Nouveau formulaire vierge → on ouvre l'éditeur dessus.
     const f = store.createFormulaire(projetId.value, name, description)
-    router.push(`/dataos/projets/${projetId.value}/formulaires/${f.id}`)
+    enterFormulaire(f.id)
   }
 }
 
@@ -168,6 +211,6 @@ function onInvite(email: string, role: MembreRole) {
 
 // Ouvre l'éditeur du formulaire.
 function onOpen(formulaire: Formulaire) {
-  router.push(`/dataos/projets/${projetId.value}/formulaires/${formulaire.id}`)
+  enterFormulaire(formulaire.id)
 }
 </script>

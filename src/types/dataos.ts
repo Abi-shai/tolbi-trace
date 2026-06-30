@@ -52,7 +52,23 @@ export type QuestionFieldType = 'text' | 'phone' | 'date'
 export interface Question {
   id: string
   fieldType: QuestionFieldType | null
+  /** Titre/intitulé de la question, éditable via le panneau Paramètres. */
   label: string
+  /** Réponse obligatoire sur le terrain (défaut : oui). */
+  required?: boolean
+  /** Indice affiché à l'agent pour préciser la question. */
+  hint?: string
+  /** Question dont dépend l'affichage de celle-ci (affichage conditionnel). */
+  linkedQuestionId?: string | null
+}
+
+// Patch appliqué depuis le panneau Paramètres d'une question.
+export interface QuestionSettingsPatch {
+  label?: string
+  fieldType?: QuestionFieldType | null
+  required?: boolean
+  hint?: string
+  linkedQuestionId?: string | null
 }
 
 // Contrairement au Projet, un Formulaire porte un statut (cycle de vie).

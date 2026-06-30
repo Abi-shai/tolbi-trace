@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+/* Tailwind v4 ne remet pas le curseur « main » sur les éléments cliquables.
+   On le restaure pour tout ce qui est interactif (sauf désactivé). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"],
+  [disabled] {
+    cursor: default;
+  }
+}
+
 @theme inline {
   --font-sans: var(--ds-typography-font-family-poppins);
   --font-mono: var(--ds-typography-font-family-inter);
