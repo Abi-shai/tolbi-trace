@@ -202,7 +202,7 @@ export const useDataOsStore = defineStore('dataos', {
         return { status: 'nothing' }
       }
       if (this.syncShouldFail) {
-        return { status: 'error', error: 'La connexion au service KYF a été interrompue. Réessaie dans un instant.' }
+        return { status: 'error', error: 'La connexion au service ID a été interrompue. Réessaie dans un instant.' }
       }
       useProducteursStore().addMany(collecteProducteursMock)
       this.kyfSynced = true

@@ -209,7 +209,9 @@ const NavTextBtn = defineComponent({
     }, [
       // Figma : l'icône reste #667085 (text-quaternary) dans les deux états —
       // seuls la couleur du texte et le fond changent entre actif/inactif.
-      h(props.icon as any, { size: 24, class: 'text-text-quaternary' }),
+      // shrink-0 : sans ça, le flex rétrécit l'icône du plus long libellé
+      // (« Suivi des réponses ») et décale son texte vers la gauche.
+      h(props.icon as any, { size: 24, class: 'text-text-quaternary shrink-0' }),
       props.label,
     ])
   },

@@ -73,7 +73,7 @@
               <div class="px-6 pt-6">
                 <p class="text-[18px] font-semibold text-text-primary leading-7" style="font-family: var(--ds-typography-font-family-poppins)">Finaliser l'import</p>
                 <p class="mt-1 text-sm text-text-secondary leading-5" style="font-family: var(--ds-typography-font-family-poppins)">
-                  {{ totalMatched.toLocaleString('fr-FR') }} producteurs seront ajoutés à votre base KYF. Cette action est irréversible.
+                  {{ totalMatched.toLocaleString('fr-FR') }} producteurs seront ajoutés à votre base ID. Cette action est irréversible.
                 </p>
               </div>
               <button

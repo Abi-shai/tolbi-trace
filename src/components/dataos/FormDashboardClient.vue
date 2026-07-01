@@ -13,7 +13,7 @@
           <span v-if="syncing" class="sync-btn__spinner" aria-hidden="true" />
           <template v-else>
             <DsIcon name="refresh-ccw-01" :size="20" class="shrink-0" />
-            <span>Synchroniser vers KYF</span>
+            <span>Synchroniser vers ID</span>
             <Transition name="sync-badge" appear>
               <span v-if="pendingKyf > 0" class="sync-badge">
                 <DsBadge :label="String(pendingKyf)" color="brand" variant="pill-color" size="sm" />
@@ -214,8 +214,8 @@ function sync() {
     if (res.status === 'synced') {
       toast.show({
         title: 'Synchronisation terminée',
-        description: `${res.count} producteurs ajoutés à la liste KYF.`,
-        actions: [{ label: 'Voir dans KYF', onClick: goKyf }],
+        description: `${res.count} producteurs ajoutés à la liste ID.`,
+        actions: [{ label: 'Voir dans ID', onClick: goKyf }],
       })
     } else if (res.status === 'nothing') {
       showNothingToSync()
@@ -229,8 +229,8 @@ function sync() {
 function showNothingToSync() {
   toast.show({
     title: 'Aucune donnée à synchroniser',
-    description: 'Toutes les données collectées sont déjà dans KYF.',
-    actions: [{ label: 'Voir dans KYF', onClick: goKyf }],
+    description: 'Toutes les données collectées sont déjà dans ID.',
+    actions: [{ label: 'Voir dans ID', onClick: goKyf }],
   })
 }
 
