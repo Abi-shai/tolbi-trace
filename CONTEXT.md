@@ -56,6 +56,10 @@ _Avoid_: workflow (that is a Source concept), campagne, conflating with Source "
 The configurable form an operator builds inside a Projet to define what field agents collect. A Projet can hold several. **Status lives here, not on the Projet** — each Formulaire carries its own lifecycle/status.
 _Avoid_: questionnaire, form, étape (Source concept)
 
+**Analytiques (Data OS)**:
+A tab inside a [[Formulaire (Data OS)]] that visualises the collected data as charts — one chart per question the operator selects from a multi-select "Questions" control. Each analysable question renders with its own default chart type (barre, circulaire, ligne), switchable per chart. Shows aggregate distributions and trends over the collection period, not individual rows.
+_Avoid_: dashboard / tableau de bord (that is the row-level "Suivi des réponses" view), statistiques, reporting
+
 **Recensement de producteurs**:
 The Data OS use case where a Projet's Formulaire(s) collect producteur identity + parcelle mapping in the field. Collected data stays in Data OS until the Responsable ops explicitly **pushes** it into TOLBI ID — the two modules are decoupled, not a live write. Because a [[Projet (Data OS)]] is untyped, the push must map which collected fields are producteur identity / parcelle (a field-concordance step at push time, analogous to the import's [[Traitement]] — but on structured form data, not file columns). Entered from the [[Import de producteurs]] flow via "Lancer une collecte terrain".
 _Avoid_: enregistrement, onboarding terrain

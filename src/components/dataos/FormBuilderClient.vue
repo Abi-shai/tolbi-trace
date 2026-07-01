@@ -5,7 +5,13 @@
     <Header title="Questions">
       <template #actions>
         <DsButton label="Enregistrer comme template" variant="secondary-gray" :disabled="saving" @click="saveAsTemplate" />
-        <DsButton label="Enregistrer le formulaire" variant="primary" :loading="saving" @click="save" />
+        <DsButton
+          :label="dirty ? 'Enregistrer le formulaire' : 'Enregistré'"
+          variant="primary"
+          :loading="saving"
+          :disabled="!dirty"
+          @click="save"
+        />
       </template>
     </Header>
 
@@ -68,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
@@ -77,34 +83,64 @@ import QuestionSettingsPanel from '~/components/dataos/QuestionSettingsPanel.vue
 import DeleteQuestionModal from '~/components/dataos/DeleteQuestionModal.vue'
 import { useDataOsStore } from '~/stores/dataos'
 import { useUIStore } from '~/stores/ui'
+import { useFormulaireShare } from '~/composables/useFormulaireShare'
 import type { Question, QuestionSettingsPatch } from '~/types/dataos'
 
 const route   = useRoute()
 const router  = useRouter()
 const store   = useDataOsStore()
 const uiStore = useUIStore()
+const { notifyShare } = useFormulaireShare()
 
 const projetId   = computed(() => String(route.params.id))
 const formId     = computed(() => String(route.params.formId))
 const formulaire = computed(() => store.formulaireById(formId.value))
 const questions  = computed(() => formulaire.value?.questions ?? [])
 
+// Les questions sont persistées en direct dans le store. Pour savoir s'il reste
+// quelque chose à « enregistrer », on compare l'état courant au dernier état enregistré.
+const savedSnapshot = ref('')
+const snapshot = () => JSON.stringify(questions.value)
+const dirty = computed(() => snapshot() !== savedSnapshot.value)
+
 onMounted(() => {
   store.init()
-  if (!formulaire.value) router.replace(`/dataos/projets/${projetId.value}`)
+  if (!formulaire.value) {
+    router.replace(`/dataos/projets/${projetId.value}`)
+    return
+  }
+  savedSnapshot.value = snapshot()
+
+  // Création depuis un template : proposer le partage une fois la transition
+  // plein écran terminée (TOQ-560), puis nettoyer le paramètre d'URL.
+  if (route.query.created === 'template') {
+    const stop = watch(
+      () => uiStore.moduleTransition,
+      (active) => {
+        if (active) return
+        notifyShare(formId.value, formulaire.value?.name, { title: 'Formulaire créé' })
+        stop()
+      },
+      { immediate: true },
+    )
+    router.replace({ path: route.path, query: {} })
+  }
 })
 
-// Les questions sont déjà persistées dans le store au fil des modifications ;
-// on marque un court temps de chargement pour rendre l'action expressive.
+// Enregistrer = figer l'état courant comme référence. On reste sur la page et on
+// confirme par un toast ; le court délai rend l'action expressive.
 const saving = ref(false)
 let saveTimer: ReturnType<typeof setTimeout>
 
 function save() {
-  if (saving.value) return
+  if (!dirty.value || saving.value) return
   saving.value = true
-  // Retour au projet : l'architecture repasse en sidebar simple → overlay.
-  uiStore.beginTransition()
-  saveTimer = setTimeout(() => router.push(`/dataos/projets/${projetId.value}`), 250)
+  saveTimer = setTimeout(() => {
+    saving.value = false
+    savedSnapshot.value = snapshot()
+    // TOQ-560 : proposer le partage du lien dès l'enregistrement.
+    notifyShare(formId.value, formulaire.value?.name, { title: 'Formulaire enregistré' })
+  }, 600)
 }
 
 function saveAsTemplate() {

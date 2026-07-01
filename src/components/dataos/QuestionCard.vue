@@ -32,6 +32,15 @@
             <DsIcon :name="leadingIcon" :size="20" />
           </template>
         </DsInputField>
+        <!-- Liste de producteurs : récap de la liste importée (ou amorce si vide). -->
+        <p
+          v-if="producteurSummary"
+          class="flex items-center gap-1.5 mt-1.5 text-xs leading-[18px]"
+          :class="hasProducteurs ? 'text-text-tertiary' : 'text-[color:var(--ds-semantic-text-warning-primary,#b54708)]'"
+        >
+          <DsIcon name="users-01" :size="14" />
+          {{ producteurSummary }}
+        </p>
         <!-- Lecture seule (template pas encore utilisé) : couche transparente qui
              absorbe les clics → le champ ne peut ni se focaliser ni s'éditer. -->
         <div v-if="readonly" class="absolute inset-0 cursor-not-allowed" aria-hidden="true" />
@@ -138,11 +147,22 @@ function onRename(value: string) {
 
 // Icône de tête selon le type (choisi dans le panneau Paramètres) — slugs Ds exacts.
 const SLUG: Record<QuestionFieldType, string> = {
-  text:  'text-input',
-  phone: 'phone',
-  date:  'calendar',
+  text:       'text-input',
+  phone:      'phone',
+  date:       'calendar',
+  producteur: 'users-01',
 }
 const leadingIcon = computed(() => (props.question.fieldType ? SLUG[props.question.fieldType] : undefined))
+
+// Récap de la liste importée pour une question « Liste de producteurs ».
+// Sert aussi d'amorce si rien n'est encore importé.
+const hasProducteurs     = computed(() => (props.question.producteurs?.length ?? 0) > 0)
+const producteurSummary  = computed(() => {
+  if (props.question.fieldType !== 'producteur') return null
+  return hasProducteurs.value
+    ? `Liste · ${props.question.producteurs!.length} producteurs`
+    : 'Aucune liste importée'
+})
 
 // Libellé du tooltip de la corbeille : explique l'état inactif sur la dernière question.
 const removeTip = computed(() => (props.deletable ? 'Supprimer' : 'Garde au moins une question'))

@@ -145,7 +145,9 @@ const NavTextBtn = defineComponent({
         props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-secondary hover:bg-surface hover:text-text-nav-hover',
       ),
     }, [
-      h(props.icon as any, { size: 24, class: props.active ? 'text-text-secondary' : 'text-text-quaternary' }),
+      // Figma : l'icône reste #667085 (text-quaternary) dans les deux états —
+      // seuls la couleur du texte et le fond changent entre actif/inactif.
+      h(props.icon as any, { size: 24, class: 'text-text-quaternary' }),
       props.label,
     ])
   },

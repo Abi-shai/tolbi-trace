@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { useProducteursStore } from '~/stores/producteurs'
+import { collecteProducteursMock } from '~/data/dataos'
 import type {
   Projet, Formulaire, Invitation, MembreRole,
   Question, QuestionFieldType, FormulaireTemplate, QuestionSettingsPatch,
@@ -13,6 +15,9 @@ export const useDataOsStore = defineStore('dataos', {
     formulaires: [] as Formulaire[],
     invitations: [] as Invitation[],
     initialized: false,
+    // Synchronisation des données collectées vers KYF (TOQ-559).
+    kyfSynced:      false,
+    syncShouldFail: false,
   }),
 
   getters: {
@@ -22,6 +27,8 @@ export const useDataOsStore = defineStore('dataos', {
       state.formulaires.filter((f) => f.projetId === projetId),
     invitationsFor: (state) => (projetId: string) =>
       state.invitations.filter((i) => i.projetId === projetId),
+    // Producteurs collectés en attente de synchronisation vers KYF.
+    pendingKyfCount: (state) => (state.kyfSynced ? 0 : collecteProducteursMock.length),
   },
 
   actions: {
@@ -125,7 +132,8 @@ export const useDataOsStore = defineStore('dataos', {
     addQuestion(formulaireId: string): Question | undefined {
       const f = this.formulaires.find((f) => f.id === formulaireId)
       if (!f) return
-      const question: Question = { id: uid('q'), fieldType: null, label: '' }
+      // Type par défaut : texte.
+      const question: Question = { id: uid('q'), fieldType: 'text', label: '' }
       f.questions.push(question)
       return question
     },
@@ -136,7 +144,8 @@ export const useDataOsStore = defineStore('dataos', {
       if (!f) return
       const idx = f.questions.findIndex((q) => q.id === questionId)
       if (idx === -1) return
-      const question: Question = { id: uid('q'), fieldType: null, label: '' }
+      // Type par défaut : texte.
+      const question: Question = { id: uid('q'), fieldType: 'text', label: '' }
       f.questions.splice(idx + 1, 0, question)
       return question
     },
@@ -157,6 +166,8 @@ export const useDataOsStore = defineStore('dataos', {
       if (patch.required !== undefined)         q.required         = patch.required
       if (patch.hint !== undefined)             q.hint             = patch.hint
       if (patch.linkedQuestionId !== undefined) q.linkedQuestionId = patch.linkedQuestionId
+      if (patch.producteurs !== undefined)      q.producteurs      = patch.producteurs
+      if (patch.producteurSource !== undefined) q.producteurSource = patch.producteurSource
     },
 
     duplicateQuestion(formulaireId: string, questionId: string) {
@@ -178,6 +189,20 @@ export const useDataOsStore = defineStore('dataos', {
       if (!f) return
       const [moved] = f.questions.splice(from, 1)
       f.questions.splice(to, 0, moved)
+    },
+
+    // ── Synchronisation vers KYF (TOQ-559) ─────────────────────────
+    // Pousse les producteurs collectés vers la liste KYF (TOLBI ID).
+    syncToKyf(): { ok: boolean; count?: number; error?: string } {
+      if (this.syncShouldFail) {
+        return { ok: false, error: 'La connexion au service KYF a été interrompue. Réessaie dans un instant.' }
+      }
+      if (this.kyfSynced) {
+        return { ok: false, error: 'Ces producteurs ont déjà été synchronisés vers KYF.' }
+      }
+      useProducteursStore().addMany(collecteProducteursMock)
+      this.kyfSynced = true
+      return { ok: true, count: collecteProducteursMock.length }
     },
 
     // ── Invitations ────────────────────────────────────────────────

@@ -47,7 +47,17 @@ export interface QuestionFieldOption {
 
 // Une question d'un formulaire. `fieldType` reste null tant qu'aucun type
 // n'a été choisi (état placeholder de la carte question).
-export type QuestionFieldType = 'text' | 'phone' | 'date'
+export type QuestionFieldType = 'text' | 'phone' | 'date' | 'producteur'
+
+// Un producteur de la liste prédéfinie alimentant une question « Liste de
+// producteurs » (importée depuis un CSV : colonnes nom, prénom, identifiant).
+// Sur le terrain, l'agent choisit dans cette liste — aucune saisie libre.
+export interface ProducteurOption {
+  id: string
+  nom: string
+  prenom: string
+  identifiant: string
+}
 
 export interface Question {
   id: string
@@ -60,6 +70,10 @@ export interface Question {
   hint?: string
   /** Question dont dépend l'affichage de celle-ci (affichage conditionnel). */
   linkedQuestionId?: string | null
+  /** Liste prédéfinie (type « Liste de producteurs ») importée depuis un CSV. */
+  producteurs?: ProducteurOption[]
+  /** Nom du fichier CSV importé pour alimenter la liste. */
+  producteurSource?: string
 }
 
 // Patch appliqué depuis le panneau Paramètres d'une question.
@@ -69,6 +83,8 @@ export interface QuestionSettingsPatch {
   required?: boolean
   hint?: string
   linkedQuestionId?: string | null
+  producteurs?: ProducteurOption[]
+  producteurSource?: string
 }
 
 // Contrairement au Projet, un Formulaire porte un statut (cycle de vie).

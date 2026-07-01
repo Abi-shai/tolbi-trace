@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@abi-shai/tolbi-design-system": "^0.3.0",
+    "@abi-shai/tolbi-design-system": "^0.4.0",
     "@pinia/nuxt": "^0.10.1",
     "@vue-flow/background": "^1.3.2",
     "@vue-flow/controls": "^1.1.2",

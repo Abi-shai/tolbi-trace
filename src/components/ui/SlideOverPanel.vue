@@ -53,10 +53,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   title: string
   supportingText?: string
   width?: number
+  /** Garde optionnelle : retourne false pour bloquer la fermeture
+      (ex. changements non enregistrés → on affiche une confirmation à la place). */
+  beforeClose?: () => boolean
 }>(), {
   width: 400,
 })
@@ -78,8 +81,10 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') requestClose()
 }
 
-/** Déclenche la sortie animée ; le parent est notifié à la fin via @close. */
+/** Déclenche la sortie animée ; le parent est notifié à la fin via @close.
+    Si `beforeClose` renvoie false, la fermeture est bloquée (le parent gère). */
 function requestClose() {
+  if (props.beforeClose && props.beforeClose() === false) return
   visible.value = false
 }
 

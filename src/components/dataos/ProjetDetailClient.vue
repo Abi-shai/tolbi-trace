@@ -86,7 +86,7 @@
         </div>
         <div class="flex items-center gap-3">
           <DsButton label="Utiliser un template" variant="secondary-gray" @click="openTemplates" />
-          <DsButton label="Créer un formulaire" variant="secondary-gray" @click="openCreate" />
+          <DsButton label="Créer un formulaire" variant="secondary-gray" @click="createFormulaireDirect" />
         </div>
       </div>
 
@@ -130,9 +130,9 @@ const router  = useRouter()
 const store   = useDataOsStore()
 const uiStore = useUIStore()
 
-// Entrer dans un formulaire change l'architecture (sidebar simple → double) :
-// on masque le basculement par l'overlay plein écran.
-function enterFormulaire(formId: string) {
+// Créer un nouveau formulaire : on masque le passage en sidebar double par
+// l'overlay plein écran (c'est un nouveau formulaire, pas une simple ouverture).
+function enterNewFormulaire(formId: string) {
   uiStore.beginTransition()
   router.push(`/dataos/projets/${projetId.value}/formulaires/${formId}`)
 }
@@ -161,9 +161,12 @@ const filtered = computed(() => {
   return formulaires.value.filter((f) => f.name.toLowerCase().includes(q))
 })
 
-function openCreate() {
-  editing.value   = null
-  panelOpen.value = true
+// « Créer » : on entre directement dans le flux de nouveau formulaire — un
+// formulaire avec une première question vierge à intituler — et ses onglets.
+function createFormulaireDirect() {
+  const f = store.createFormulaire(projetId.value, 'Nouveau formulaire', '')
+  store.addQuestion(f.id)
+  enterNewFormulaire(f.id)
 }
 
 function openTemplates() {
@@ -172,7 +175,7 @@ function openTemplates() {
 
 function onMenuCreate() {
   addMenuOpen.value = false
-  openCreate()
+  createFormulaireDirect()
 }
 
 function onMenuTemplate() {
@@ -190,14 +193,9 @@ function onRename(formulaire: Formulaire) {
   panelOpen.value = true
 }
 
+// Le panneau ne sert plus qu'au renommage d'un formulaire existant.
 function onSubmit(name: string, description: string) {
-  if (editing.value) {
-    store.renameFormulaire(editing.value.id, name, description)
-  } else {
-    // Nouveau formulaire vierge → on ouvre l'éditeur dessus.
-    const f = store.createFormulaire(projetId.value, name, description)
-    enterFormulaire(f.id)
-  }
+  if (editing.value) store.renameFormulaire(editing.value.id, name, description)
 }
 
 function closePanel() {
@@ -209,8 +207,12 @@ function onInvite(email: string, role: MembreRole) {
   store.inviteUser(projetId.value, email, role)
 }
 
-// Ouvre l'éditeur du formulaire.
+// Ouvre un formulaire déjà créé : navigation simple, sans overlay de transition.
+// Atterrissage selon le statut — un formulaire publié s'ouvre sur le suivi des
+// réponses (l'ops vient le surveiller), un brouillon sur ses questions (il se
+// construit encore).
 function onOpen(formulaire: Formulaire) {
-  enterFormulaire(formulaire.id)
+  const base = `/dataos/projets/${projetId.value}/formulaires/${formulaire.id}`
+  router.push(formulaire.status === 'publie' ? `${base}/tableau-de-bord` : base)
 }
 </script>

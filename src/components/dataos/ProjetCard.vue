@@ -24,8 +24,6 @@
     <div class="flex items-center justify-between gap-4 px-5 py-3 flex-wrap">
       <div class="flex items-center gap-5 text-sm text-text-tertiary">
         <span class="flex items-center gap-1.5"><DsIcon name="file-02" :size="16" /> {{ projet.formulaires }} formulaires</span>
-        <span class="flex items-center gap-1.5"><DsIcon name="clipboard-check" :size="16" /> {{ projet.reponses.toLocaleString('fr-FR') }} réponses</span>
-        <span class="flex items-center gap-1.5"><DsIcon name="users-01" :size="16" /> {{ projet.agents }} agents</span>
       </div>
       <DsButton label="Voir le projet" variant="secondary-gray" size="sm" @click="$emit('view', projet)" />
     </div>

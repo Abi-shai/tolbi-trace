@@ -66,6 +66,7 @@ function useTemplate() {
   using.value = true
   uiStore.beginTransition()
   const f = store.createFormulaireFromTemplate(projetId.value, template.value)
-  router.push(`/dataos/projets/${projetId.value}/formulaires/${f.id}`)
+  // `created=template` : l'éditeur affichera la notification de partage après la transition.
+  router.push({ path: `/dataos/projets/${projetId.value}/formulaires/${f.id}`, query: { created: 'template' } })
 }
 </script>

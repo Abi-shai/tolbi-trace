@@ -21,9 +21,8 @@
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
-          <NavIconBtn :icon="Folder" label="Retour au projet" :active="false" @click="goProject" />
           <NavIconBtn
-            v-for="tab in allTabs"
+            v-for="tab in tabs"
             :key="tab.key"
             :icon="tab.icon"
             :label="tab.label"
@@ -59,20 +58,15 @@
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
-      <nav class="flex flex-col gap-6">
-        <div v-for="group in tabGroups" :key="group.label" class="flex flex-col gap-3">
-          <p class="text-base font-medium text-text-tertiary leading-6">{{ group.label }}</p>
-          <div class="flex flex-col gap-1">
-            <NavTextBtn
-              v-for="tab in group.items"
-              :key="tab.key"
-              :icon="tab.icon"
-              :label="tab.label"
-              :active="tab.key === activeTab"
-              @click="onTab(tab)"
-            />
-          </div>
-        </div>
+      <nav class="flex flex-col gap-1">
+        <NavTextBtn
+          v-for="tab in tabs"
+          :key="tab.key"
+          :icon="tab.icon"
+          :label="tab.label"
+          :active="tab.key === activeTab"
+          @click="onTab(tab)"
+        />
       </nav>
     </div>
   </aside>
@@ -81,7 +75,7 @@
 <script setup lang="ts">
 import { reactive, computed, defineComponent, resolveComponent, h, Teleport, ref, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronsLeft, ChevronsRight, Folder, ListChecks, Users, LayoutDashboard, BarChart3, ShieldCheck } from 'lucide-vue-next'
+import { ChevronsLeft, ChevronsRight, Folder, ListChecks, Users, Inbox, BarChart3 } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { useUIStore } from '~/stores/ui'
 import { useDataOsStore } from '~/stores/dataos'
@@ -97,34 +91,29 @@ const projetId   = computed(() => String(route.params.id ?? ''))
 const formId     = computed(() => String(route.params.formId ?? ''))
 const formulaire = computed(() => store.formulaireById(formId.value))
 
-// Onglets de configuration du formulaire, rangés par section.
+// Onglets de configuration du formulaire — liste plate, sans sectionnage.
 interface FormTab { key: string; label: string; icon: Component }
-const tabGroups: { label: string; items: FormTab[] }[] = [
-  { label: 'Configurer', items: [
-    { key: 'questions', label: 'Questions', icon: ListChecks },
-    { key: 'agents',    label: 'Agents',    icon: Users },
-  ] },
-  { label: 'Observer et corriger', items: [
-    { key: 'dashboard', label: 'Tableau de bord',   icon: LayoutDashboard },
-    { key: 'analytics', label: 'Analytics',         icon: BarChart3 },
-    { key: 'qualite',   label: 'Assurance qualité', icon: ShieldCheck },
-  ] },
+const tabs: FormTab[] = [
+  { key: 'questions', label: 'Questions',          icon: ListChecks },
+  { key: 'dashboard', label: 'Suivi des réponses', icon: Inbox },
+  { key: 'analytics', label: 'Analytiques',        icon: BarChart3 },
+  { key: 'agents',    label: 'Agents',             icon: Users },
 ]
-const allTabs = tabGroups.flatMap((g) => g.items)
 
-// Seul l'onglet « Questions » (l'éditeur) est implémenté pour l'instant.
-const activeTab = ref('questions')
+// Onglet actif déduit de la route (Questions par défaut, Tableau de bord sur sa vue).
+const activeTab = computed(() =>
+  route.path.endsWith('/tableau-de-bord') ? 'dashboard' : 'questions',
+)
 
 function onTab(tab: FormTab) {
-  if (tab.key === 'questions') {
-    router.push(`/dataos/projets/${projetId.value}/formulaires/${formId.value}`)
-  }
-  // Les autres onglets (Agents, Tableau de bord, Analytics, Assurance qualité) auront leurs vues plus tard.
+  const base = `/dataos/projets/${projetId.value}/formulaires/${formId.value}`
+  if (tab.key === 'questions')      router.push(base)
+  else if (tab.key === 'dashboard') router.push(`${base}/tableau-de-bord`)
+  // Les autres onglets (Agents, Analytiques) auront leurs vues plus tard.
 }
 
 function goProject() {
-  // Sortie du formulaire : sidebar double → simple, on masque le basculement.
-  uiStore.beginTransition()
+  // Le formulaire existe déjà : retour simple au projet, sans overlay.
   router.push(`/dataos/projets/${projetId.value}`)
 }
 
@@ -214,7 +203,9 @@ const NavTextBtn = defineComponent({
         props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-secondary hover:bg-surface hover:text-text-nav-hover',
       ),
     }, [
-      h(props.icon as any, { size: 24, class: props.active ? 'text-text-secondary' : 'text-text-quaternary' }),
+      // Figma : l'icône reste #667085 (text-quaternary) dans les deux états —
+      // seuls la couleur du texte et le fond changent entre actif/inactif.
+      h(props.icon as any, { size: 24, class: 'text-text-quaternary' }),
       props.label,
     ])
   },
