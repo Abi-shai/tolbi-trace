@@ -157,3 +157,25 @@ body {
 .content-arrive {
   animation: content-arrive var(--ds-motion-duration-process) var(--ds-motion-easing-out);
 }
+
+/* ── Item de menu déroulant « danger » ──────────────────────────────
+   Action destructive (ex : « Supprimer ») : texte + icône rouges pour la
+   distinguer des autres actions. Pas de fond au repos — le fond rouge
+   n'apparaît qu'au survol. Extension locale alignée sur le DS : le composant
+   DsDropdownItem publié n'a pas (encore) de variante « danger », donc on ajoute
+   un modifieur `ds-dropdown-item--danger` posé en `class` sur l'item, en
+   réutilisant les tokens d'erreur du DS. `!important` : override délibéré des
+   styles scopés (data-v) du composant tiers. À terme, cette variante a vocation
+   à vivre dans le package DS (prop `variant="danger"`). */
+.ds-dropdown-item--danger .ds-dropdown-item__label,
+.ds-dropdown-item--danger .ds-dropdown-item__icon {
+  color: var(--ds-semantic-fg-error-primary) !important;      /* #d92d20 */
+}
+.ds-dropdown-item--danger:hover:not(.ds-dropdown-item--disabled) .ds-dropdown-item__content,
+.ds-dropdown-item--danger:focus-visible .ds-dropdown-item__content {
+  background-color: var(--ds-semantic-bg-error-primary) !important; /* #fef3f2 — visible au survol */
+}
+.ds-dropdown-item--danger:hover .ds-dropdown-item__label,
+.ds-dropdown-item--danger:hover .ds-dropdown-item__icon {
+  color: var(--ds-color-error-700) !important;                /* #b42318 */
+}

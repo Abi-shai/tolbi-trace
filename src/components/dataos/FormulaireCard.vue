@@ -8,12 +8,20 @@
       <div class="shrink-0">
         <DsDropdown trigger="icon" v-model:open="menuOpen">
           <DsDropdownItem label="Copier le lien" icon="clipboard-check" @click="onCopyLink" />
-          <DsDropdownItem label="Partager sur WhatsApp" icon="message-chat-circle" @click="onShareWhatsApp" />
+          <!-- Partager : icône lucide Share2, cohérente avec le reste du flux
+               (onglet Agents…). Le DS n'a pas de glyphe « share » et DsDropdownItem
+               ne rend que des slugs DsIcon → item recomposé à l'identique du DS. -->
+          <button type="button" role="menuitem" class="qshare-item" @click="onShareWhatsApp">
+            <span class="qshare-item__content">
+              <Share2 :size="16" class="qshare-item__icon" />
+              <span class="qshare-item__label">Partager sur WhatsApp</span>
+            </span>
+          </button>
           <DsDropdownDivider />
           <DsDropdownItem label="Renommer" icon="edit-01" @click="act('rename')" />
           <DsDropdownItem label="Dupliquer" icon="file-plus-01" @click="act('duplicate')" />
           <DsDropdownDivider />
-          <DsDropdownItem label="Supprimer" icon="trash-01" @click="act('remove')" />
+          <DsDropdownItem class="ds-dropdown-item--danger" label="Supprimer" icon="trash-01" @click="act('remove')" />
         </DsDropdown>
       </div>
     </div>
@@ -34,6 +42,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Share2 } from 'lucide-vue-next'
 import { useFormulaireShare } from '~/composables/useFormulaireShare'
 import type { Formulaire } from '~/types/dataos'
 
@@ -64,3 +73,53 @@ function onShareWhatsApp() {
   shareWhatsApp(props.formulaire.id, props.formulaire.name)
 }
 </script>
+
+<style scoped>
+/* Item « Partager » recomposé à l'identique de DsDropdownItem (mêmes métriques
+   et tokens) pour héberger l'icône lucide Share2 que DsDropdownItem ne peut pas
+   rendre (il n'accepte que des slugs DsIcon). */
+.qshare-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+}
+.qshare-item__content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: var(--ds-radius-sm);
+  transition: background-color var(--ds-motion-duration-quick) var(--ds-motion-easing-default);
+}
+.qshare-item:hover .qshare-item__content,
+.qshare-item:focus-visible .qshare-item__content {
+  background-color: var(--ds-semantic-bg-primary-hover);
+}
+.qshare-item:focus-visible { outline: none; }
+.qshare-item__icon {
+  flex-shrink: 0;
+  color: var(--ds-semantic-fg-secondary);
+}
+.qshare-item__label {
+  font-family: var(--ds-typography-font-family-inter);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--ds-semantic-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+</style>

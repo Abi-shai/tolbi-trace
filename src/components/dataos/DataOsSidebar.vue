@@ -100,16 +100,20 @@ const tabs: FormTab[] = [
   { key: 'agents',    label: 'Agents',             icon: Users },
 ]
 
-// Onglet actif déduit de la route (Questions par défaut, Tableau de bord sur sa vue).
-const activeTab = computed(() =>
-  route.path.endsWith('/tableau-de-bord') ? 'dashboard' : 'questions',
-)
+// Onglet actif déduit de la route (Questions par défaut, sinon la vue courante).
+const activeTab = computed(() => {
+  if (route.path.endsWith('/tableau-de-bord')) return 'dashboard'
+  if (route.path.endsWith('/analytiques'))     return 'analytics'
+  if (route.path.endsWith('/agents'))          return 'agents'
+  return 'questions'
+})
 
 function onTab(tab: FormTab) {
   const base = `/dataos/projets/${projetId.value}/formulaires/${formId.value}`
   if (tab.key === 'questions')      router.push(base)
   else if (tab.key === 'dashboard') router.push(`${base}/tableau-de-bord`)
-  // Les autres onglets (Agents, Analytiques) auront leurs vues plus tard.
+  else if (tab.key === 'analytics') router.push(`${base}/analytiques`)
+  else if (tab.key === 'agents')    router.push(`${base}/agents`)
 }
 
 function goProject() {
@@ -205,7 +209,9 @@ const NavTextBtn = defineComponent({
     }, [
       // Figma : l'icône reste #667085 (text-quaternary) dans les deux états —
       // seuls la couleur du texte et le fond changent entre actif/inactif.
-      h(props.icon as any, { size: 24, class: 'text-text-quaternary' }),
+      // shrink-0 : sans ça, le flex rétrécit l'icône du plus long libellé
+      // (« Suivi des réponses ») et décale son texte vers la gauche.
+      h(props.icon as any, { size: 24, class: 'text-text-quaternary shrink-0' }),
       props.label,
     ])
   },

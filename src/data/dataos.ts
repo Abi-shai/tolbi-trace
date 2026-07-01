@@ -1,4 +1,7 @@
-import type { Projet, FormulaireTemplate, QuestionFieldOption, ProducteurOption } from '~/types/dataos'
+import type {
+  Projet, FormulaireTemplate, QuestionFieldOption, ProducteurOption,
+  AnalyticsQuestion, AnalyticsSummary,
+} from '~/types/dataos'
 import type { Producteur } from '~/types/producteur'
 import { producteursMock } from '~/data/producteurs'
 
@@ -131,5 +134,63 @@ export const projetsMock: Projet[] = [
     agents:      6,
     createdAt:   '2024-10-03',
     createdBy:   'Awa Thiam',
+  },
+]
+
+// ── Analytiques (onglet d'un formulaire) ──
+// Données de démo dédiées. Cartouches cohérents avec un recensement (surface
+// réaliste, contrairement au 1.24 ha placeholder du Figma). Semaine de collecte
+// alignée sur la campagne maïs nov. 2025 (Lun 17 → Dim 23).
+export const analyticsSummary: AnalyticsSummary = {
+  producteurs: 270,
+  parcelles:   281,
+  surfaceHa:   342.6,
+}
+
+const RECENSEMENT_WEEK = ['Lun 17', 'Mar 18', 'Mer 19', 'Jeu 20', 'Ven 21', 'Sam 22', 'Dim 23']
+
+// Couleurs des séries.
+// - Cultures : cacao/riz échantillonnés au pixel depuis le Figma (légende).
+// - Genre / Statut : non montrés dans le Figma → palette catégorielle dérivée
+//   des tokens DS (brand, bleu, jaune, tan). Choix design, pas imposé par Figma.
+const COL = {
+  cacao:  '#7f461b',
+  riz:    '#c19a70',
+  brand:  '#056033',
+  blue:   '#2e90fa',
+  yellow: '#eaaa08',
+} as const
+
+export const analyticsQuestions: AnalyticsQuestion[] = [
+  {
+    id: 'cultures',
+    label: 'Cultures pratiquées',
+    periods: RECENSEMENT_WEEK,
+    defaultChart: 'barre',
+    series: [
+      { name: 'Cacao', color: COL.cacao, values: [3, 6, 7, 7, 8, 8, 14] },
+      { name: 'Riz',   color: COL.riz,   values: [5, 10, 11, 12, 15, 15, 25] },
+    ],
+  },
+  {
+    id: 'genre',
+    label: 'Genre',
+    periods: RECENSEMENT_WEEK,
+    defaultChart: 'circulaire',
+    series: [
+      { name: 'Homme', color: COL.brand,  values: [20, 22, 24, 24, 24, 24, 24] },
+      { name: 'Femme', color: COL.yellow, values: [12, 14, 16, 16, 16, 16, 18] },
+    ],
+  },
+  {
+    id: 'statut',
+    label: 'Statut matrimonial',
+    periods: RECENSEMENT_WEEK,
+    defaultChart: 'barre',
+    series: [
+      { name: 'Marié·e',     color: COL.brand, values: [14, 15, 17, 18, 18, 18, 20] },
+      { name: 'Célibataire', color: COL.blue,  values: [8, 9, 10, 10, 11, 11, 12] },
+      { name: 'Veuf·ve',     color: COL.riz,   values: [2, 3, 3, 3, 4, 4, 5] },
+    ],
   },
 ]

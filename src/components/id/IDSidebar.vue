@@ -57,7 +57,7 @@
       :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
     >
       <div class="flex items-center justify-between gap-2 shrink-0">
-        <p class="text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">KYF</p>
+        <p class="text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">ID</p>
         <IconBtn tooltip="Réduire" @click="uiStore.toggleSidebar()">
           <ChevronsLeft :size="20" />
         </IconBtn>

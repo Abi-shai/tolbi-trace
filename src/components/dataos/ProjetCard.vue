@@ -13,7 +13,7 @@
           <DsDropdownItem label="Renommer" icon="edit-01" @click="act('rename')" />
           <DsDropdownItem label="Dupliquer" icon="file-plus-01" @click="act('duplicate')" />
           <DsDropdownDivider />
-          <DsDropdownItem label="Supprimer" icon="trash-01" @click="act('remove')" />
+          <DsDropdownItem class="ds-dropdown-item--danger" label="Supprimer" icon="trash-01" @click="act('remove')" />
         </DsDropdown>
       </div>
     </div>

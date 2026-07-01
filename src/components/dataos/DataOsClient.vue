@@ -36,7 +36,7 @@
           @view="onView"
           @rename="onRename"
           @duplicate="store.duplicateProjet($event.id)"
-          @remove="store.removeProjet($event.id)"
+          @remove="deleteTarget = $event"
         />
       </TransitionGroup>
 
@@ -71,6 +71,14 @@
       @submit="onSubmit"
       @close="closePanel"
     />
+
+    <!-- Confirmation avant suppression d'un projet (action irréversible). -->
+    <DeleteProjetModal
+      v-if="deleteTarget"
+      :projet="deleteTarget"
+      @confirm="confirmDelete"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>
 
@@ -81,6 +89,7 @@ import { Folder } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
 import NewProjetPanel from '~/components/dataos/NewProjetPanel.vue'
 import ProjetCard from '~/components/dataos/ProjetCard.vue'
+import DeleteProjetModal from '~/components/dataos/DeleteProjetModal.vue'
 import { useDataOsStore } from '~/stores/dataos'
 import { useScenarioStore } from '~/stores/scenario'
 import { SCENARIOS } from '~/scenarios'
@@ -117,6 +126,13 @@ function applyScenario(id: string | null, oldId?: string | null) {
 const search    = ref('')
 const panelOpen = ref(false)
 const editing   = ref<Projet | null>(null)
+
+// Projet en attente de confirmation de suppression (null = aucune).
+const deleteTarget = ref<Projet | null>(null)
+function confirmDelete() {
+  if (deleteTarget.value) store.removeProjet(deleteTarget.value.id)
+  deleteTarget.value = null
+}
 
 const filtered = computed(() => {
   const q = search.value.trim().toLowerCase()

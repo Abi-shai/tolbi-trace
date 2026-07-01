@@ -1,6 +1,6 @@
 <template>
   <!-- Conteneur relatif : laisse déborder le « + » d'ajout sans le rogner -->
-  <div class="relative" :class="readonly ? '' : 'group/qcard'">
+  <div ref="root" class="relative" :class="readonly ? '' : 'group/qcard'">
     <div
       class="flex items-stretch bg-white border border-border rounded-lg overflow-hidden"
       :class="readonly ? '' : 'transition-shadow duration-150 ease-out group-hover/qcard:shadow-[var(--ds-shadow-lg)]'"
@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import type { Question, QuestionFieldType } from '~/types/dataos'
 
 const props = withDefaults(defineProps<{
@@ -126,9 +126,21 @@ const props = withDefaults(defineProps<{
   readonly?: boolean
   /** Suppression possible : false quand c'est la dernière question (formulaire non vide). */
   deletable?: boolean
+  /** Place le curseur dans le champ titre au montage (1re question d'un formulaire vierge). */
+  autofocus?: boolean
 }>(), {
   readonly: false,
   deletable: true,
+  autofocus: false,
+})
+
+// Curseur d'emblée dans le titre à l'arrivée sur un formulaire créé de zéro :
+// l'utilisateur peut saisir la question sans cliquer d'abord dans le champ.
+const root = ref<HTMLElement | null>(null)
+onMounted(async () => {
+  if (!props.autofocus || props.readonly) return
+  await nextTick()
+  root.value?.querySelector('input')?.focus()
 })
 
 const emit = defineEmits<{

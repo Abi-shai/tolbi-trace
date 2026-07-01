@@ -193,16 +193,20 @@ export const useDataOsStore = defineStore('dataos', {
 
     // ── Synchronisation vers KYF (TOQ-559) ─────────────────────────
     // Pousse les producteurs collectés vers la liste KYF (TOLBI ID).
-    syncToKyf(): { ok: boolean; count?: number; error?: string } {
-      if (this.syncShouldFail) {
-        return { ok: false, error: 'La connexion au service KYF a été interrompue. Réessaie dans un instant.' }
+    // 'nothing' (déjà à jour) est distinct de 'error' : ce n'est pas un échec.
+    syncToKyf():
+      | { status: 'synced'; count: number }
+      | { status: 'nothing' }
+      | { status: 'error'; error: string } {
+      if (this.pendingKyfCount === 0) {
+        return { status: 'nothing' }
       }
-      if (this.kyfSynced) {
-        return { ok: false, error: 'Ces producteurs ont déjà été synchronisés vers KYF.' }
+      if (this.syncShouldFail) {
+        return { status: 'error', error: 'La connexion au service ID a été interrompue. Réessaie dans un instant.' }
       }
       useProducteursStore().addMany(collecteProducteursMock)
       this.kyfSynced = true
-      return { ok: true, count: collecteProducteursMock.length }
+      return { status: 'synced', count: collecteProducteursMock.length }
     },
 
     // ── Invitations ────────────────────────────────────────────────
