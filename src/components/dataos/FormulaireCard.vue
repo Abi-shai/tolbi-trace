@@ -1,0 +1,66 @@
+<template>
+  <div class="flex flex-col bg-white rounded-xl border border-border overflow-visible hover:shadow-sm transition-shadow">
+
+    <!-- Header : nom + menu -->
+    <div class="flex items-start justify-between gap-3 px-5 pt-4 pb-3">
+      <p class="text-base font-semibold text-text-primary truncate min-w-0">{{ formulaire.name }}</p>
+
+      <div class="shrink-0">
+        <DsDropdown trigger="icon" v-model:open="menuOpen">
+          <DsDropdownItem label="Copier le lien" icon="clipboard-check" @click="onCopyLink" />
+          <DsDropdownItem label="Partager sur WhatsApp" icon="message-chat-circle" @click="onShareWhatsApp" />
+          <DsDropdownDivider />
+          <DsDropdownItem label="Renommer" icon="edit-01" @click="act('rename')" />
+          <DsDropdownItem label="Dupliquer" icon="file-plus-01" @click="act('duplicate')" />
+          <DsDropdownDivider />
+          <DsDropdownItem label="Supprimer" icon="trash-01" @click="act('remove')" />
+        </DsDropdown>
+      </div>
+    </div>
+
+    <div class="h-px bg-border" />
+
+    <!-- Footer : stats + action -->
+    <div class="flex items-center justify-between gap-4 px-5 py-3 flex-wrap">
+      <div class="flex items-center gap-5 text-sm text-text-tertiary">
+        <span class="flex items-center gap-1.5">
+          <DsIcon name="clipboard-check" :size="16" /> {{ formulaire.reponses.toLocaleString('fr-FR') }} réponses
+        </span>
+      </div>
+      <DsButton label="Ouvrir le formulaire" variant="secondary-gray" size="sm" @click="$emit('open', formulaire)" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useFormulaireShare } from '~/composables/useFormulaireShare'
+import type { Formulaire } from '~/types/dataos'
+
+const props = defineProps<{ formulaire: Formulaire }>()
+
+const emit = defineEmits<{
+  open:      [formulaire: Formulaire]
+  rename:    [formulaire: Formulaire]
+  duplicate: [formulaire: Formulaire]
+  remove:    [formulaire: Formulaire]
+}>()
+
+const menuOpen = ref(false)
+const { copyLink, shareWhatsApp } = useFormulaireShare()
+
+function act(action: 'rename' | 'duplicate' | 'remove') {
+  menuOpen.value = false
+  emit(action, props.formulaire)
+}
+
+// TOQ-560 : partage du lien aussi accessible depuis la liste des formulaires.
+function onCopyLink() {
+  menuOpen.value = false
+  copyLink(props.formulaire.id)
+}
+function onShareWhatsApp() {
+  menuOpen.value = false
+  shareWhatsApp(props.formulaire.id, props.formulaire.name)
+}
+</script>

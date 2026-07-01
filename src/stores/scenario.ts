@@ -6,7 +6,7 @@ export const useScenarioStore = defineStore('__ux', {
   state: () => ({
     activeId:     null as string | null,
     panelOpen:    false,
-    enabled:      false,
+    enabled:      true,
     activeScopes: [] as string[],
   }),
 
@@ -29,7 +29,6 @@ export const useScenarioStore = defineStore('__ux', {
   },
 
   actions: {
-    enable()              { this.enabled = true },
     togglePanel()         { this.panelOpen = !this.panelOpen },
     activate(id: string)  { this.activeId = id; this.panelOpen = false },
     reset()               { this.activeId = null },

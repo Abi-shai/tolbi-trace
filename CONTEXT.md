@@ -18,6 +18,14 @@ _Avoid_: client, acheteur (in domain context), producteur
 The organization that submits producteur data to the platform on behalf of its members.
 _Avoid_: client, partenaire (in domain context)
 
+**Agent** (EN: Field agent):
+A field worker who executes the steps of one workflow from the mobile app (weighing, scanning, filling forms). An Agent is scoped to a single workflow: the same person working on two workflows has two distinct Agent profiles. Created and managed from the web by the Responsable ops; never logs into the web.
+_Avoid_: utilisateur, opérateur, collecteur
+
+**Code PIN**:
+A 4-digit code attached to a workflow-agent, unique across the whole Fournisseur (tenant) so it alone identifies the agent at mobile login. Used as the agent's personal credential to open their form on mobile without handling a URL. Belongs to exactly one Agent profile; can be regenerated from the web by the Responsable ops.
+_Avoid_: mot de passe, code d'accès, token
+
 ### Modules & Features
 
 **Module Tolbi**:
@@ -39,6 +47,26 @@ _Avoid_: Trace (that is a different module), procurement
 **TOLBI Trace** (ex: EUDR):
 The compliance module. Automatically analyses deforestation risk on parcelles to guarantee access to the European market (EUDR regulation). Distinct from Source — Trace analyses the data, Source collects it.
 _Avoid_: confusing with Source; they are different modules with different purposes_
+
+**Projet (Data OS)**:
+A generic data-collection container in Data OS. Holds one or more Formulaires and the data collected against them by field agents. **Untyped** — every Projet is a blank form-builder; there is no "recensement vs generic" kind at creation. Producteur-ness emerges purely from how the operator builds the form. **A Projet has no status of its own** — status lives on the [[Formulaire (Data OS)]]s it contains. The Data OS landing page is the list of Projets.
+_Avoid_: workflow (that is a Source concept), campagne, conflating with Source "projet"
+
+**Formulaire (Data OS)**:
+The configurable form an operator builds inside a Projet to define what field agents collect. A Projet can hold several. **Status lives here, not on the Projet** — each Formulaire carries its own lifecycle/status.
+_Avoid_: questionnaire, form, étape (Source concept)
+
+**Analytiques (Data OS)**:
+A tab inside a [[Formulaire (Data OS)]] that visualises the collected data as charts — one chart per question the operator selects from a multi-select "Questions" control. Each analysable question renders with its own default chart type (barre, circulaire, ligne), switchable per chart. Shows aggregate distributions and trends over the collection period, not individual rows.
+_Avoid_: dashboard / tableau de bord (that is the row-level "Suivi des réponses" view), statistiques, reporting
+
+**Recensement de producteurs**:
+The Data OS use case where a Projet's Formulaire(s) collect producteur identity + parcelle mapping in the field. Collected data stays in Data OS until the Responsable ops explicitly **pushes** it into TOLBI ID — the two modules are decoupled, not a live write. Because a [[Projet (Data OS)]] is untyped, the push must map which collected fields are producteur identity / parcelle (a field-concordance step at push time, analogous to the import's [[Traitement]] — but on structured form data, not file columns). Entered from the [[Import de producteurs]] flow via "Lancer une collecte terrain".
+_Avoid_: enregistrement, onboarding terrain
+
+**TOLBI Data OS** (ex: Survey):
+The field data-collection module — mobile, offline-first collection deployed to register producteurs and map their parcelles. Survey and the former "DataOS raw-data API" concept have merged into one module: Data OS *is* Tolbi Survey, same functionality and objective. Reached from the [[Import de producteurs]] flow via "Lancer une collecte terrain". "Survey" remains a legacy entry in the module list but the operator-facing name is now Data OS.
+_Avoid_: Survey (legacy name — use in code/module-list only, never in new UI copy), DataOS as "raw-data API for finance" (that concept is gone)
 
 **KYF (Know Your Farmer)**:
 Legacy internal name for what is now TOLBI ID. Still used in code and database references.

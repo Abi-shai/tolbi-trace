@@ -41,8 +41,13 @@ export interface ProducteursState {
   fileUploadError?:   boolean
 }
 
+export interface DataOsState {
+  projets: import('~/types/dataos').Projet[]
+}
+
 export interface ScenarioState {
   producteurs?: ProducteursState
+  dataos?:      DataOsState
 }
 
 export interface Scenario {

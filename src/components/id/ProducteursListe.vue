@@ -180,11 +180,15 @@ import { ref, computed } from 'vue'
 import { Users, MapPin, Layers, Search, Map, LayoutGrid, MoreVertical, Pencil, Trash2, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
 import MetricCard from '~/components/ui/MetricCard.vue'
-import { producteursMock, producteurStats } from '~/data/producteurs'
+import { useProducteursStore } from '~/stores/producteurs'
 
 defineEmits<{ add: [] }>()
 
-const stats     = producteurStats
+// Liste KYF réactive : alimentée aussi par la synchronisation Data OS (TOQ-559).
+const prodStore = useProducteursStore()
+prodStore.init()
+
+const stats     = computed(() => prodStore.stats)
 const activeTab = ref<'profils' | 'polygones'>('profils')
 const search    = ref('')
 const currentPage = 1
@@ -193,8 +197,8 @@ const visiblePages = [1, 2, 3, '...', 8, 9, 10]
 
 const filteredRows = computed(() => {
   const q = search.value.trim().toLowerCase()
-  if (!q) return producteursMock
-  return producteursMock.filter(f =>
+  if (!q) return prodStore.producteurs
+  return prodStore.producteurs.filter(f =>
     `${f.prenom} ${f.nom}`.toLowerCase().includes(q) ||
     f.codeParcelles.toLowerCase().includes(q) ||
     f.ina.toLowerCase().includes(q) ||

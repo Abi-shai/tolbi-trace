@@ -14,12 +14,16 @@
 
           <div class="flex flex-col gap-4">
             <div class="flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary">
-              <UserPlus :size="16" />
+              <component :is="isEdit ? UserCog : UserPlus" :size="16" />
             </div>
             <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-semibold text-text-primary leading-[30px]">Ajouter un agent</h2>
+              <h2 class="text-xl font-semibold text-text-primary leading-[30px]">
+                {{ isEdit ? "Modifier l'agent" : 'Ajouter un agent' }}
+              </h2>
               <p class="text-sm text-text-tertiary leading-5">
-                Renseignez les informations de l'agent terrain à assigner à ce processus.
+                {{ isEdit
+                  ? "Mets à jour les informations de l'agent."
+                  : "Renseigne les informations de l'agent terrain à assigner à ce processus. Un code PIN lui sera attribué automatiquement." }}
               </p>
             </div>
           </div>
@@ -37,8 +41,16 @@
           />
 
           <DsInputField
-            label="Téléphone"
+            label="Rôle"
             hint="Optionnel"
+            type="text"
+            v-model="role"
+            placeholder="Ex. Magasinier coopérative"
+          />
+
+          <DsInputField
+            label="Téléphone"
+            hint="Optionnel — requis pour le partage WhatsApp"
             type="tel"
             v-model="phone"
             placeholder="+221 77 000 00 00"
@@ -47,7 +59,12 @@
 
         <div class="px-6 py-4 border-t border-border shrink-0 flex items-center justify-end gap-3">
           <DsButton label="Annuler" variant="secondary-gray" @click="$emit('close')" />
-          <DsButton label="Ajouter l'agent" variant="primary" :disabled="!name.trim()" @click="handleSubmit" />
+          <DsButton
+            :label="submitLabel"
+            variant="primary"
+            :disabled="!name.trim()"
+            @click="handleSubmit"
+          />
         </div>
       </aside>
     </Transition>
@@ -56,19 +73,32 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { UserPlus } from 'lucide-vue-next'
+import { UserPlus, UserCog } from 'lucide-vue-next'
 import { useAgentsStore } from '~/stores/agents'
+import type { Agent } from '~/types/agent'
 
-const props = defineProps<{ workflowId: string }>()
+const props = defineProps<{ workflowId: string; agent?: Agent }>()
 const emit  = defineEmits<{ close: [] }>()
 
 const agentsStore = useAgentsStore()
-const name  = ref('')
-const phone = ref('')
+const isEdit = !!props.agent
+const submitLabel = isEdit ? 'Enregistrer' : "Ajouter l'agent"
+const name  = ref(props.agent?.name ?? '')
+const role  = ref(props.agent?.role ?? '')
+const phone = ref(props.agent?.phone ?? '')
 
 function handleSubmit() {
   if (!name.value.trim()) return
-  agentsStore.addAgent(props.workflowId, name.value.trim(), phone.value.trim() || undefined)
+  const input = {
+    name: name.value.trim(),
+    role: role.value.trim() || undefined,
+    phone: phone.value.trim() || undefined,
+  }
+  if (props.agent) {
+    agentsStore.updateAgent(props.agent.id, input)
+  } else {
+    agentsStore.addAgent(props.workflowId, input)
+  }
   emit('close')
 }
 </script>
