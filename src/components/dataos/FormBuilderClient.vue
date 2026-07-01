@@ -30,6 +30,7 @@
         >
           <QuestionCard
             :question="question"
+            :autofocus="i === 0 && !question.label"
             :deletable="questions.length > 1"
             @grab="handleGrab = true"
             @rename="store.updateQuestionSettings(formId, question.id, { label: $event })"

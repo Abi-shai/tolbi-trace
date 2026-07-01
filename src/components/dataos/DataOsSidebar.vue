@@ -100,16 +100,20 @@ const tabs: FormTab[] = [
   { key: 'agents',    label: 'Agents',             icon: Users },
 ]
 
-// Onglet actif déduit de la route (Questions par défaut, Tableau de bord sur sa vue).
-const activeTab = computed(() =>
-  route.path.endsWith('/tableau-de-bord') ? 'dashboard' : 'questions',
-)
+// Onglet actif déduit de la route (Questions par défaut, sinon la vue courante).
+const activeTab = computed(() => {
+  if (route.path.endsWith('/tableau-de-bord')) return 'dashboard'
+  if (route.path.endsWith('/analytiques'))     return 'analytics'
+  if (route.path.endsWith('/agents'))          return 'agents'
+  return 'questions'
+})
 
 function onTab(tab: FormTab) {
   const base = `/dataos/projets/${projetId.value}/formulaires/${formId.value}`
   if (tab.key === 'questions')      router.push(base)
   else if (tab.key === 'dashboard') router.push(`${base}/tableau-de-bord`)
-  // Les autres onglets (Agents, Analytiques) auront leurs vues plus tard.
+  else if (tab.key === 'analytics') router.push(`${base}/analytiques`)
+  else if (tab.key === 'agents')    router.push(`${base}/agents`)
 }
 
 function goProject() {

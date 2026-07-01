@@ -1,5 +1,7 @@
 # Agents are soft-deactivated, never hard-deleted
 
+> ⚠️ **Superseded by [ADR-0007](./0007-agents-hard-delete-reintroduced.md)** — hard delete has since been reintroduced (guarded by a confirmation). Deactivation remains the non-destructive path; the rationale below still explains *why* deactivation is preferred when history exists.
+
 TOQ-565 asks the Responsable ops to "créer, modifier, **désactiver**" agents — deliberately not "supprimer". We introduce a `statut: 'actif' | 'inactif'` on `Agent`. Deactivating flips the agent to `inactif`, which invalidates their Code PIN (mobile login is refused) and removes them from active rosters, but preserves the agent node and every event that references it. Agents are reactivatable; on reactivation the old PIN stays dead and the Responsable ops regenerates a fresh one. The previous hard-delete `removeAgent` action is retired in favour of `deactivateAgent` / `reactivateAgent`.
 
 The reason: the graph model records `Événement → Agent` ("who did it") for every field event. Hard-deleting an agent would orphan their historical events and destroy the "qui" of the trace — antithetical to a traceability product. A `statut` flag keeps history intact while still removing operational access.

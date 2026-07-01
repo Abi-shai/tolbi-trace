@@ -19,8 +19,12 @@ The organization that submits producteur data to the platform on behalf of its m
 _Avoid_: client, partenaire (in domain context)
 
 **Agent** (EN: Field agent):
-A field worker who executes the steps of one workflow from the mobile app (weighing, scanning, filling forms). An Agent is scoped to a single workflow: the same person working on two workflows has two distinct Agent profiles. Created and managed from the web by the Responsable ops; never logs into the web.
-_Avoid_: utilisateur, opérateur, collecteur
+A field worker who executes a mobile collection unit from the app (weighing, scanning, filling forms). An Agent is scoped to a single execution unit: a [[TOLBI Source]] **workflow** or a [[Formulaire (Data OS)]]. The same person working on two units has two distinct Agent profiles, each with its own [[Code PIN]]. Created and managed from the web by the Responsable ops; never logs into the web. The Data OS "Agents" tab lives *inside a Formulaire*; `Projet.agents` is a rollup count across the Projet's Formulaires, not a separate roster.
+_Avoid_: utilisateur, opérateur, collecteur; enquêteur (see [[Enquêteur]] — a display label, not a distinct actor)
+
+**Enquêteur**:
+Not a separate actor — a display label used in Data OS's "Suivi des réponses" table for the [[Agent]] who collected a given response (columns "Nom / Prénom de l'enquêteur"). The canonical, page-level noun everywhere else (sidebar tab, header, empty states, `Projet.agents`) is **Agent**.
+_Avoid_: promoting to a first-class entity, or using as the Agents-page title
 
 **Code PIN**:
 A 4-digit code attached to a workflow-agent, unique across the whole Fournisseur (tenant) so it alone identifies the agent at mobile login. Used as the agent's personal credential to open their form on mobile without handling a URL. Belongs to exactly one Agent profile; can be regenerated from the web by the Responsable ops.

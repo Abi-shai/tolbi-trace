@@ -14,14 +14,7 @@
       type="text"
       v-model="name"
       @keydown.enter="handleSubmit"
-      placeholder="Ex. Mamadou Diallo"
-    />
-
-    <DsInputField
-      label="Rôle (optionnel)"
-      type="text"
-      v-model="role"
-      placeholder="Ex. Magasinier coopérative"
+      placeholder="Ex. Ousseynou Ndiaye"
     />
 
     <DsInputField
@@ -49,13 +42,13 @@
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { UserPlus, UserCog } from 'lucide-vue-next'
 import SlideOverPanel from '~/components/ui/SlideOverPanel.vue'
-import { useAgentsStore } from '~/stores/agents'
-import type { Agent } from '~/types/agent'
+import { useDataosAgentsStore } from '~/stores/dataos-agents'
+import type { DataosAgent } from '~/types/dataos-agent'
 
-const props = defineProps<{ workflowId: string; agent?: Agent }>()
-const emit  = defineEmits<{ close: []; created: [agent: Agent] }>()
+const props = defineProps<{ formulaireId: string; agent?: DataosAgent }>()
+const emit  = defineEmits<{ close: []; created: [agent: DataosAgent] }>()
 
-const agentsStore = useAgentsStore()
+const agentsStore = useDataosAgentsStore()
 const panel  = ref<InstanceType<typeof SlideOverPanel> | null>(null)
 const isEdit = computed(() => !!props.agent)
 
@@ -63,12 +56,11 @@ const title = computed(() => (isEdit.value ? "Modifier l'agent" : 'Ajouter un ag
 const supportingText = computed(() =>
   isEdit.value
     ? "Mets à jour les informations de l'agent."
-    : "Renseigne les informations de l'agent terrain à assigner à ce processus. Un code PIN lui sera attribué automatiquement.",
+    : "Renseigne les informations de l'agent terrain à assigner à ce formulaire. Un code PIN lui sera attribué automatiquement.",
 )
 const submitLabel = computed(() => (isEdit.value ? 'Enregistrer' : "Ajouter l'agent"))
 
 const name  = ref(props.agent?.name ?? '')
-const role  = ref(props.agent?.role ?? '')
 const phone = ref(props.agent?.phone ?? '')
 
 const submitting = ref(false)
@@ -80,13 +72,12 @@ function handleSubmit() {
   submitTimer = setTimeout(() => {
     const input = {
       name: name.value.trim(),
-      role: role.value.trim() || undefined,
       phone: phone.value.trim() || undefined,
     }
     if (props.agent) {
       agentsStore.updateAgent(props.agent.id, input)
     } else {
-      const agent = agentsStore.addAgent(props.workflowId, input)
+      const agent = agentsStore.addAgent(props.formulaireId, input)
       emit('created', agent)
     }
     panel.value?.close()

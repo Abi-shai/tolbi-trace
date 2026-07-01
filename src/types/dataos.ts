@@ -87,6 +87,42 @@ export interface QuestionSettingsPatch {
   producteurSource?: string
 }
 
+// ── Analytiques (onglet d'un formulaire) ──
+// Visualisation des données collectées : une carte-graphique par question
+// sélectionnée. Données de démo dédiées, découplées des vraies questions du
+// builder (le modèle Question n'a pas de type « choix » ni de réponses stockées).
+
+export type AnalyticsChartType = 'barre' | 'circulaire' | 'ligne'
+
+// Une catégorie de réponse (ex: « Cacao ») et sa valeur par période.
+// Les séries alimentent directement les barres/lignes ; le camembert dérive
+// de la somme des valeurs de chaque série sur la période.
+export interface AnalyticsSeries {
+  name: string
+  /** Couleur de la série (hex). Cultures : cacao/riz extraits du Figma. */
+  color: string
+  /** Une valeur par bucket de `periods`, même longueur. */
+  values: number[]
+}
+
+// Une question analysable, rendue comme une carte-graphique.
+export interface AnalyticsQuestion {
+  id: string
+  label: string
+  /** Buckets de l'axe X (axe temporel « Période »). */
+  periods: string[]
+  series: AnalyticsSeries[]
+  /** Type de graphe affiché par défaut, surchargé par carte. */
+  defaultChart: AnalyticsChartType
+}
+
+// Cartouches de tête de l'onglet Analytiques.
+export interface AnalyticsSummary {
+  producteurs: number
+  parcelles: number
+  surfaceHa: number
+}
+
 // Contrairement au Projet, un Formulaire porte un statut (cycle de vie).
 export type FormulaireStatus = 'brouillon' | 'publie'
 

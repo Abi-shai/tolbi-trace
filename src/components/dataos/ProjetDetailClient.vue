@@ -18,13 +18,13 @@
                 <span
                   class="flex w-full items-center text-left pl-2.5 pr-2 py-2 rounded-md text-sm font-medium leading-5 text-text-primary hover:bg-surface transition-colors"
                   style="font-family: var(--ds-typography-font-family-inter)"
-                >Créer un formulaire</span>
+                >Créer à partir de zéro</span>
               </button>
               <button type="button" class="w-full px-2 py-0.5" @click="onMenuTemplate">
                 <span
                   class="flex w-full items-center text-left pl-2.5 pr-2 py-2 rounded-md text-sm font-medium leading-5 text-text-primary hover:bg-surface transition-colors"
                   style="font-family: var(--ds-typography-font-family-inter)"
-                >Utiliser un modèle</span>
+                >Utiliser un template</span>
               </button>
             </div>
           </template>
@@ -60,7 +60,7 @@
           @open="onOpen"
           @rename="onRename"
           @duplicate="store.duplicateFormulaire($event.id)"
-          @remove="store.removeFormulaire($event.id)"
+          @remove="deleteTarget = $event"
         />
       </TransitionGroup>
 
@@ -85,8 +85,8 @@
           <p class="text-base text-text-tertiary leading-6">Commence à créer des formulaires pour collecter tes informations terrain.</p>
         </div>
         <div class="flex items-center gap-3">
+          <DsButton label="Créer à partir de zéro" variant="secondary-gray" @click="createFormulaireDirect" />
           <DsButton label="Utiliser un template" variant="secondary-gray" @click="openTemplates" />
-          <DsButton label="Créer un formulaire" variant="secondary-gray" @click="createFormulaireDirect" />
         </div>
       </div>
 
@@ -110,6 +110,14 @@
       @open="onOpenTemplate"
       @close="templatePanelOpen = false"
     />
+
+    <!-- Confirmation avant suppression d'un formulaire (action irréversible). -->
+    <DeleteFormulaireModal
+      v-if="deleteTarget"
+      :formulaire="deleteTarget"
+      @confirm="confirmDelete"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>
 
@@ -121,6 +129,7 @@ import NewFormulairePanel from '~/components/dataos/NewFormulairePanel.vue'
 import InviteUserPanel from '~/components/dataos/InviteUserPanel.vue'
 import TemplatePickerPanel from '~/components/dataos/TemplatePickerPanel.vue'
 import FormulaireCard from '~/components/dataos/FormulaireCard.vue'
+import DeleteFormulaireModal from '~/components/dataos/DeleteFormulaireModal.vue'
 import { useDataOsStore } from '~/stores/dataos'
 import { useUIStore } from '~/stores/ui'
 import type { Formulaire, MembreRole, FormulaireTemplate } from '~/types/dataos'
@@ -152,6 +161,13 @@ const invitePanelOpen   = ref(false)
 const templatePanelOpen = ref(false)
 const addMenuOpen       = ref(false)
 const editing           = ref<Formulaire | null>(null)
+
+// Formulaire en attente de confirmation de suppression (null = aucune).
+const deleteTarget = ref<Formulaire | null>(null)
+function confirmDelete() {
+  if (deleteTarget.value) store.removeFormulaire(deleteTarget.value.id)
+  deleteTarget.value = null
+}
 
 const formulaires = computed(() => store.formulairesFor(projetId.value))
 

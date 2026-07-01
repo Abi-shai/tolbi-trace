@@ -3,7 +3,24 @@
 
     <Header title="Suivi des réponses">
       <template #actions>
-        <DsButton label="Synchroniser vers KYF" variant="secondary-gray" icon-leading="refresh-ccw-01" :loading="syncing" @click="sync" />
+        <!-- Bouton « Synchroniser » : le compteur de données à synchroniser est
+             intégré à droite (en miroir de l'icône de gauche). Le bouton s'élargit
+             pour révéler le patch quand il y a des données, puis revient à sa taille
+             initiale une fois synchronisé. Recomposé à partir des tokens DsButton
+             (secondary-gray) — DsButton n'expose pas de slot de contenu trailing —
+             et animé avec les tokens de motion du design system. -->
+        <button class="sync-btn" :disabled="syncing" :aria-busy="syncing || undefined" @click="sync">
+          <span v-if="syncing" class="sync-btn__spinner" aria-hidden="true" />
+          <template v-else>
+            <DsIcon name="refresh-ccw-01" :size="20" class="shrink-0" />
+            <span>Synchroniser vers KYF</span>
+            <Transition name="sync-badge" appear>
+              <span v-if="pendingKyf > 0" class="sync-badge">
+                <DsBadge :label="String(pendingKyf)" color="brand" variant="pill-color" size="sm" />
+              </span>
+            </Transition>
+          </template>
+        </button>
         <DsButton label="Terminer la collecte" variant="danger" @click="finishCollecte" />
       </template>
     </Header>
@@ -11,16 +28,15 @@
     <div class="flex-1 overflow-y-auto">
       <div class="flex flex-col gap-6 p-6">
 
-        <!-- Métriques -->
+        <!-- Métriques (composant partagé MetricCard) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div
+          <MetricCard
             v-for="m in metrics"
             :key="m.label"
-            class="flex flex-col gap-1 justify-center bg-white border border-[#f2f4f7] rounded-md px-4 py-2 min-h-[76px]"
-          >
-            <p class="text-base text-text-secondary leading-6 tracking-[-0.16px]">{{ m.label }}</p>
-            <p class="text-2xl font-bold text-[#056033] leading-8 tracking-[-0.24px]">{{ m.value }}</p>
-          </div>
+            :icon="m.icon"
+            :label="m.label"
+            :value="m.value"
+          />
         </div>
 
         <!-- Bascule Data points / Polygones + recherche + actions -->
@@ -120,8 +136,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { LayoutGrid, Map, Pencil, Trash2 } from 'lucide-vue-next'
+import { LayoutGrid, Map, Pencil, Trash2, CircleCheck, Clock } from 'lucide-vue-next'
 import Header from '~/components/layout/Header.vue'
+import MetricCard from '~/components/ui/MetricCard.vue'
 import ResponseEditPanel from '~/components/dataos/ResponseEditPanel.vue'
 import { useDataOsStore } from '~/stores/dataos'
 import { useToastStore } from '~/stores/toast'
@@ -134,10 +151,14 @@ const store   = useDataOsStore()
 const toast   = useToastStore()
 const uiStore = useUIStore()
 
+// Données collectées en attente de synchronisation vers KYF (TOLBI ID).
+// Alimente le badge de compteur sur le bouton « Synchroniser vers KYF ».
+const pendingKyf = computed(() => store.pendingKyfCount)
+
 const metrics = [
-  { label: 'Nombre de données',     value: reponsesStats.total.toLocaleString('fr-FR') },
-  { label: 'Validés',               value: reponsesStats.valides.toLocaleString('fr-FR') },
-  { label: 'En cours de validation', value: reponsesStats.enCours.toLocaleString('fr-FR') },
+  { label: 'Nombre de données',      value: reponsesStats.total.toLocaleString('fr-FR'),   icon: LayoutGrid },
+  { label: 'Validés',                value: reponsesStats.valides.toLocaleString('fr-FR'), icon: CircleCheck },
+  { label: 'En cours de validation', value: reponsesStats.enCours.toLocaleString('fr-FR'), icon: Clock },
 ]
 
 const columns = ['Niveau', 'Stade', 'Culture trouvées', 'Nom de l\'enquêteur', 'Prénom de l\'enquêteur', 'Actions']
@@ -183,20 +204,34 @@ const syncing = ref(false)
 
 function sync() {
   if (syncing.value) return
+  // On passe toujours par l'état de chargement — même sans données en attente :
+  // le bouton montre qu'une vérification est tentée, puis annonce le résultat
+  // (synchronisé, rien à synchroniser, ou échec).
   syncing.value = true
   setTimeout(() => {
     syncing.value = false
     const res = store.syncToKyf()
-    if (res.ok) {
+    if (res.status === 'synced') {
       toast.show({
         title: 'Synchronisation terminée',
         description: `${res.count} producteurs ajoutés à la liste KYF.`,
         actions: [{ label: 'Voir dans KYF', onClick: goKyf }],
       })
+    } else if (res.status === 'nothing') {
+      showNothingToSync()
     } else {
       toast.show({ title: 'Synchronisation échouée', description: res.error })
     }
   }, 1500)
+}
+
+// Cas « rien à synchroniser » : pas une erreur — les données sont déjà dans KYF.
+function showNothingToSync() {
+  toast.show({
+    title: 'Aucune donnée à synchroniser',
+    description: 'Toutes les données collectées sont déjà dans KYF.',
+    actions: [{ label: 'Voir dans KYF', onClick: goKyf }],
+  })
 }
 
 function goKyf() {
@@ -208,3 +243,85 @@ function finishCollecte() {
   // TODO : flux de fin de collecte (confirmation + clôture).
 }
 </script>
+
+<style scoped>
+/* Bouton recomposé à l'identique de DsButton (variante secondary-gray, taille md)
+   à partir des mêmes tokens du design system, pour héberger le patch trailing. */
+.sync-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--ds-semantic-border-primary);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-semantic-bg-primary);
+  color: var(--ds-semantic-fg-secondary);
+  font-family: var(--ds-typography-font-family-poppins);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--ds-shadow-xs);
+  transition:
+    background-color var(--ds-motion-duration-moderate) var(--ds-motion-easing-default),
+    color            var(--ds-motion-duration-moderate) var(--ds-motion-easing-default),
+    border-color     var(--ds-motion-duration-moderate) var(--ds-motion-easing-default);
+}
+.sync-btn:hover:not(:disabled) { background: var(--ds-semantic-bg-primary-hover); }
+.sync-btn:disabled { cursor: default; }
+
+/* Spinner de chargement — repris du DsButton (mêmes dimensions/animation). */
+.sync-btn__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: sync-spin 0.6s linear infinite;
+}
+@keyframes sync-spin { to { transform: rotate(360deg); } }
+
+/* Patch trailing : révélé en élargissant le bouton (max-width) avec un léger pop,
+   sur les tokens de motion du design system. margin-left compense le gap du bouton
+   pour ne pas laisser d'espace résiduel une fois le patch retiré. */
+.sync-badge {
+  display: inline-flex;
+  overflow: hidden;
+}
+.sync-badge-enter-active {
+  transition:
+    max-width   var(--ds-motion-duration-enter) var(--ds-motion-easing-default),
+    opacity     var(--ds-motion-duration-enter) var(--ds-motion-easing-default),
+    transform   var(--ds-motion-duration-enter) var(--ds-motion-easing-default),
+    margin-left var(--ds-motion-duration-enter) var(--ds-motion-easing-default);
+}
+.sync-badge-leave-active {
+  transition:
+    max-width   var(--ds-motion-duration-moderate) var(--ds-motion-easing-default),
+    opacity     var(--ds-motion-duration-moderate) var(--ds-motion-easing-default),
+    transform   var(--ds-motion-duration-moderate) var(--ds-motion-easing-default),
+    margin-left var(--ds-motion-duration-moderate) var(--ds-motion-easing-default);
+}
+.sync-badge-enter-from,
+.sync-badge-leave-to {
+  max-width: 0;
+  opacity: 0;
+  transform: scale(0.7);
+  margin-left: -4px;
+}
+.sync-badge-enter-to,
+.sync-badge-leave-from {
+  max-width: 2.5rem;
+  opacity: 1;
+  transform: scale(1);
+  margin-left: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-btn,
+  .sync-badge-enter-active,
+  .sync-badge-leave-active { transition: none; }
+}
+</style>

@@ -1,9 +1,6 @@
 <template>
-  <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
-    <Header
-      title="Agents"
-      description="Agents terrain assignés à ce processus. Chacun se connecte à l'app mobile avec son code PIN personnel."
-    >
+  <div class="flex flex-col flex-1 min-h-0 overflow-hidden bg-surface content-arrive">
+    <Header title="Agents">
       <template #actions>
         <DsButton label="Ajouter un agent" variant="primary" icon-leading="plus" @click="openCreate" />
       </template>
@@ -37,12 +34,12 @@
               <Users :size="22" class="text-text-quaternary" />
             </div>
             <p class="text-sm font-semibold text-text-secondary mb-1">
-              {{ search ? 'Aucun résultat' : "Aucun agent dans l'équipe" }}
+              {{ search ? 'Aucun résultat' : "Aucun agent sur ce formulaire" }}
             </p>
             <p class="text-xs text-text-quaternary leading-5 max-w-xs">
               {{ search
                 ? 'Essaie un autre terme de recherche.'
-                : 'Ajoute les agents terrain qui participeront à ce processus.' }}
+                : 'Ajoute les agents terrain qui collecteront les réponses de ce formulaire.' }}
             </p>
           </div>
 
@@ -58,7 +55,6 @@
               <DsAvatar :initials="getInitials(agent.name)" size="md" />
               <div class="flex flex-col min-w-0">
                 <span class="text-sm font-medium text-text-primary truncate">{{ agent.name }}</span>
-                <span v-if="agent.role" class="text-sm text-text-tertiary truncate">{{ agent.role }}</span>
               </div>
             </div>
 
@@ -123,6 +119,17 @@
                   <Pencil :size="16" />
                 </button>
               </HoverTooltip>
+              <!-- Suppression (danger) — action irréversible, gardée par une confirmation.
+                   Réintroduite après supersession de l'ADR-0005 par l'ADR-0007. -->
+              <HoverTooltip label="Supprimer">
+                <button
+                  type="button"
+                  class="p-2 rounded-lg text-text-quaternary hover:text-[#d92d20] hover:bg-[#fef3f2] transition-colors"
+                  @click="deleteTarget = agent"
+                >
+                  <Trash2 :size="16" />
+                </button>
+              </HoverTooltip>
             </div>
           </div>
         </div>
@@ -140,9 +147,9 @@
     </div>
 
     <!-- Create / edit panel -->
-    <NewAgentPanel
+    <NewFormAgentPanel
       v-if="panelOpen"
-      :workflow-id="workflowId"
+      :formulaire-id="formulaireId"
       :agent="editAgent ?? undefined"
       @created="onAgentCreated"
       @close="closePanel"
@@ -166,7 +173,7 @@
       :model-value="!!newPinInfo"
       :title="newPinInfo?.reason === 'reactivate' ? 'Agent réactivé' : 'Nouveau code PIN'"
       :description="newPinInfo
-        ? `Voici le nouveau code de ${newPinInfo.agent.name}. Partage-le pour qu'il puisse se connecter.`
+        ? `Voici le nouveau code de ${newPinInfo.agent.name}. Partage-le pour qu'il puisse se connecter et collecter.`
         : ''"
       @update:model-value="newPinInfo = null"
     >
@@ -197,17 +204,26 @@
         <DsButton label="Désactiver" variant="danger" @click="confirmDeactivate" />
       </template>
     </Modal>
+
+    <!-- Confirm: supprimer définitivement (ADR-0007) -->
+    <DeleteAgentModal
+      v-if="deleteTarget"
+      :agent="deleteTarget"
+      @confirm="confirmDelete"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Search, Users, Copy, Share2, RefreshCw, Pencil } from 'lucide-vue-next'
-import { useAgentsStore } from '~/stores/agents'
+import { Search, Users, Copy, Share2, RefreshCw, Pencil, Trash2 } from 'lucide-vue-next'
+import DeleteAgentModal from '~/components/dataos/DeleteAgentModal.vue'
+import { useDataosAgentsStore } from '~/stores/dataos-agents'
 import { useToastStore } from '~/stores/toast'
-import type { Agent } from '~/types/agent'
+import type { DataosAgent } from '~/types/dataos-agent'
 import Header from '~/components/layout/Header.vue'
-import NewAgentPanel from './NewAgentPanel.vue'
+import NewFormAgentPanel from './NewFormAgentPanel.vue'
 import HoverTooltip from '~/components/ui/HoverTooltip.vue'
 import Modal from '~/components/ui/Modal.vue'
 
@@ -220,27 +236,30 @@ function getInitials(name: string): string {
 
 const PAGE_SIZE = 10
 
-const props = defineProps<{ workflowId: string }>()
+const props = defineProps<{ formulaireId: string }>()
 
-const agentsStore = useAgentsStore()
+const agentsStore = useDataosAgentsStore()
 const toast       = useToastStore()
 const panelOpen   = ref(false)
-const editAgent   = ref<Agent | null>(null)
+const editAgent   = ref<DataosAgent | null>(null)
 const search      = ref('')
 const page        = ref(1)
 
-const regenTarget      = ref<Agent | null>(null)
-const deactivateTarget = ref<Agent | null>(null)
-const newPinInfo       = ref<{ agent: Agent; pin: string; reason: 'regenerate' | 'reactivate' } | null>(null)
+const regenTarget      = ref<DataosAgent | null>(null)
+const deactivateTarget = ref<DataosAgent | null>(null)
+const deleteTarget     = ref<DataosAgent | null>(null)
+const newPinInfo       = ref<{ agent: DataosAgent; pin: string; reason: 'regenerate' | 'reactivate' } | null>(null)
 
-agentsStore.init()
+// Sème le roster de démo pour ce formulaire (une seule fois).
+agentsStore.ensureSeed(props.formulaireId)
+watch(() => props.formulaireId, (id) => agentsStore.ensureSeed(id))
 
-const workflowAgents = computed(() => agentsStore.agents.filter((a) => a.workflowId === props.workflowId))
+const formAgents = computed(() => agentsStore.agentsFor(props.formulaireId))
 
 const filtered = computed(() => {
   const q = search.value.toLowerCase()
-  if (!q) return workflowAgents.value
-  return workflowAgents.value.filter((a) => a.name.toLowerCase().includes(q))
+  if (!q) return formAgents.value
+  return formAgents.value.filter((a) => a.name.toLowerCase().includes(q))
 })
 
 watch(search, () => { page.value = 1 })
@@ -254,7 +273,7 @@ function openCreate() {
   panelOpen.value = true
 }
 
-function openEdit(agent: Agent) {
+function openEdit(agent: DataosAgent) {
   editAgent.value = agent
   panelOpen.value = true
 }
@@ -264,7 +283,7 @@ function closePanel() {
   editAgent.value = null
 }
 
-function copyPin(agent: Agent) {
+function copyPin(agent: DataosAgent) {
   navigator.clipboard?.writeText(agent.pin)
   toast.show({
     title: 'Code PIN copié',
@@ -272,7 +291,7 @@ function copyPin(agent: Agent) {
   })
 }
 
-function shareWhatsApp(agent: Agent) {
+function shareWhatsApp(agent: DataosAgent) {
   if (!agent.phone) return
   const digits = agent.phone.replace(/[^\d]/g, '')
   const firstName = agent.name.trim().split(' ')[0]
@@ -282,7 +301,7 @@ function shareWhatsApp(agent: Agent) {
 
 // Après création : toast persistant de confirmation, avec de quoi copier /
 // partager immédiatement le code PIN fraîchement attribué.
-function onAgentCreated(agent: Agent) {
+function onAgentCreated(agent: DataosAgent) {
   const actions: { label: string; onClick: () => void }[] = [
     { label: 'Copier le code', onClick: () => copyPin(agent) },
   ]
@@ -297,7 +316,7 @@ function onAgentCreated(agent: Agent) {
   })
 }
 
-function onToggleAccess(agent: Agent, value: boolean) {
+function onToggleAccess(agent: DataosAgent, value: boolean) {
   if (value) {
     // Réactivation immédiate (sans confirmation) — un nouveau code est attribué.
     const pin = agentsStore.reactivateAgent(agent.id)
@@ -318,5 +337,14 @@ function confirmRegen() {
 function confirmDeactivate() {
   if (deactivateTarget.value) agentsStore.deactivateAgent(deactivateTarget.value.id)
   deactivateTarget.value = null
+}
+
+// Suppression définitive (ADR-0007) — gardée par DeleteAgentModal.
+function confirmDelete() {
+  if (deleteTarget.value) {
+    agentsStore.removeAgent(deleteTarget.value.id)
+    toast.show({ title: 'Agent supprimé', description: `${deleteTarget.value.name} a été retiré du formulaire.` })
+  }
+  deleteTarget.value = null
 }
 </script>

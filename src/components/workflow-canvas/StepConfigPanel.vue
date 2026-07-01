@@ -83,8 +83,7 @@
             </div>
 
             <DsTextareaField
-              label="Description"
-              hint="Optionnel"
+              label="Description (optionnel)"
               :model-value="step.description ?? ''"
               @update:model-value="(val: string) => builder.updateStep(step!.id, { description: val })"
               placeholder="Description courte de cette étape"

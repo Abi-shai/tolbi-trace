@@ -12,13 +12,11 @@
       </div>
     </main>
 
-    <Transition name="slide-panel">
-      <NewWorkflowPanel
-        v-if="panelOpen"
-        @create="handleCreate"
-        @close="panelOpen = false"
-      />
-    </Transition>
+    <NewWorkflowPanel
+      v-if="panelOpen"
+      @create="handleCreate"
+      @close="panelOpen = false"
+    />
   </div>
 </template>
 
