@@ -138,6 +138,44 @@ export const producteurScenarios: Scenario[] = [
       },
     },
   },
+
+  {
+    id:          'producteurs-finalisation-partielle',
+    label:       'Finalisation partielle — valides + rejets',
+    description: '2 394 producteurs prêts, 6 en erreur mis de côté',
+    group:       'Producteurs',
+    folder:      'Files treatment scenarios',
+    scope:       'matching',
+    state: {
+      producteurs: {
+        matchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          columns:       STANDARD_COLUMNS,
+        },
+        rowMatchingResult: {
+          totalMatched:  2394,
+          totalExpected: 2400,
+          surfaceHa:     534,
+          errorCount:    6,
+          warningCount:  0,
+          geoColumns:    ['FID', 'CODE_WAYPT', 'SURF_HA', 'DATE_GPS', 'PR_GPS', 'WKT_GEOM'],
+          excelColumns:  ['ID_INTERNE', 'Ref_Waypoint', 'Nom', 'Prénom', 'Village', 'CNI'],
+          rows: [
+            { index: 0, geoCells: [{ value: '0' }, { value: 'ZN1_WP042' }, { value: '2.45' }, { value: '17541992012', hasError: true }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-042' }, { value: 'ZN1_WP042' }, { value: 'Diop' }, { value: 'Moussa' }, { value: 'Tivaouane' }, { value: '17420011' }] },
+            { index: 1, geoCells: [{ value: '1' }, { value: 'ZN1_WP043' }, { value: '1.80' }, { value: '17541992012', hasError: true }, { value: '0.9m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-043' }, { value: 'ZN1_WP043' }, { value: 'Ndiaye' }, { value: 'Fatou' }, { value: 'Tivaouane' }, { value: '17420012' }] },
+            { index: 2, geoCells: [{ value: '2' }, { value: 'ZN1_WP044' }, { value: '3.10' }, { value: '17541992012', hasError: true }, { value: '1.5m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-044' }, { value: 'ZN1_WP044' }, { value: 'Cissé' }, { value: 'Babacar' }, { value: 'Kolda' }, { value: '17420013' }] },
+            { index: 3, geoCells: [{ value: '3' }, { value: 'ZN1_WP045' }, { value: '0.95' }, { value: '17541992012', hasError: true }, { value: '2.1m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-045' }, { value: 'ZN1_WP045' }, { value: 'Diallo' }, { value: 'Ibrahim' }, { value: 'Kolda' }, { value: '17420014' }] },
+            { index: 4, geoCells: [{ value: '4' }, { value: 'ZN1_WP046' }, { value: '5.00' }, { value: '17541992012', hasError: true }, { value: '1.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-046' }, { value: 'ZN1_WP046' }, { value: 'Kouassi' }, { value: 'Jean' }, { value: 'Kolda' }, { value: '17420015' }] },
+            { index: 5, geoCells: [{ value: '5' }, { value: 'ZN1_WP047' }, { value: '2.10' }, { value: '17541992012', hasError: true }, { value: '1.2m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-047' }, { value: 'ZN1_WP047' }, { value: 'Sene' }, { value: 'Mohamed' }, { value: 'Kolda' }, { value: '17420016' }] },
+            { index: 6, geoCells: [{ value: '6' }, { value: 'ZN1_WP048' }, { value: '1.50' }, { value: '-16.4790, 14.5937' }, { value: '2.0m' }, { value: 'POLYGON((' }], excelCells: [{ value: 'AGRI-048' }, { value: 'ZN1_WP048' }, { value: 'Ba' }, { value: 'Aminata' }, { value: 'Kolda' }, { value: '17420017' }] },
+          ],
+        },
+      },
+    },
+  },
+
   {
     id:          'producteurs-erreur-fichiers',
     label:       'Avertissements fichiers',

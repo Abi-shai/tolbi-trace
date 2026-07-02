@@ -3,6 +3,8 @@
     <img :src="tolbiLogoAnimation" alt="" class="size-[150px] object-contain pointer-events-none" />
   </ScreenTransition>
 
+  <ManuelAjout v-if="showManuel" @close="showManuel = false" @finalize="onManuelFinalize" />
+
   <ImportMatching v-if="step === 'matching'" @back="step = 'import'" @add="$emit('add')" @cancel="step = 'import'" @finalize-start="onFinalizeStart" />
 
   <Transition name="step-reveal">
@@ -78,7 +80,7 @@
           <!-- Card: Ajouter manuellement -->
           <button
             class="flex flex-col items-center gap-4 p-4 bg-white rounded-lg w-[276px] h-full text-center overflow-hidden cursor-pointer shadow-[0_0_0_4px_rgba(152,162,179,0.2)] hover:shadow-[0_0_0_4px_rgba(29,158,117,0.25)] hover:bg-[var(--ds-semantic-bg-brand-primary)] transition duration-150"
-            @click="$emit('manual')"
+            @click="showManuel = true"
           >
             <div class="relative size-[48px] shrink-0 overflow-hidden rounded-[10px] border border-border shadow-xs">
               <div class="absolute inset-0 overflow-hidden pointer-events-none">
@@ -114,10 +116,14 @@ import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
 import ProducteursListe from '~/components/id/ProducteursListe.vue'
+import ManuelAjout, { type ProducteurManuel } from '~/components/id/ManuelAjout.vue'
 import manualIllustration from '~/assets/images/upload-ways/manual-illustration.png'
 import tolbiLogoAnimation from '~/assets/images/tolbi-logo-animation.gif'
 import { useScenarioStore } from '~/stores/scenario'
 import { useUIStore } from '~/stores/ui'
+import { useToastStore } from '~/stores/toast'
+import { useProducteursStore } from '~/stores/producteurs'
+import type { Producteur } from '~/types/producteur'
 
 defineEmits<{ add: []; collect: []; manual: [] }>()
 
@@ -137,14 +143,67 @@ async function goToDataOs() {
 
 const step          = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
 const showFinalizing = ref(false)
+const showManuel     = ref(false)
 const scenario      = useScenarioStore()
+const toast         = useToastStore()
+const prodStore     = useProducteursStore()
 let finalizeTimer: ReturnType<typeof setTimeout>
 
-function onFinalizeStart() {
+// « Ajouter manuellement » — enregistrement unitaire : on injecte les producteurs
+// saisis dans la base ID, puis on révèle la liste et on confirme par un toast.
+function onManuelFinalize({ count, entries }: { count: number; entries: ProducteurManuel[] }) {
+  showManuel.value = false
+
+  const nouveaux: Producteur[] = entries.map((e, i) => ({
+    id:            e.id,
+    prenom:        e.prenom,
+    nom:           e.nom,
+    codeParcelles: `${(e.localite || 'AKP').slice(0, 3).toUpperCase()}-${1001 + i}`,
+    ina:           '—',
+    telephone:     '—',
+    cooperative:   '—',
+  }))
+  prodStore.addMany(nouveaux)
+  prodStore.stats.surfaceHa += Math.round(entries.reduce((s, e) => s + e.surfaceHa, 0))
+
+  // Même transition de chargement que la finalisation d'import : overlay logo,
+  // puis révélation de la liste peuplée et confirmation par toast — pas d'entrée
+  // brutale dans la vue ID.
   showFinalizing.value = true
   step.value = 'done'
   clearTimeout(finalizeTimer)
-  finalizeTimer = setTimeout(() => { showFinalizing.value = false }, 2000)
+  finalizeTimer = setTimeout(() => {
+    showFinalizing.value = false
+    const description = count === 1
+      ? 'Le nouveau producteur et sa parcelle sont enregistrés.'
+      : `Les ${count.toLocaleString('fr-FR')} nouveaux producteurs et leurs parcelles sont enregistrés.`
+    toast.show({
+      title:       'Producteurs ajoutés',
+      description,
+      actions:     [{ label: 'Voir les producteurs', onClick: () => { step.value = 'done' } }],
+      duration:    6000,
+    })
+  }, 2000)
+}
+
+function onFinalizeStart(summary: { ready: number; attention: number }) {
+  showFinalizing.value = true
+  step.value = 'done'
+  clearTimeout(finalizeTimer)
+  // La confirmation apparaît quand la liste peuplée se révèle (fin de l'overlay).
+  finalizeTimer = setTimeout(() => {
+    showFinalizing.value = false
+    const ready = summary.ready.toLocaleString('fr-FR')
+    const base  = `${ready} producteurs ajoutés à ta base ID.`
+    const rejets = summary.attention > 0
+      ? ` ${summary.attention.toLocaleString('fr-FR')} producteurs en erreur mis de côté.`
+      : ''
+    toast.show({
+      title:       'Import finalisé',
+      description: `${base}${rejets} Un récapitulatif t'a été envoyé par email.`,
+      duration:    6000,
+    })
+  }, 2000)
 }
 
 watch(step, (val, old) => {

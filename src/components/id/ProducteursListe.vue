@@ -99,15 +99,21 @@
                   <td class="h-16 px-6 py-3">
                     <div class="flex items-center gap-3">
                       <DsAvatar size="sm" :initials="initials(row.prenom, row.nom)" />
-                      <span class="text-sm font-medium text-[#101828]" style="font-family: var(--ds-typography-font-family-inter)">
-                        {{ row.prenom }} {{ row.nom }}
-                      </span>
+                      <EditableCell :value="`${row.prenom} ${row.nom}`" emphasis @commit="(v) => updateName(row, v)" />
                     </div>
                   </td>
-                  <td class="h-16 px-6 py-3 text-sm text-[#475467] whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">{{ row.codeParcelles }}</td>
-                  <td class="h-16 px-6 py-3 text-sm text-[#475467] whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">{{ row.ina }}</td>
-                  <td class="h-16 px-6 py-3 text-sm text-[#475467] whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">{{ row.telephone }}</td>
-                  <td class="h-16 px-6 py-3 text-sm text-[#475467] whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">{{ row.cooperative }}</td>
+                  <td class="h-16 px-6 py-3 text-sm whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">
+                    <EditableCell :value="row.codeParcelles" @commit="(v) => prodStore.updateProducteur(row.id, { codeParcelles: v })" />
+                  </td>
+                  <td class="h-16 px-6 py-3 text-sm whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">
+                    <EditableCell :value="row.ina" @commit="(v) => prodStore.updateProducteur(row.id, { ina: v })" />
+                  </td>
+                  <td class="h-16 px-6 py-3 text-sm whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">
+                    <EditableCell :value="row.telephone" @commit="(v) => prodStore.updateProducteur(row.id, { telephone: v })" />
+                  </td>
+                  <td class="h-16 px-6 py-3 text-sm whitespace-nowrap" style="font-family: var(--ds-typography-font-family-inter)">
+                    <EditableCell :value="row.cooperative" @commit="(v) => prodStore.updateProducteur(row.id, { cooperative: v })" />
+                  </td>
                   <td class="h-16 px-6 py-3">
                     <div class="flex items-center gap-1">
                       <button class="flex items-center justify-center w-8 h-8 rounded-md text-[#667085] hover:bg-[#f2f4f7] transition-colors">
@@ -181,6 +187,7 @@ import { Users, MapPin, Layers, Search, Map, LayoutGrid, MoreVertical, Pencil, T
 import Header from '~/components/layout/Header.vue'
 import MetricCard from '~/components/ui/MetricCard.vue'
 import { useProducteursStore } from '~/stores/producteurs'
+import type { Producteur } from '~/types/producteur'
 
 defineEmits<{ add: [] }>()
 
@@ -209,5 +216,15 @@ const filteredRows = computed(() => {
 
 function initials(prenom: string, nom: string) {
   return (prenom[0] ?? '') + (nom[0] ?? '')
+}
+
+// Édition inline du nom : « Prénom Nom » re-splitté sur le premier espace.
+function updateName(row: Producteur, v: string) {
+  const t = v.trim()
+  if (!t) return
+  const i = t.indexOf(' ')
+  const prenom = i === -1 ? t : t.slice(0, i)
+  const nom    = i === -1 ? '' : t.slice(i + 1)
+  prodStore.updateProducteur(row.id, { prenom, nom })
 }
 </script>

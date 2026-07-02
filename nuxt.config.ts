@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/design-system.css',
     '~/assets/css/main.css',
+    'maplibre-gl/dist/maplibre-gl.css',
   ],
 
   dir: {
