@@ -15,6 +15,7 @@ export interface CellData {
   value:      string
   hasError?:  boolean   // fond rose + triangle rouge
   hasWarning?: boolean  // triangle orange + "Champ vide" italic
+  corrected?: boolean   // erreur corrigée en ligne (TOQ-577/578) → check vert
 }
 
 export interface DataRow {

@@ -26,5 +26,11 @@ export const useProducteursStore = defineStore('producteurs', {
       this.stats.count     += list.length
       this.stats.parcelles += list.length
     },
+
+    // Édition inline d'un champ producteur depuis la liste ID (clic sur la cellule).
+    updateProducteur(id: string, patch: Partial<Producteur>) {
+      const p = this.producteurs.find((x) => x.id === id)
+      if (p) Object.assign(p, patch)
+    },
   },
 })

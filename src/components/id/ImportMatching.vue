@@ -73,7 +73,7 @@
               <div class="px-6 pt-6">
                 <p class="text-[18px] font-semibold text-text-primary leading-7" style="font-family: var(--ds-typography-font-family-poppins)">Finaliser l'import</p>
                 <p class="mt-1 text-sm text-text-secondary leading-5" style="font-family: var(--ds-typography-font-family-poppins)">
-                  {{ totalMatched.toLocaleString('fr-FR') }} producteurs seront ajoutés à votre base ID. Cette action est irréversible.
+                  {{ readyCount.toLocaleString('fr-FR') }} producteurs seront ajoutés à ta base ID. Cette action est irréversible.
                 </p>
               </div>
               <button
@@ -118,6 +118,38 @@
               <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
                 <DsButton label="Annuler" variant="secondary-gray" @click="showFinalizeWarningsModal = false" />
                 <DsButton label="Finaliser quand même" variant="primary" @click="onFinalize" />
+              </div>
+            </div>
+          </div>
+        </Transition>
+
+        <!-- ── Modal de confirmation — Finaliser les valides (rejets mis de côté) ── -->
+        <Transition name="cancel-modal">
+          <div v-if="showFinalizePartialModal" class="absolute inset-0 z-50 flex items-center justify-center px-8">
+            <div class="absolute inset-0 bg-[#0c111d]/70 backdrop-blur-sm" @click="showFinalizePartialModal = false" />
+            <div class="relative bg-white rounded-xl w-full max-w-[544px] overflow-hidden shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.08),0px_8px_8px_-4px_rgba(16,24,40,0.03)]">
+              <!-- Header -->
+              <div class="flex gap-4 items-start px-6 pt-6">
+                <div class="flex items-center justify-center size-12 rounded-full bg-[#fef0c7] shrink-0">
+                  <AlertTriangle :size="24" class="text-[#f79009]" />
+                </div>
+                <div class="flex flex-col gap-1 flex-1 min-w-0 pr-8">
+                  <p class="text-[18px] font-semibold text-text-primary leading-7" style="font-family: var(--ds-typography-font-family-poppins)">Finaliser les producteurs valides</p>
+                  <p class="text-sm text-text-secondary leading-5" style="font-family: var(--ds-typography-font-family-poppins)">
+                    {{ readyCount.toLocaleString('fr-FR') }} producteurs valides seront ajoutés à ta base ID. Les {{ attentionCount.toLocaleString('fr-FR') }} producteurs en erreur sont mis de côté pour correction. Cette action est irréversible.
+                  </p>
+                </div>
+              </div>
+              <button
+                class="absolute top-3 right-3 flex items-center justify-center w-11 h-11 rounded-lg text-text-quaternary hover:bg-surface transition-colors"
+                @click="showFinalizePartialModal = false"
+              >
+                <X :size="24" />
+              </button>
+              <!-- Footer -->
+              <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
+                <DsButton label="Annuler" variant="secondary-gray" @click="showFinalizePartialModal = false" />
+                <DsButton label="Finaliser les valides" variant="primary" @click="onFinalize" />
               </div>
             </div>
           </div>
@@ -174,9 +206,9 @@
           <div v-if="!isProcessingError && !isRetrying" class="flex items-center justify-between mx-6 mt-4 p-4 bg-surface rounded-xl shrink-0">
             <p class="text-base leading-6" style="font-family: var(--ds-typography-font-family-inter)">
               <span class="font-semibold text-text-primary" style="font-family: var(--ds-typography-font-family-poppins)">
-                {{ totalMatched.toLocaleString('fr-FR') }} producteurs
+                {{ readyCount.toLocaleString('fr-FR') }} producteurs
               </span>
-              {{ ' ' }}correctement matchés sur {{ totalExpected.toLocaleString('fr-FR') }}.
+              {{ ' ' }}prêts à être créés<template v-if="attentionCount > 0">, <span class="font-semibold text-[#b42318]" style="font-family: var(--ds-typography-font-family-poppins)">{{ attentionCount.toLocaleString('fr-FR') }} à corriger</span></template>.
             </p>
             <div class="flex items-center gap-2">
               <div
@@ -261,10 +293,10 @@
                   </svg>
                   Fichier Excel
                   <span
-                    v-if="rowResult?.warningCount"
+                    v-if="warningCount"
                     class="flex items-center px-2 py-0.5 bg-[#fffaeb] border border-[#fedf89] rounded-full text-xs font-medium text-[#b54708]"
                     style="font-family: var(--ds-typography-font-family-inter)"
-                  >{{ rowResult.warningCount }}</span>
+                  >{{ warningCount }}</span>
                 </button>
               </div>
             </div>
@@ -272,63 +304,46 @@
             <!-- Actions -->
             <div class="flex items-center gap-2 shrink-0">
 
-              <!-- Dropdown: Voir toutes les colonnes -->
-              <div ref="columnsDropdownRef" class="relative">
-                <button
-                  class="flex items-center gap-1 px-[14px] py-[10px] bg-white border border-[#d0d5dd] rounded-lg shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] text-sm font-semibold text-[#344054] transition-colors hover:bg-[#f9fafb]"
-                  style="font-family: var(--ds-typography-font-family-poppins)"
-                  @click="showColumnsDropdown = !showColumnsDropdown"
-                >
-                  {{ activeTab === 'concordance' ? 'Voir toutes les colonnes' : 'Voir toutes les lignes' }}
-                  <ChevronDown :size="16" class="text-[#667085] transition-transform" :class="showColumnsDropdown ? 'rotate-180' : ''" />
-                </button>
-                <Transition name="dropdown">
+              <!-- Colonnes visibles — dropdown du design system, cases DsCheckbox -->
+              <DsDropdown
+                v-model:open="showColumnsDropdown"
+                trigger="button"
+                :button-label="activeTab === 'concordance' ? 'Voir toutes les colonnes' : 'Voir toutes les lignes'"
+              >
+                <div class="py-1">
                   <div
-                    v-if="showColumnsDropdown"
-                    class="absolute right-0 top-full mt-1 z-50 bg-white border border-[#eaecf0] rounded-lg shadow-[0px_4px_6px_-2px_rgba(16,24,40,0.03),0px_12px_16px_-4px_rgba(16,24,40,0.08)] min-w-[220px] py-1 overflow-hidden"
+                    v-for="col in result.columns"
+                    :key="col.tolbiColumn"
+                    class="flex items-center px-3.5 py-2 hover:bg-[#f9fafb]"
                   >
-                    <p class="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wide" style="font-family: var(--ds-typography-font-family-inter)">Colonnes visibles</p>
-                    <div
-                      v-for="col in result.columns"
-                      :key="col.tolbiColumn"
-                      class="flex items-center gap-3 px-4 py-2 hover:bg-[#f9fafb] cursor-pointer"
-                    >
-                      <input type="checkbox" checked class="rounded accent-[#1D9E75] cursor-pointer" :id="`col-${col.tolbiColumn}`" />
-                      <label :for="`col-${col.tolbiColumn}`" class="text-sm text-text-secondary cursor-pointer" style="font-family: var(--ds-typography-font-family-inter)">
-                        {{ col.tolbiColumn }}
-                      </label>
-                    </div>
+                    <DsCheckbox
+                      :model-value="!hiddenColumns.has(col.tolbiColumn)"
+                      size="sm"
+                      :label="col.tolbiColumn"
+                      @update:model-value="() => toggleColumn(col.tolbiColumn)"
+                    />
                   </div>
-                </Transition>
-              </div>
+                </div>
+              </DsDropdown>
 
-              <!-- Dropdown: Exporter sous format Excel -->
-              <div ref="exportDropdownRef" class="relative">
-                <button
-                  class="flex items-center gap-1 px-[14px] py-[10px] bg-white border border-[#d0d5dd] rounded-lg shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] text-sm font-semibold transition-colors"
-                  :class="isProcessingError ? 'text-[#98a2b3] cursor-not-allowed' : 'text-[#344054] hover:bg-[#f9fafb]'"
-                  style="font-family: var(--ds-typography-font-family-poppins)"
-                  :disabled="isProcessingError"
-                  @click="!isProcessingError && (showExportDropdown = !showExportDropdown)"
+              <!-- Export — dropdown du design system (DsDropdown), cohérent avec les autres modules -->
+              <div :class="isProcessingError ? 'opacity-50 pointer-events-none' : ''">
+                <DsDropdown
+                  v-model:open="showExportDropdown"
+                  trigger="button"
+                  button-label="Exporter sous format Excel"
                 >
-                  Exporter sous format Excel
-                  <ChevronDown :size="16" class="transition-transform" :class="[isProcessingError ? 'text-[#98a2b3]' : 'text-[#667085]', showExportDropdown ? 'rotate-180' : '']" />
-                </button>
-                <Transition name="dropdown">
-                  <div
-                    v-if="showExportDropdown"
-                    class="absolute right-0 top-full mt-1 z-50 bg-white border border-[#eaecf0] rounded-lg shadow-[0px_4px_6px_-2px_rgba(16,24,40,0.03),0px_12px_16px_-4px_rgba(16,24,40,0.08)] min-w-[220px] py-1 overflow-hidden"
-                  >
-                    <button class="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-text-secondary hover:bg-[#f9fafb] text-left" style="font-family: var(--ds-typography-font-family-inter)">
-                      <FileDown :size="16" class="text-text-tertiary shrink-0" />
-                      Exporter la concordance
-                    </button>
-                    <button class="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-text-secondary hover:bg-[#f9fafb] text-left" style="font-family: var(--ds-typography-font-family-inter)">
-                      <FileDown :size="16" class="text-text-tertiary shrink-0" />
-                      Exporter toutes les données
-                    </button>
-                  </div>
-                </Transition>
+                  <DsDropdownItem
+                    v-if="hasRowErrors"
+                    class="ds-dropdown-item--danger"
+                    :label="`Rejets (${attentionCount.toLocaleString('fr-FR')})`"
+                    icon="file-x-03"
+                    @click="exportRejets"
+                  />
+                  <DsDropdownDivider v-if="hasRowErrors" />
+                  <DsDropdownItem label="Concordance" icon="file-check-03" @click="exportConcordance" />
+                  <DsDropdownItem label="Toutes les données" icon="file-download-03" @click="exportToutesDonnees" />
+                </DsDropdown>
               </div>
 
             </div>
@@ -415,7 +430,7 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="row in rowResult.rows" :key="`geo-row-${row.index}`"
+                    v-for="row in workingRows" :key="`geo-row-${row.index}`"
                     class="border-b border-[#eaecf0] last:border-b-0"
                     :class="row.geoCells.some(c => c.hasError) ? 'bg-[#fef3f2]' : 'bg-white'"
                   >
@@ -424,11 +439,14 @@
                       class="h-16 px-4 py-3 whitespace-nowrap text-sm"
                       style="font-family: var(--ds-typography-font-family-inter)"
                     >
-                      <div v-if="cell.hasError" class="flex items-center gap-2">
-                        <AlertTriangle :size="14" class="text-[#d92d20] shrink-0" />
-                        <span class="font-medium text-[#101828]">{{ cell.value }}</span>
-                      </div>
-                      <span v-else class="font-medium text-[#101828]">{{ cell.value }}</span>
+                      <EditableCell
+                        :value="cell.value"
+                        :has-error="cell.hasError"
+                        :has-warning="cell.hasWarning"
+                        :corrected="cell.corrected"
+                        emphasis
+                        @commit="(v) => applyCellEdit(cell, v)"
+                      />
                     </td>
                   </tr>
                 </tbody>
@@ -449,7 +467,7 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="row in rowResult.rows" :key="`xls-row-${row.index}`"
+                    v-for="row in workingRows" :key="`xls-row-${row.index}`"
                     class="border-b border-[#eaecf0] last:border-b-0"
                     :class="row.excelCells.some(c => c.hasWarning) ? 'bg-[#fffaeb]' : 'bg-white'"
                   >
@@ -458,11 +476,14 @@
                       class="h-16 px-4 py-3 whitespace-nowrap text-sm"
                       style="font-family: var(--ds-typography-font-family-inter)"
                     >
-                      <div v-if="cell.hasWarning" class="flex items-center gap-2">
-                        <AlertTriangle :size="14" class="text-[#f79009] shrink-0" />
-                        <span class="italic text-[#475467]">{{ cell.value }}</span>
-                      </div>
-                      <span v-else :class="ci === 0 ? 'font-semibold text-[#101828]' : 'font-medium text-[#101828]'">{{ cell.value }}</span>
+                      <EditableCell
+                        :value="cell.value"
+                        :has-error="cell.hasError"
+                        :has-warning="cell.hasWarning"
+                        :corrected="cell.corrected"
+                        emphasis
+                        @commit="(v) => applyCellEdit(cell, v)"
+                      />
                     </td>
                   </tr>
                 </tbody>
@@ -495,10 +516,10 @@
               <div class="flex items-center gap-3">
                 <DsButton label="Refaire le traitement" variant="secondary-gray" :disabled="isRetrying" @click="showRetryModal = true" />
                 <DsButton
-                  :label="hasWarnings && !hasErrors && !isProcessingError && !isRetrying ? 'Finaliser malgré les avertissements' : 'Finaliser l\'import'"
-                  :variant="hasErrors || isProcessingError || isRetrying ? 'secondary-gray' : 'primary'"
-                  :disabled="hasErrors || isProcessingError || isRetrying"
-                  @click="hasWarnings && !hasErrors ? showFinalizeWarningsModal = true : showFinalizeModal = true"
+                  :label="finalizeLabel"
+                  :variant="hasStructuralErrors || isProcessingError || isRetrying ? 'secondary-gray' : 'primary'"
+                  :disabled="hasStructuralErrors || isProcessingError || isRetrying"
+                  @click="onFinalizeClick"
                 />
               </div>
             </div>
@@ -514,14 +535,15 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { AlertTriangle, X, Table2, Trash2, ChevronDown, FileDown, Info, Plus } from 'lucide-vue-next'
+import { AlertTriangle, X, Table2, Trash2, Info, Plus } from 'lucide-vue-next'
 import iconDataProcessing from '~/assets/images/icon-data-processing.svg'
 import ScrollArea from '~/components/ui/ScrollArea.vue'
-import { onClickOutside } from '@vueuse/core'
 import { useScenarioStore } from '~/stores/scenario'
-import type { MatchingResult, RowMatchingResult } from '~/types/scenario'
+import { useToastStore } from '~/stores/toast'
+import type { MatchingResult, RowMatchingResult, DataRow, CellData } from '~/types/scenario'
 
 const scenario = useScenarioStore()
+const toast    = useToastStore()
 
 type Phase = 'processing' | 'results'
 type Tab   = 'concordance' | 'fichiers'
@@ -532,16 +554,20 @@ const showCancelModal            = ref(false)
 const showRetryModal             = ref(false)
 const showFinalizeModal          = ref(false)
 const showFinalizeWarningsModal  = ref(false)
+const showFinalizePartialModal   = ref(false)
 const retryMotif      = ref('')
 const isRetrying      = ref(false)
 const showColumnsDropdown = ref(false)
 const showExportDropdown  = ref(false)
-const columnsDropdownRef  = ref<HTMLElement | null>(null)
-const exportDropdownRef   = ref<HTMLElement | null>(null)
+// Colonnes masquées via le sélecteur « Colonnes visibles » (cases DsCheckbox).
+const hiddenColumns = ref<Set<string>>(new Set())
 let timer: ReturnType<typeof setTimeout>
 
-onClickOutside(columnsDropdownRef, () => { showColumnsDropdown.value = false })
-onClickOutside(exportDropdownRef,  () => { showExportDropdown.value  = false })
+function toggleColumn(key: string) {
+  const next = new Set(hiddenColumns.value)
+  next.has(key) ? next.delete(key) : next.add(key)
+  hiddenColumns.value = next
+}
 
 const DEFAULT_RESULT: MatchingResult = {
   totalMatched:  2400,
@@ -572,6 +598,24 @@ const rowResult = computed<RowMatchingResult | null>(() =>
   scenario.producteurs?.rowMatchingResult ?? null,
 )
 
+// Copie de travail mutable des lignes : la correction inline édite ceci, jamais
+// le scénario mock (source en lecture seule). Réamorcée à chaque scénario.
+const workingRows = ref<DataRow[]>([])
+watch(rowResult, (rr) => {
+  workingRows.value = rr ? JSON.parse(JSON.stringify(rr.rows)) as DataRow[] : []
+}, { immediate: true })
+
+// Édition inline d'une cellule (TOQ-577, généralisée à tous les champs).
+// Réévaluation (TOQ-578) : effacer hasError/hasWarning fait chuter les compteurs
+// dérivés → bannière, pastilles, bouton de finalisation et export rejets se recalculent.
+function applyCellEdit(cell: CellData, value: string) {
+  const v = value.trim()
+  if (!v || v === cell.value) return
+  cell.value = v
+  if (cell.hasError)        { cell.hasError = false;   cell.corrected = true }
+  else if (cell.hasWarning) { cell.hasWarning = false; cell.corrected = true }
+}
+
 const result = computed<MatchingResult>(() =>
   scenario.producteurs?.matchingResult ?? DEFAULT_RESULT,
 )
@@ -588,15 +632,35 @@ const informationCount = computed(() =>
   result.value.columns.filter(c => c.isNewEntry).length,
 )
 
-// Erreurs/avertissements fichiers (fichiers tab)
-const rowErrorCount   = computed(() => rowResult.value?.errorCount   ?? 0)
-const warningCount    = computed(() => rowResult.value?.warningCount  ?? 0)
+// Erreurs/avertissements fichiers (fichiers tab) — dérivés des cellules réelles
+// de la copie de travail, pour que la correction inline se répercute partout.
+const rowErrorCount = computed(() => workingRows.value.filter(r => r.geoCells.some(c => c.hasError)).length)
+const warningCount  = computed(() => workingRows.value.filter(r => r.excelCells.some(c => c.hasWarning)).length)
 
 // Total pour le banner : somme des deux sources
 const errorCount  = computed(() => columnErrorCount.value + rowErrorCount.value)
 
 const hasErrors   = computed(() => errorCount.value > 0)
 const hasWarnings = computed(() => warningCount.value > 0)
+
+// Erreurs structurelles (concordance des colonnes) : elles concernent tout le
+// fichier — impossible de scinder producteur par producteur, la finalisation
+// reste bloquée tant qu'elles ne sont pas résolues.
+const hasStructuralErrors = computed(() => columnErrorCount.value > 0)
+// Erreurs de données ligne à ligne : ce sont les rejets. On peut finaliser les
+// producteurs valides et mettre ceux-là de côté pour correction.
+const hasRowErrors = computed(() => rowErrorCount.value > 0)
+
+// Résumé « prêts à créer » / « à corriger » (TOQ-497) — dérivé des compteurs réels.
+const attentionCount = computed(() => rowErrorCount.value)
+const readyCount     = computed(() => Math.max(0, totalExpected.value - attentionCount.value))
+
+const finalizeLabel = computed(() => {
+  if (hasStructuralErrors.value) return "Finaliser l'import"
+  if (hasRowErrors.value)  return `Finaliser les ${readyCount.value.toLocaleString('fr-FR')} valides`
+  if (hasWarnings.value)   return 'Finaliser malgré les avertissements'
+  return "Finaliser l'import"
+})
 
 function startProcessing() {
   clearTimeout(timer)
@@ -607,12 +671,83 @@ function startProcessing() {
 
 watch(() => scenario.activeId, () => { startProcessing() })
 
-const emit = defineEmits<{ back: []; add: []; cancel: []; 'finalize-start': [] }>()
+const emit = defineEmits<{ back: []; add: []; cancel: []; 'finalize-start': [summary: { ready: number; attention: number }] }>()
+
+function onFinalizeClick() {
+  if (hasRowErrors.value)      showFinalizePartialModal.value = true
+  else if (hasWarnings.value)  showFinalizeWarningsModal.value = true
+  else                         showFinalizeModal.value = true
+}
 
 function onFinalize() {
   showFinalizeModal.value = false
   showFinalizeWarningsModal.value = false
-  emit('finalize-start')
+  showFinalizePartialModal.value = false
+  emit('finalize-start', { ready: readyCount.value, attention: attentionCount.value })
+}
+
+// ── Exports (CSV compatible Excel) — TOQ-575 ────────────────────────
+// BOM UTF-8 pour que les accents (Cissé, préfecture…) s'ouvrent bien dans Excel.
+function downloadCsv(filename: string, matrix: (string | number)[][]) {
+  const csv = matrix
+    .map(row => row.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+const today = () => new Date().toISOString().slice(0, 10)
+
+// Producteurs en erreur → fichier « Rejets » pour correction externe et réimport.
+function exportRejets() {
+  showExportDropdown.value = false
+  const rr = rowResult.value
+  if (!rr) return
+  const rejets = rr.rows.filter(r => r.geoCells.some(c => c.hasError))
+  const matrix: (string | number)[][] = [
+    ['Colonnes en erreur', ...rr.geoColumns, ...rr.excelColumns],
+    ...rejets.map(r => {
+      const motif = r.geoCells.map((c, i) => (c.hasError ? rr.geoColumns[i] : null)).filter(Boolean).join(', ')
+      return [motif, ...r.geoCells.map(c => c.value), ...r.excelCells.map(c => c.value)]
+    }),
+  ]
+  downloadCsv(`rejets-import-${today()}.csv`, matrix)
+  toast.show({
+    title:       'Rejets exportés',
+    description: `${attentionCount.value.toLocaleString('fr-FR')} producteurs à corriger. Corrige-les puis relance un import.`,
+    duration:    8000,
+  })
+}
+
+function exportConcordance() {
+  showExportDropdown.value = false
+  const matrix: (string | number)[][] = [
+    ['Vos colonnes', 'Colonnes Tolbi', 'Statut'],
+    ...result.value.columns.map(c => [
+      c.yourColumn ?? '(colonne manquante)',
+      c.tolbiColumn,
+      c.yourColumn === null ? 'Manquante' : c.isNewEntry ? 'Nouvelle entrée' : 'OK',
+    ]),
+  ]
+  downloadCsv(`concordance-import-${today()}.csv`, matrix)
+  toast.show({ title: 'Concordance exportée', description: 'La correspondance des colonnes est dans tes téléchargements.' })
+}
+
+function exportToutesDonnees() {
+  showExportDropdown.value = false
+  const rr = rowResult.value
+  if (!rr) { exportConcordance(); return }
+  const matrix: (string | number)[][] = [
+    [...rr.geoColumns, ...rr.excelColumns],
+    ...rr.rows.map(r => [...r.geoCells.map(c => c.value), ...r.excelCells.map(c => c.value)]),
+  ]
+  downloadCsv(`import-donnees-${today()}.csv`, matrix)
+  toast.show({ title: 'Données exportées', description: `${totalMatched.value.toLocaleString('fr-FR')} producteurs dans tes téléchargements.` })
 }
 
 function onRetry() {
