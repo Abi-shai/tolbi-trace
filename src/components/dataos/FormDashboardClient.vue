@@ -93,7 +93,8 @@
                 <tr
                   v-for="row in filteredRows"
                   :key="row.id"
-                  class="border-b border-border last:border-b-0 hover:bg-[#f9fafb] transition-colors"
+                  class="border-b border-border last:border-b-0 hover:bg-[#f9fafb] transition-colors cursor-pointer"
+                  @click="detailTarget = row"
                 >
                   <td class="h-[52px] px-6 text-sm text-text-secondary whitespace-nowrap">{{ row.niveau }}</td>
                   <td class="h-[52px] px-6">
@@ -104,10 +105,10 @@
                   <td class="h-[52px] px-6 text-sm text-text-secondary whitespace-nowrap">{{ row.prenomEnqueteur }}</td>
                   <td class="h-[52px] px-6">
                     <div class="flex items-center gap-1">
-                      <button class="flex items-center justify-center w-8 h-8 rounded-md text-text-quaternary hover:bg-[#f2f4f7] transition-colors" aria-label="Modifier" @click="editTarget = row">
+                      <button class="flex items-center justify-center w-8 h-8 rounded-md text-text-quaternary hover:bg-[#f2f4f7] transition-colors" aria-label="Modifier" @click.stop="editTarget = row">
                         <Pencil :size="16" />
                       </button>
-                      <button class="flex items-center justify-center w-8 h-8 rounded-md text-text-quaternary hover:bg-[#fef3f2] hover:text-[#d92d20] transition-colors" aria-label="Supprimer">
+                      <button class="flex items-center justify-center w-8 h-8 rounded-md text-text-quaternary hover:bg-[#fef3f2] hover:text-[#d92d20] transition-colors" aria-label="Supprimer" @click.stop>
                         <Trash2 :size="16" />
                       </button>
                     </div>
@@ -122,6 +123,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Détail d'une réponse (slide-over lecture seule, ouvert au clic sur une ligne) -->
+    <ResponseDetailPanel
+      v-if="detailTarget"
+      :reponse="detailTarget"
+      @close="detailTarget = null"
+    />
 
     <!-- Édition d'une réponse (slide-over + confirmation si abandon) -->
     <ResponseEditPanel
@@ -140,6 +148,7 @@ import { LayoutGrid, Map, Pencil, Trash2, CircleCheck, Clock } from 'lucide-vue-
 import Header from '~/components/layout/Header.vue'
 import MetricCard from '~/components/ui/MetricCard.vue'
 import ResponseEditPanel from '~/components/dataos/ResponseEditPanel.vue'
+import ResponseDetailPanel from '~/components/dataos/ResponseDetailPanel.vue'
 import { useDataOsStore } from '~/stores/dataos'
 import { useToastStore } from '~/stores/toast'
 import { useUIStore } from '~/stores/ui'
@@ -182,6 +191,9 @@ const filteredRows = computed(() => {
     r.prenomEnqueteur.toLowerCase().includes(q),
   )
 })
+
+// ── Détail d'une réponse (slide-over lecture seule, clic sur une ligne) ──
+const detailTarget = ref<SuiviReponse | null>(null)
 
 // ── Édition d'une réponse (slide-over) ──
 const editTarget = ref<SuiviReponse | null>(null)
