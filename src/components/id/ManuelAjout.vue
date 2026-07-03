@@ -39,6 +39,64 @@
             </div>
           </Transition>
 
+          <!-- ── Confirmation : supprimer un champ supplémentaire (schéma partagé) ── -->
+          <Transition name="ma-confirm">
+            <div v-if="champToDelete" class="absolute inset-0 z-50 flex items-center justify-center px-8">
+              <div class="absolute inset-0 bg-modal-overlay/70 backdrop-blur-sm" @click="champToDelete = null" />
+              <div class="relative bg-white rounded-xl w-full max-w-[544px] overflow-hidden shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.08),0px_8px_8px_-4px_rgba(16,24,40,0.03)]">
+                <div class="flex gap-4 items-start px-6 pt-6">
+                  <div class="flex items-center justify-center size-12 rounded-full bg-[#fee4e2] shrink-0">
+                    <Trash2 :size="24" class="text-[#d92d20]" />
+                  </div>
+                  <div class="flex flex-col gap-1 flex-1 min-w-0 pr-8">
+                    <p class="text-[18px] font-semibold text-text-primary leading-7">Supprimer ce champ</p>
+                    <p class="text-sm text-text-secondary leading-5"><span v-if="champToDelete.label.trim()">Le champ « {{ champToDelete.label }} »</span><span v-else>Ce champ</span><template v-if="champToDelete.established"> sera retiré de tous les producteurs.<template v-if="champToDeleteUsage > 0"> {{ champToDeleteUsage.toLocaleString('fr-FR') }} valeur{{ champToDeleteUsage > 1 ? 's' : '' }} déjà saisie{{ champToDeleteUsage > 1 ? 's' : '' }} {{ champToDeleteUsage > 1 ? 'seront perdues' : 'sera perdue' }}.</template> Cette action est irréversible.</template><template v-else> sera supprimé.</template></p>
+                  </div>
+                </div>
+                <button
+                  class="absolute top-3 right-3 flex items-center justify-center w-11 h-11 rounded-lg text-text-quaternary hover:bg-surface transition-colors"
+                  @click="champToDelete = null"
+                >
+                  <X :size="20" />
+                </button>
+                <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
+                  <DsButton label="Conserver le champ" variant="secondary-gray" @click="champToDelete = null" />
+                  <DsButton label="Supprimer le champ" variant="danger" @click="confirmRemoveChamp" />
+                </div>
+              </div>
+            </div>
+          </Transition>
+
+          <!-- ── Confirmation : supprimer un producteur saisi du récap ── -->
+          <Transition name="ma-confirm">
+            <div v-if="producteurToDelete" class="absolute inset-0 z-50 flex items-center justify-center px-8">
+              <div class="absolute inset-0 bg-modal-overlay/70 backdrop-blur-sm" @click="producteurToDelete = null" />
+              <div class="relative bg-white rounded-xl w-full max-w-[544px] overflow-hidden shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.08),0px_8px_8px_-4px_rgba(16,24,40,0.03)]">
+                <div class="flex gap-4 items-start px-6 pt-6">
+                  <div class="flex items-center justify-center size-12 rounded-full bg-[#fee4e2] shrink-0">
+                    <Trash2 :size="24" class="text-[#d92d20]" />
+                  </div>
+                  <div class="flex flex-col gap-1 flex-1 min-w-0 pr-8">
+                    <p class="text-[18px] font-semibold text-text-primary leading-7">Supprimer ce producteur</p>
+                    <p class="text-sm text-text-secondary leading-5">
+                      {{ producteurToDelete.prenom }} {{ producteurToDelete.nom }} et ses parcelles seront retirés de la saisie. Cette action est irréversible.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  class="absolute top-3 right-3 flex items-center justify-center w-11 h-11 rounded-lg text-text-quaternary hover:bg-surface transition-colors"
+                  @click="producteurToDelete = null"
+                >
+                  <X :size="20" />
+                </button>
+                <div class="flex items-center justify-end gap-3 px-6 pt-8 pb-6">
+                  <DsButton label="Conserver le producteur" variant="secondary-gray" @click="producteurToDelete = null" />
+                  <DsButton label="Supprimer le producteur" variant="danger" @click="confirmDeleteEntry" />
+                </div>
+              </div>
+            </div>
+          </Transition>
+
           <!-- Bouton fermer -->
           <button
             class="absolute top-5 right-5 z-20 flex items-center justify-center size-9 rounded-lg bg-surface text-text-quaternary hover:bg-surface-active transition-colors"
@@ -94,9 +152,10 @@
                     <div class="flex items-center justify-center size-10 rounded-full bg-surface-alt text-text-quaternary shrink-0">
                       <User :size="20" />
                     </div>
-                    <p class="flex-1 min-w-0 truncate text-sm font-semibold text-text-primary">
-                      {{ p.prenom }} {{ p.nom }}
-                    </p>
+                    <div class="flex-1 min-w-0 flex flex-col">
+                      <p class="truncate text-sm font-semibold text-text-primary">{{ p.prenom }} {{ p.nom }}</p>
+                      <p v-if="p.telephone" class="truncate text-sm text-text-tertiary">{{ p.telephone }}</p>
+                    </div>
                     <div class="flex flex-col items-end text-right mr-1">
                       <span class="text-sm font-semibold text-text-primary">{{ formatHa(p.surfaceHa) }} ha</span>
                       <span class="text-sm text-text-tertiary">{{ p.localite || '—' }}</span>
@@ -109,7 +168,7 @@
                     </button>
                     <button
                       class="flex items-center justify-center size-9 rounded-lg border border-[#fda29b] bg-white text-[#d92d20] hover:bg-[#fef3f2] transition-colors"
-                      @click="deleteEntry(p.id)"
+                      @click="askDeleteEntry(p)"
                     >
                       <Trash2 :size="16" />
                     </button>
@@ -130,20 +189,86 @@
 
               <!-- Formulaire — Informations (composants du Design System) -->
               <template v-else-if="formStep === 'informations'">
-                <div class="flex flex-col gap-4">
-                  <div class="flex gap-4">
-                    <div class="flex-1 min-w-0 flex flex-col gap-1.5">
-                      <label class="text-sm font-medium text-text-secondary">Prénom</label>
-                      <DsInputField v-model="prenom" type="text" placeholder="Ex: Amadou" />
+                <!-- Étape scrollable : les champs supplémentaires peuvent s'empiler
+                     au-delà de la hauteur du modal. Léger padding pour ne pas rogner
+                     les bordures collées aux arêtes du conteneur (cf. récap). -->
+                <div class="flex-1 min-h-0 overflow-y-auto p-0.5 pr-2">
+                  <div class="flex flex-col gap-4">
+                    <div class="flex gap-4">
+                      <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-text-secondary">Prénom</label>
+                        <DsInputField v-model="prenom" type="text" placeholder="Ex: Amadou" />
+                      </div>
+                      <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-text-secondary">Nom</label>
+                        <DsInputField v-model="nom" type="text" placeholder="Ex: Diallo" />
+                      </div>
                     </div>
-                    <div class="flex-1 min-w-0 flex flex-col gap-1.5">
-                      <label class="text-sm font-medium text-text-secondary">Nom</label>
-                      <DsInputField v-model="nom" type="text" placeholder="Ex: Diallo" />
+                    <div class="flex gap-4">
+                      <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-text-secondary">Téléphone</label>
+                        <PhoneField v-model="telephone" />
+                        <p class="text-sm text-text-tertiary">Requis pour le partage WhatsApp</p>
+                      </div>
+                      <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-text-secondary">Code NAT (optionnel)</label>
+                        <DsInputField v-model="codeNat" type="text" placeholder="Ex: NAT-2024-00123" />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-text-secondary">Culture principale</label>
-                    <DsInputDropdown v-model="culture" placeholder="Ex: Cacao" :options="cultureOptions" />
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-sm font-medium text-text-secondary">Culture principale</label>
+                      <DsInputDropdown v-model="culture" placeholder="Ex: Cacao" :options="cultureOptions" />
+                    </div>
+
+                    <!-- ── Champs supplémentaires (schéma partagé de la session) ── -->
+                    <div class="h-px bg-border w-full mt-2" />
+                    <div class="flex flex-col gap-1">
+                      <p class="text-sm font-semibold text-text-secondary leading-5">Champs supplémentaires</p>
+                      <p class="text-sm text-text-tertiary leading-5">Ajoute des informations propres à ta collecte. Elles seront demandées pour chaque producteur.</p>
+                    </div>
+
+                    <div v-for="c in champsSchema" :key="c.id" class="flex gap-3 items-end">
+                      <!-- Mode « définir » : libellé + type éditables tant que le champ n'a pas été figé. -->
+                      <template v-if="!c.established">
+                        <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                          <label class="text-sm font-medium text-text-secondary">Libellé du champ</label>
+                          <DsInputField v-model="c.label" type="text" placeholder="Ex: Code coopérative" />
+                        </div>
+                        <div class="w-[180px] shrink-0 flex flex-col gap-1.5">
+                          <label class="text-sm font-medium text-text-secondary">Type</label>
+                          <DsInputDropdown v-model="c.type" :options="champTypeOptions" />
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                          <label class="text-sm font-medium text-text-secondary">Valeur</label>
+                          <PhoneField v-if="c.type === 'phone'" v-model="champValues[c.id]" />
+                          <DsInputField v-else v-model="champValues[c.id]" :type="champInputType(c.type)" :inputmode="champInputMode(c.type)" placeholder="Valeur" />
+                        </div>
+                      </template>
+                      <!-- Mode « remplir » : le champ est figé, on ne renseigne que la valeur. -->
+                      <template v-else>
+                        <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                          <label class="text-sm font-medium text-text-secondary">{{ c.label }}</label>
+                          <PhoneField v-if="c.type === 'phone'" v-model="champValues[c.id]" />
+                          <DsInputField v-else v-model="champValues[c.id]" :type="champInputType(c.type)" :inputmode="champInputMode(c.type)" placeholder="Valeur" />
+                        </div>
+                      </template>
+                      <button
+                        class="flex items-center justify-center size-11 shrink-0 rounded-lg border border-[#fda29b] bg-white text-[#d92d20] hover:bg-[#fef3f2] transition-colors"
+                        title="Supprimer le champ"
+                        @click="askRemoveChamp(c)"
+                      >
+                        <Trash2 :size="18" />
+                      </button>
+                    </div>
+
+                    <!-- Toujours actif : ajoute une nouvelle ligne de champ à chaque clic. -->
+                    <button
+                      class="flex items-center justify-center gap-2 w-full px-6 py-5 bg-white border border-dashed border-border-strong rounded-xl text-text-secondary hover:bg-surface-alt transition-colors"
+                      @click="addChamp"
+                    >
+                      <Plus :size="20" />
+                      <span class="text-sm font-medium" style="font-family: var(--ds-typography-font-family-inter)">Ajouter un champ</span>
+                    </button>
                   </div>
                 </div>
               </template>
@@ -267,14 +392,47 @@ import type { Map as MaplibreMap, GeoJSONSource, MapMouseEvent, StyleSpecificati
 
 type LngLat = [number, number]
 
+// Types de « champ supplémentaire » — sous-ensemble du vocabulaire du form builder
+// (dataos `QuestionFieldType`), sans « Liste de producteurs » (hors-sujet ici) et
+// augmenté de « Nombre ».
+export type ChampType = 'text' | 'phone' | 'date' | 'number'
+
+// Définition partagée d'un champ supplémentaire pour la session de saisie : on la
+// définit une fois (libellé + type), on remplit sa valeur pour chaque producteur.
+// `established` = le champ a déjà été figé par au moins une validation → libellé/type
+// non ré-éditables (mode « remplir »). Sinon mode « définir » (libellé + type éditables).
+interface ChampDef { id: string; label: string; type: ChampType; established: boolean }
+
+// Valeur d'un champ supplémentaire, dénormalisée pour le payload de finalisation.
+export interface ChampValeur { label: string; type: ChampType; value: string }
+
 export interface ProducteurManuel {
   id:        string
   prenom:    string
   nom:       string
+  telephone: string
+  codeNat:   string
   culture:   string
   surfaceHa: number
   localite:  string
   polygons:  LngLat[][]
+  champs:    ChampValeur[]
+}
+
+// Producteur tel que stocké en interne : valeurs des champs supplémentaires indexées
+// par l'id du schéma partagé (permet la rétroactivité — un producteur saisi avant
+// l'ajout d'un champ a simplement une valeur absente).
+interface StoredProducteur {
+  id:          string
+  prenom:      string
+  nom:         string
+  telephone:   string
+  codeNat:     string
+  culture:     string
+  surfaceHa:   number
+  localite:    string
+  polygons:    LngLat[][]
+  champValues: Record<string, string>
 }
 
 const emit = defineEmits<{ close: []; finalize: [payload: { count: number; entries: ProducteurManuel[] }] }>()
@@ -292,14 +450,26 @@ const cultureOptions = ['Cacao', 'Café', 'Hévéa (caoutchouc)', 'Anacarde', 'P
 
 const view     = ref<View>('recap')
 const formStep = ref<FormStep>('informations')
-const producteurs = ref<ProducteurManuel[]>([])
+const producteurs = ref<StoredProducteur[]>([])
 const showDiscardModal = ref(false)
 
+// Schéma partagé des champs supplémentaires (défini une fois, rempli par producteur).
+const champsSchema = ref<ChampDef[]>([])
+const champTypeOptions = [
+  { label: 'Texte',     value: 'text'   },
+  { label: 'Téléphone', value: 'phone'  },
+  { label: 'Date',      value: 'date'   },
+  { label: 'Nombre',    value: 'number' },
+]
+
 // ── Brouillon en cours ──
-const editingId = ref<string | null>(null)
-const prenom    = ref('')
-const nom       = ref('')
-const culture   = ref('')
+const editingId   = ref<string | null>(null)
+const prenom      = ref('')
+const nom         = ref('')
+const telephone   = ref('')
+const codeNat     = ref('')
+const culture     = ref('')
+const champValues = ref<Record<string, string>>({})   // fieldId -> valeur (producteur en cours)
 
 // ── Carte / parcelles ──
 const ESRI_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -320,7 +490,38 @@ const surfaceHa      = ref(0)
 const localite       = ref('')
 const localiteSearch = ref('')
 
-const canContinue = computed(() => prenom.value.trim() !== '' && nom.value.trim() !== '')
+const canContinue = computed(() => prenom.value.trim() !== '' && nom.value.trim() !== '' && telephone.value.trim() !== '')
+
+// Input de valeur selon le type de champ : le type reste un signal (bon clavier /
+// format), sans validation stricte — on est en prototype.
+function champInputType(t: ChampType) { return t === 'date' ? 'date' : t === 'number' ? 'number' : 'text' }
+function champInputMode(t: ChampType) { return t === 'phone' ? 'tel' : t === 'number' ? 'numeric' : undefined }
+
+function addChamp() {
+  const id = `champ-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+  champsSchema.value.push({ id, label: '', type: 'text', established: false })
+  champValues.value[id] = ''
+}
+function removeChamp(id: string) {
+  champsSchema.value = champsSchema.value.filter((c) => c.id !== id)
+  delete champValues.value[id]
+  // Les valeurs orphelines des producteurs déjà saisis sont ignorées à l'émission
+  // (on ne dénormalise que les champs présents dans le schéma courant).
+}
+
+// Confirmation avant de retirer un champ figé du schéma partagé (des valeurs peuvent
+// être en jeu sur plusieurs producteurs). Un brouillon non figé se supprime directement.
+const champToDelete = ref<ChampDef | null>(null)
+const champToDeleteUsage = computed(() =>
+  champToDelete.value
+    ? producteurs.value.filter((p) => (p.champValues[champToDelete.value!.id] ?? '').trim() !== '').length
+    : 0,
+)
+function askRemoveChamp(c: ChampDef) { champToDelete.value = c }   // confirmation systématique
+function confirmRemoveChamp() {
+  if (champToDelete.value) removeChamp(champToDelete.value.id)
+  champToDelete.value = null
+}
 const canDelete   = computed(() => drawing.value || draftPolygons.value.length > 0)
 
 const surfaceLabel = computed(() => {
@@ -605,7 +806,9 @@ async function searchLocality() {
 // ── Navigation formulaire ──
 function resetDraft() {
   editingId.value = null
-  prenom.value = ''; nom.value = ''; culture.value = ''
+  prenom.value = ''; nom.value = ''; telephone.value = ''; codeNat.value = ''; culture.value = ''
+  // Le schéma partagé reste ; seules les valeurs se réinitialisent (toutes vides).
+  champValues.value = Object.fromEntries(champsSchema.value.map((c) => [c.id, '']))
   draftPolygons.value = []; draftVertices.value = []; drawing.value = false
   selectedIndex.value = null; hoverCursor.value = null
   surfaceHa.value = 0; localite.value = ''
@@ -614,10 +817,13 @@ function resetDraft() {
 
 function startAdd() { resetDraft(); view.value = 'form' }
 
-function editEntry(p: ProducteurManuel) {
+function editEntry(p: StoredProducteur) {
   resetDraft()
   editingId.value = p.id
-  prenom.value = p.prenom; nom.value = p.nom; culture.value = p.culture
+  prenom.value = p.prenom; nom.value = p.nom; telephone.value = p.telephone; codeNat.value = p.codeNat; culture.value = p.culture
+  // Recharge les valeurs connues du producteur ; les champs ajoutés après sa
+  // création restent vides pour lui (rétroactivité).
+  champValues.value = Object.fromEntries(champsSchema.value.map((c) => [c.id, p.champValues[c.id] ?? '']))
   draftPolygons.value = p.polygons.map((poly) => poly.map((pt) => [...pt] as LngLat))
   surfaceHa.value = p.surfaceHa; localite.value = p.localite
   view.value = 'form'
@@ -625,17 +831,33 @@ function editEntry(p: ProducteurManuel) {
 
 function deleteEntry(id: string) { producteurs.value = producteurs.value.filter((p) => p.id !== id) }
 
+// Confirmation avant de retirer un producteur déjà saisi du récap (donnée committée).
+const producteurToDelete = ref<StoredProducteur | null>(null)
+function askDeleteEntry(p: StoredProducteur) { producteurToDelete.value = p }
+function confirmDeleteEntry() {
+  if (producteurToDelete.value) deleteEntry(producteurToDelete.value.id)
+  producteurToDelete.value = null
+}
+
 function cancelDraft() { resetDraft(); view.value = 'recap' }
 
 function commitDraft() {
-  const entry: ProducteurManuel = {
-    id:        editingId.value ?? `manuel-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    prenom:    prenom.value.trim(),
-    nom:       nom.value.trim(),
-    culture:   culture.value,
-    surfaceHa: surfaceHa.value,
-    localite:  localite.value,
-    polygons:  draftPolygons.value.map((poly) => poly.map((pt) => [...pt] as LngLat)),
+  // Les lignes sans libellé sont des brouillons : on les retire du schéma partagé.
+  champsSchema.value = champsSchema.value.filter((c) => c.label.trim() !== '')
+  // Tout champ nommé restant est désormais figé (mode « remplir » ensuite).
+  champsSchema.value.forEach((c) => { c.established = true })
+
+  const entry: StoredProducteur = {
+    id:          editingId.value ?? `manuel-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    prenom:      prenom.value.trim(),
+    nom:         nom.value.trim(),
+    telephone:   telephone.value.trim(),
+    codeNat:     codeNat.value.trim(),
+    culture:     culture.value,
+    surfaceHa:   surfaceHa.value,
+    localite:    localite.value,
+    polygons:    draftPolygons.value.map((poly) => poly.map((pt) => [...pt] as LngLat)),
+    champValues: champsSchema.value.reduce<Record<string, string>>((acc, c) => { acc[c.id] = (champValues.value[c.id] ?? '').trim(); return acc }, {}),
   }
   if (editingId.value) {
     const i = producteurs.value.findIndex((p) => p.id === editingId.value)
@@ -663,7 +885,22 @@ function attemptClose() {
 function confirmDiscard() { showDiscardModal.value = false; emit('close') }
 
 function finalize() {
-  emit('finalize', { count: producteurs.value.length, entries: producteurs.value.map((p) => ({ ...p, polygons: p.polygons.map((poly) => poly.map((pt) => [...pt] as LngLat)) })) })
+  // Dénormalise les champs supplémentaires du schéma courant (labellés) pour chaque
+  // producteur ; valeur absente = chaîne vide (rétroactivité).
+  const schema = champsSchema.value.filter((c) => c.label.trim() !== '')
+  const entries: ProducteurManuel[] = producteurs.value.map((p) => ({
+    id:        p.id,
+    prenom:    p.prenom,
+    nom:       p.nom,
+    telephone: p.telephone,
+    codeNat:   p.codeNat,
+    culture:   p.culture,
+    surfaceHa: p.surfaceHa,
+    localite:  p.localite,
+    polygons:  p.polygons.map((poly) => poly.map((pt) => [...pt] as LngLat)),
+    champs:    schema.map((c) => ({ label: c.label.trim(), type: c.type, value: p.champValues[c.id] ?? '' })),
+  }))
+  emit('finalize', { count: producteurs.value.length, entries })
 }
 
 // La carte n'existe que sur l'étape « Parcelles » : on l'instancie / détruit au bon moment.
