@@ -56,7 +56,14 @@
 
                 <div class="flex items-center gap-2">
                   <span class="text-xs font-semibold text-text-tertiary uppercase tracking-wider">Fichiers</span>
-                  <Info :size="16" class="text-text-quaternary" />
+                  <HoverTooltip
+                    label="Ce qu'on fait de tes fichiers"
+                    supporting-text="On aligne tes données sur le modèle Tolbi et on relie chaque producteur à ses parcelles. Résultat : une identité numérique vérifiable par producteur, socle de tous les autres modules."
+                    placement="top"
+                    arrow="bottom"
+                  >
+                    <Info :size="16" class="text-text-quaternary cursor-help" />
+                  </HoverTooltip>
                 </div>
 
                 <!-- GeoJSON / KML — état erreur scénario -->
@@ -175,7 +182,7 @@
                       </div>
                     </div>
                     <div class="flex flex-col gap-1 items-center text-center">
-                      <p class="text-sm font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-5">Liste des producteurs (Excel)</p>
+                      <p class="text-sm font-semibold text-[color:var(--ds-semantic-text-brand-secondary)] leading-5">Liste des producteurs (Excel) <span class="font-normal text-text-tertiary">(optionnel)</span></p>
                       <p class="text-xs text-text-tertiary leading-[18px]">Déposez le fichier Excel de vos producteurs avec leurs identifiants uniques.</p>
                     </div>
                   </label>
@@ -218,8 +225,8 @@
             <DsButton label="Retour" variant="secondary-gray" @click="handleBack" />
             <DsButton
               label="Continuer"
-              :variant="hasFiles ? 'primary' : 'secondary-gray'"
-              :disabled="!hasFiles"
+              :variant="canContinue ? 'primary' : 'secondary-gray'"
+              :disabled="!canContinue"
               @click="emit('next')"
             />
           </div>
@@ -237,6 +244,7 @@ import { Info, ChevronDown } from 'lucide-vue-next'
 import Header            from '~/components/layout/Header.vue'
 import FileItem          from '~/components/id/FileItem.vue'
 import BackConfirmModal  from '~/components/id/BackConfirmModal.vue'
+import HoverTooltip      from '~/components/ui/HoverTooltip.vue'
 import { useScenarioStore } from '~/stores/scenario'
 import shpPage    from '~/assets/images/upload-ways/shp-page.svg'
 import shpEarmark from '~/assets/images/upload-ways/shp-earmark.svg'
@@ -289,9 +297,10 @@ watch(
 )
 const isInvalidExcel  = ref(false)
 
-const hasFiles = computed(() => {
+// Le fichier géospatial est obligatoire, l'Excel est optionnel : seul le geo débloque la suite.
+const canContinue = computed(() => {
   if (geoUploadError.value) return false
-  return (geoUpload.value?.progress ?? 0) >= 100 || (excelUpload.value?.progress ?? 0) >= 100
+  return (geoUpload.value?.progress ?? 0) >= 100
 })
 
 function startUpload(target: typeof geoUpload | typeof excelUpload, file: File, isGeo = false) {
