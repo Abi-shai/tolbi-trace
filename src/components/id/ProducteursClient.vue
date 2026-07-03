@@ -160,7 +160,7 @@ function onManuelFinalize({ count, entries }: { count: number; entries: Producte
     nom:           e.nom,
     codeParcelles: `${(e.localite || 'AKP').slice(0, 3).toUpperCase()}-${1001 + i}`,
     ina:           '—',
-    telephone:     '—',
+    telephone:     e.telephone || '—',
     cooperative:   '—',
   }))
   prodStore.addMany(nouveaux)
