@@ -2,16 +2,16 @@
   <DsHNav
     :state="navState"
     :breadcrumbs="dsBreadcrumbs"
-    :credits="32"
-    credit-state="good"
+    :credits="session.creditsRemaining"
+    :credit-state="creditState"
     credit-context="home"
-    user-initials="AG"
+    :user-initials="session.userInitials"
     :has-notification="true"
     :modules="modules"
     @learn="handleHome"
-    @settings="() => {}"
+    @settings="goToSettings"
     @notifications="() => {}"
-    @user="() => {}"
+    @user="goToAccount"
     @module-select="handleModuleSelect"
     @click="handleBreadcrumbClick"
   />
@@ -23,27 +23,40 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWorkflowsStore } from '~/stores/workflows'
 import { useDataOsStore } from '~/stores/dataos'
 import { useUIStore } from '~/stores/ui'
+import { useSessionStore } from '~/stores/session'
 
 interface Crumb { label: string; href?: string }
 
 const SUB_LABELS: Record<string, string> = {
-  'qr-codes':    'QR Codes',
-  graphe:        'Traçabilité',
-  agents:        'Équipe',
-  producteurs:   'Producteurs',
-  projets:       'Projets',
+  'qr-codes':        'QR Codes',
+  graphe:            'Traçabilité',
+  agents:            'Équipe',
+  producteurs:       'Producteurs',
+  projets:           'Projets',
+  'tableau-de-bord': 'Tableau de bord',
+  cartes:            'Cartes',
+  identites:         'Identités',
+  transactions:      'Transactions',
 }
 
 const route    = useRoute()
 const router   = useRouter()
 const store       = useWorkflowsStore()
 const dataosStore = useDataOsStore()
+const session     = useSessionStore()
+session.init()
+
+const creditState = computed(() => {
+  const c = session.creditsRemaining
+  return c <= 0 ? 'empty' : c <= 20 ? 'low' : 'good'
+})
 
 const activeSegment = computed(() => route.path.split('/').filter(Boolean)[0] ?? '')
 
 const navState = computed(() => {
   if (activeSegment.value === 'source') return 'Source'
   if (activeSegment.value === 'id')     return 'ID'
+  if (activeSegment.value === 'ina')    return 'ID'   // INA réutilise l'icône ID
   if (activeSegment.value === 'dataos') return 'Data'
   return 'Accueil'
 })
@@ -56,6 +69,8 @@ const modules = computed(() => [
   { name: 'Scan',    label: 'Scan',    active: false,                              disabled: true  },
   { name: 'Data',    label: 'Data',    active: activeSegment.value === 'dataos',   disabled: false },
   { name: 'ID',      label: 'ID',      active: activeSegment.value === 'id',       disabled: false },
+  // INA : même icône de marque que ID (name 'ID'), distingué par le label.
+  { name: 'ID',      label: 'INA',     active: activeSegment.value === 'ina',      disabled: false },
   { name: 'Redd+',   label: 'Redd+',   active: false,                              disabled: true  },
   { name: 'Survey',  label: 'Survey',  active: false,                              disabled: true  },
   { name: 'Yield',   label: 'Yield',   active: false,                              disabled: true  },
@@ -96,6 +111,19 @@ const breadcrumbs = computed<Crumb[]>(() => {
     ]
   }
 
+  // ── INA ──────────────────────────────────────────────────────────
+  if (segments[0] === 'ina') {
+    if (segments.length === 1) return [{ label: 'INA' }]
+    const pageLabel = SUB_LABELS[segments[1]] ?? segments[1]
+    return [
+      { label: 'INA', href: '/ina' },
+      { label: pageLabel            },
+    ]
+  }
+
+  // ── Paramètres (cross-module) ────────────────────────────────────
+  if (segments[0] === 'parametres') return [{ label: 'Paramètres' }]
+
   // ── Data OS ──────────────────────────────────────────────────────
   if (segments[0] === 'dataos') {
     if (segments.length === 1) return [{ label: 'Data OS' }]
@@ -135,8 +163,13 @@ const dsBreadcrumbs = computed(() =>
 
 const uiStore = useUIStore()
 
-async function handleModuleSelect(mod: { name: string }) {
-  const target = mod.name === 'Source' ? '/source/workflows' : mod.name === 'ID' ? '/id' : mod.name === 'Data' ? '/dataos' : null
+async function handleModuleSelect(mod: { name: string; label: string }) {
+  // On route par label : INA partage le name 'ID' (même icône) mais un label distinct.
+  const target = mod.label === 'Source' ? '/source/workflows'
+    : mod.label === 'ID'   ? '/id'
+    : mod.label === 'INA'  ? '/ina'
+    : mod.label === 'Data' ? '/dataos'
+    : null
   if (!target || route.path.startsWith(target)) return
   uiStore.moduleTransition = true
   await Promise.all([
@@ -149,6 +182,7 @@ async function handleModuleSelect(mod: { name: string }) {
 const CRUMB_ROUTES: Record<string, string> = {
   Source:    '/source/workflows',
   ID:        '/id',
+  INA:       '/ina',
   'Data OS': '/dataos',
   Projets:   '/dataos/projets',
 }
@@ -164,10 +198,19 @@ function handleBreadcrumbClick(e: MouseEvent) {
   if (target && route.path !== target) router.push(target)
 }
 
+function goToSettings() {
+  if (route.path !== '/parametres') router.push('/parametres')
+}
+
+function goToAccount() {
+  router.push({ path: '/parametres', query: { onglet: 'compte' } })
+}
+
 async function handleHome() {
   const seg      = route.path.split('/').filter(Boolean)
   const inSource = seg[0] === 'source'
   const inId     = seg[0] === 'id'
+  const inIna    = seg[0] === 'ina'
   const inDataos = seg[0] === 'dataos'
 
   if (inSource && seg.length > 2) {
@@ -180,12 +223,17 @@ async function handleHome() {
     return
   }
 
+  if (inIna && seg.length > 1) {
+    router.push('/ina')
+    return
+  }
+
   if (inDataos && seg.length > 1) {
     router.push('/dataos')
     return
   }
 
-  if (inSource || inId || inDataos) {
+  if (inSource || inId || inIna || inDataos) {
     uiStore.moduleTransition = true
     await Promise.all([router.push('/'), new Promise<void>(r => setTimeout(r, 2000))])
     uiStore.moduleTransition = false

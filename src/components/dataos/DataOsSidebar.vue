@@ -18,6 +18,7 @@
             </IconBtn>
           </div>
           <DsModuleIcon module="Data" :size="48" class="shrink-0" />
+          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
@@ -39,6 +40,7 @@
       >
         <div class="flex flex-col items-center px-2 mb-6">
           <DsModuleIcon module="Data" :size="48" class="shrink-0" />
+          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
@@ -58,6 +60,7 @@
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
+      <OrgSwitcher variant="full" />
       <nav class="flex flex-col gap-1">
         <NavTextBtn
           v-for="tab in tabs"
@@ -75,7 +78,7 @@
 <script setup lang="ts">
 import { reactive, computed, defineComponent, resolveComponent, h, Teleport, ref, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronsLeft, ChevronsRight, Folder, ListChecks, Users, Inbox, BarChart3 } from 'lucide-vue-next'
+import { ChevronsLeft, ChevronsRight, Folder, ListChecks, Inbox, BarChart3 } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { useUIStore } from '~/stores/ui'
 import { useDataOsStore } from '~/stores/dataos'
@@ -93,18 +96,19 @@ const formulaire = computed(() => store.formulaireById(formId.value))
 
 // Onglets de configuration du formulaire — liste plate, sans sectionnage.
 interface FormTab { key: string; label: string; icon: Component }
+// Plus d'onglet « Agents » : la gestion d'agents vit dans Paramètres > Organisation,
+// et l'affectation au formulaire se fait via le slide-over « Agents affectés »
+// depuis l'en-tête des Questions (cf. ADR-0012).
 const tabs: FormTab[] = [
   { key: 'questions', label: 'Questions',          icon: ListChecks },
   { key: 'dashboard', label: 'Suivi des réponses', icon: Inbox },
   { key: 'analytics', label: 'Analytiques',        icon: BarChart3 },
-  { key: 'agents',    label: 'Agents',             icon: Users },
 ]
 
 // Onglet actif déduit de la route (Questions par défaut, sinon la vue courante).
 const activeTab = computed(() => {
   if (route.path.endsWith('/tableau-de-bord')) return 'dashboard'
   if (route.path.endsWith('/analytiques'))     return 'analytics'
-  if (route.path.endsWith('/agents'))          return 'agents'
   return 'questions'
 })
 
@@ -113,7 +117,6 @@ function onTab(tab: FormTab) {
   if (tab.key === 'questions')      router.push(base)
   else if (tab.key === 'dashboard') router.push(`${base}/tableau-de-bord`)
   else if (tab.key === 'analytics') router.push(`${base}/analytiques`)
-  else if (tab.key === 'agents')    router.push(`${base}/agents`)
 }
 
 function goProject() {

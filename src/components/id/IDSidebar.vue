@@ -18,6 +18,7 @@
             </IconBtn>
           </div>
           <DsModuleIcon module="ID" :size="48" class="shrink-0" />
+          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
@@ -42,6 +43,7 @@
       >
         <div class="flex flex-col items-center px-2 mb-6">
           <DsModuleIcon module="ID" :size="48" class="shrink-0" />
+          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
           <div class="w-full h-px bg-border mt-4" />
         </div>
         <div class="flex flex-col gap-2 px-4">
@@ -62,6 +64,7 @@
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
+      <OrgSwitcher variant="full" />
       <nav class="flex flex-col gap-1">
         <NavTextBtn :icon="Users" label="Producteurs" :active="isActive('/id/producteurs')" @click="router.push('/id/producteurs')" />
         <NavTextBtn :icon="TrendingUp" label="Statistiques" :active="isActive('/id/stats')" @click="router.push('/id/stats')" />

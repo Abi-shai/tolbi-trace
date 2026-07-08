@@ -22,6 +22,9 @@ export interface DataRow {
   index:      number
   geoCells:   CellData[]
   excelCells: CellData[]
+  // Motif en clair porté par la ligne (prioritaire sur le motif dérivé de la colonne
+  // en cause). Sert aux anomalies géométriques, qui ne tiennent pas dans une cellule.
+  motif?:     { quoi: string; cons: string }
 }
 
 export interface RowMatchingResult {
@@ -40,6 +43,9 @@ export interface ProducteursState {
   rowMatchingResult?: RowMatchingResult
   processingError?:   boolean
   fileUploadError?:   boolean
+  // Données géométriques riches de la carte-atelier (Correction cartographique,
+  // Phase 2) — points/tracés réels + items à corriger, en regard de la table géo.
+  atelierGeo?:        import('~/types/geo').AtelierGeo
 }
 
 export interface DataOsState {

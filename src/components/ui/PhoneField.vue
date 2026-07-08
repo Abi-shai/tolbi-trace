@@ -2,15 +2,19 @@
   <div ref="rootEl" class="relative">
     <!-- Contrôle : sélecteur d'indicatif (gauche) + numéro formaté (droite). -->
     <div
-      class="flex items-stretch h-11 w-full rounded-lg border bg-white overflow-hidden transition"
-      :class="open
-        ? 'border-[#5b9e78] ring-4 ring-[#0560331a]'
-        : 'border-border-strong focus-within:border-[#5b9e78] focus-within:ring-4 focus-within:ring-[#0560331a]'"
+      class="flex items-stretch h-11 w-full rounded-lg border overflow-hidden transition"
+      :class="disabled
+        ? 'border-border bg-surface cursor-not-allowed'
+        : open
+          ? 'border-[#5b9e78] bg-white ring-4 ring-[#0560331a]'
+          : 'border-border-strong bg-white focus-within:border-[#5b9e78] focus-within:ring-4 focus-within:ring-[#0560331a]'"
     >
       <!-- Bouton pays -->
       <button
         type="button"
-        class="flex items-center gap-1.5 pl-3 pr-2.5 shrink-0 border-r border-border hover:bg-surface transition-colors"
+        class="flex items-center gap-1.5 pl-3 pr-2.5 shrink-0 border-r border-border transition-colors"
+        :class="disabled ? 'cursor-not-allowed' : 'hover:bg-surface'"
+        :disabled="disabled"
         :aria-expanded="open"
         @click="toggle"
       >
@@ -27,7 +31,9 @@
         inputmode="tel"
         autocomplete="tel-national"
         :placeholder="placeholder"
-        class="flex-1 min-w-0 px-3 text-sm text-text-primary placeholder:text-text-quaternary bg-transparent outline-none tabular-nums"
+        :disabled="disabled"
+        class="flex-1 min-w-0 px-3 text-sm placeholder:text-text-quaternary bg-transparent outline-none tabular-nums"
+        :class="disabled ? 'text-text-tertiary cursor-not-allowed' : 'text-text-primary'"
         @input="onInput(($event.target as HTMLInputElement).value)"
       />
     </div>
@@ -78,7 +84,7 @@ import { ChevronDown, Search, Check } from 'lucide-vue-next'
 import { COUNTRIES, DEFAULT_COUNTRY_ISO, countryByIso, maxNationalLen, groupDigits } from '~/data/countries'
 import { COUNTRY_FLAGS } from '~/data/country-flags'
 
-const props = withDefaults(defineProps<{ modelValue?: string }>(), { modelValue: '' })
+const props = withDefaults(defineProps<{ modelValue?: string; disabled?: boolean }>(), { modelValue: '', disabled: false })
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const selectedIso = ref(DEFAULT_COUNTRY_ISO)
@@ -124,7 +130,7 @@ function selectCountry(c: typeof COUNTRIES[number]) {
   nextTick(() => inputEl.value?.focus())
 }
 
-function toggle() { open.value ? close() : openMenu() }
+function toggle() { if (props.disabled) return; open.value ? close() : openMenu() }
 function openMenu() { open.value = true; query.value = ''; nextTick(() => searchEl.value?.focus()) }
 function close() { open.value = false }
 

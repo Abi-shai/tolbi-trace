@@ -15,6 +15,7 @@
           </IconBtn>
         </div>
         <DsModuleIcon module="Data" :size="48" class="shrink-0" />
+        <OrgSwitcher variant="rail" class="mt-3" />
         <div class="w-full h-px bg-border mt-4" />
       </div>
       <div class="flex flex-col gap-2 px-4">
@@ -36,6 +37,7 @@
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
+      <OrgSwitcher variant="full" />
       <nav class="flex flex-col gap-1">
         <NavTextBtn :icon="Folder" label="Projets" :active="isActive('/dataos/projets')" @click="router.push('/dataos/projets')" />
       </nav>
