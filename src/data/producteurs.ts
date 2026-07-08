@@ -1,10 +1,22 @@
 import type { Producteur, ProducteursListeStats } from '~/types/producteur'
 
 export const producteurStats: ProducteursListeStats = {
-  count:     2400,
-  parcelles: 2400,
-  surfaceHa: 537,
+  count:     2394,
+  parcelles: 2394,
+  surfaceHa: 534,
 }
+
+// Producteurs mis de côté à l'import (bucket « à corriger » — Phase 3). Cohabitent
+// dans la liste avec la base, filtrables via le segment. Mélange géo (→ carte-atelier)
+// et attribut (→ correction inline).
+export const producteursACorriger: Producteur[] = [
+  { id: 'ac-1', prenom: 'Awa',     nom: 'Diop',    codeParcelles: '—',        ina: '—',        telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'geo',      origine: 'Géo · sommet',       motif: { quoi: 'Coordonnée hors du Sénégal.', cons: 'Corrige le point sur la carte.' } },
+  { id: 'ac-2', prenom: 'Mamadou', nom: 'Sow',     codeParcelles: '—',        ina: '—',        telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'geo',      origine: 'Géo · parcelle',     motif: { quoi: 'Géométrie manquante.', cons: 'Aucune parcelle rattachée à ce producteur.' } },
+  { id: 'ac-3', prenom: 'Fatou',   nom: 'Ndiaye',  codeParcelles: 'KLK-0071', ina: '20054140', telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'attribut', origine: 'Excel · téléphone',  motif: { quoi: 'Téléphone manquant.', cons: 'Le producteur sera importé sans numéro.' } },
+  { id: 'ac-4', prenom: 'Ibrahim', nom: 'Diallo',  codeParcelles: '—',        ina: '—',        telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'geo',      origine: 'Géo · sommet',       motif: { quoi: 'Sommet aberrant.', cons: 'Un point du tracé sort de la parcelle.' } },
+  { id: 'ac-5', prenom: 'Jean',    nom: 'Kouassi', codeParcelles: '—',        ina: '—',        telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'geo',      origine: 'Géo · parcelle',     motif: { quoi: 'Contour non refermé.', cons: 'La parcelle ne peut pas être calculée.' } },
+  { id: 'ac-6', prenom: 'Aminata', nom: 'Ba',      codeParcelles: '—',        ina: '—',        telephone: '—',        cooperative: 'Kaolack Maïs', statut: 'a-corriger', correctionKind: 'geo',      origine: 'Géo · rattachement', motif: { quoi: 'Tracé non rattaché.', cons: 'Ce relevé n’est associé à aucun producteur.' } },
+]
 
 export const producteursMock: Producteur[] = [
   { id: '1',  prenom: 'Ousmane',      nom: 'Diop',     codeParcelles: 'KLK-0042', ina: '20054112', telephone: '773971370', cooperative: 'Kaolack Maïs' },
