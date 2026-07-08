@@ -1,5 +1,7 @@
 # Data OS agents get their own store, not a generalization of Source's
 
+> ⚠️ **Superseded by [ADR-0012](./0012-agents-org-level-affectation-replaces-per-module.md)** — the separate `DataosAgent` store is retired. Agents are now a single org-level roster and Data OS only references them by id via [[Affectation]]. The "revisit when a real backend unifies agent management" trigger below has arrived.
+
 The Data OS "Agents" tab (inside a [[Formulaire (Data OS)]]) duplicates the Source
 agents page — same functionality: PIN generation, regenerate, soft-deactivate /
 reactivate (see 0005), WhatsApp share, copy PIN. Rather than share the existing

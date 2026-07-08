@@ -1,5 +1,7 @@
 # La suppression définitive d'un agent est réintroduite
 
+> ⚠️ **Supersédé par [ADR-0012](./0012-agents-org-level-affectation-replaces-per-module.md)** — la gestion des agents par-module disparaît. Les agents vivent dans un roster unique au niveau de l'organisation (Paramètres) ; les modules ne font plus que de l'[[Affectation]]. Le cycle de vie décrit ici (créer / supprimer / désactiver un agent dans un Formulaire) est retiré. Le souci de provenance ci-dessous (`Événement → Agent`) est repris tel quel au niveau du roster org.
+
 **Supersède [ADR-0005](./0005-agents-soft-deactivate-not-delete.md).**
 
 L'ADR-0005 avait retiré le hard delete des agents au profit de la seule désactivation (`statut: inactif`), pour ne jamais orpheliner les événements `Événement → Agent` du modèle graphe. On revient sur ce choix : le Responsable ops peut désormais **supprimer définitivement** un agent depuis la table des agents d'un Formulaire.
