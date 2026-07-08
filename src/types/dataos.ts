@@ -135,6 +135,9 @@ export interface Formulaire {
   status: FormulaireStatus
   /** Questions composant le formulaire. */
   questions: Question[]
+  /** Agents (roster de l'org) affectés à ce formulaire — ils le collectent sur
+   *  l'app mobile. Cf. ADR-0012 (Affectation). Références d'`OrgAgent.id`. */
+  agentIds?: string[]
   /** Nombre de réponses collectées via ce formulaire. */
   reponses: number
   /** Date de création (ISO, AAAA-MM-JJ). */

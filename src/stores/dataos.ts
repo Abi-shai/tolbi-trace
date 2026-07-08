@@ -91,6 +91,7 @@ export const useDataOsStore = defineStore('dataos', {
         description: description || undefined,
         status:      'brouillon',
         questions:   questions.map((q) => ({ ...q })),
+        agentIds:    [],
         reponses:    0,
         createdAt:   today(),
         createdBy:   'Awa Thiam',
@@ -126,6 +127,20 @@ export const useDataOsStore = defineStore('dataos', {
 
     removeFormulaire(id: string) {
       this.formulaires = this.formulaires.filter((f) => f.id !== id)
+    },
+
+    // Affectation (cf. ADR-0012) : fixe les agents (roster org) qui collectent ce
+    // formulaire. On ne stocke que des références d'`OrgAgent.id`, pas de copie.
+    setFormulaireAgents(formulaireId: string, agentIds: string[]) {
+      const f = this.formulaires.find((f) => f.id === formulaireId)
+      if (f) f.agentIds = [...agentIds]
+    },
+
+    // Remplace les questions d'un formulaire (utilisé pour « quitter sans
+    // enregistrer » : on restaure le dernier état enregistré).
+    setFormulaireQuestions(formulaireId: string, questions: Question[]) {
+      const f = this.formulaires.find((f) => f.id === formulaireId)
+      if (f) f.questions = questions.map((q) => ({ ...q }))
     },
 
     // ── Questions d'un formulaire ──────────────────────────────────
