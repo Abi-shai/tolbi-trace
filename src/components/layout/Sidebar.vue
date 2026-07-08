@@ -26,6 +26,7 @@
             </IconBtn>
           </div>
           <DsModuleIcon module="Source" :size="48" class="shrink-0" />
+          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
           <div class="w-full h-px bg-border mt-4" />
         </div>
 
@@ -66,6 +67,8 @@
             <ChevronsLeft :size="20" />
           </IconBtn>
         </div>
+
+        <OrgSwitcher variant="full" />
 
         <div class="flex flex-col gap-6">
           <div v-for="group in navGroups" :key="group.label" class="flex flex-col gap-3">
@@ -118,6 +121,7 @@
           </IconBtn>
         </div>
         <DsModuleIcon module="Source" :size="48" class="shrink-0" />
+        <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
         <div class="w-full h-px bg-border mt-4" />
       </div>
       <div class="flex flex-col gap-2 px-4">
@@ -136,6 +140,7 @@
           <ChevronsLeft :size="20" />
         </IconBtn>
       </div>
+      <OrgSwitcher variant="full" />
       <nav>
         <NavTextBtn :icon="Route" label="Processus" :active="processusActive" @click="router.push('/source/workflows')" />
       </nav>
