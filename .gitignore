@@ -45,4 +45,12 @@ yarn-error.log*
 next-env.d.ts
 
 # claude code
-.claude/
+# On PARTAGE le système d'orchestration pour qu'il voyage avec le repo et soit
+# reconnaissable par tout agent : contexte (glossaire-adjacent, catalogue DS,
+# vision produit), skills, commands, et les settings projet.
+# Seul le fichier personnel settings.local.json reste local.
+.claude/*
+!.claude/context/
+!.claude/skills/
+!.claude/commands/
+!.claude/settings.json
