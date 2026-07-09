@@ -1,7 +1,7 @@
 <template>
   <SlideOverPanel
-    title="Générer un lot de cartes"
-    supporting-text="Crée des cartes vierges pré-provisionnées (jeton QR + serial), prêtes pour l'export d'impression puis l'enrôlement terrain."
+    title="Générer des cartes"
+    supporting-text="Crée des cartes vierges pré-provisionnées (jeton QR + serial), prêtes pour l'export d'impression puis l'activation des statuts INA sur le terrain."
     :width="440"
     @close="$emit('close')"
   >
@@ -31,59 +31,52 @@
           class="h-10 px-3 border border-[#d0d5dd] rounded-lg text-sm text-text-secondary bg-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/30 focus:border-[#1D9E75] transition-colors"
         />
       </label>
+    </div>
 
-      <!-- Référence (optionnel) -->
-      <label class="flex flex-col gap-1.5">
-        <span class="text-sm font-semibold text-text-secondary">Référence du lot (optionnel)</span>
-        <input
-          v-model="reference"
-          type="text"
-          :placeholder="autoRef"
-          class="h-10 px-3 border border-[#d0d5dd] rounded-lg text-sm text-text-secondary placeholder-text-quaternary bg-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/30 focus:border-[#1D9E75] transition-colors"
-        />
-      </label>
-
-      <!-- Récap -->
-      <div class="flex items-start gap-3 p-4 rounded-xl bg-surface">
-        <Info :size="18" class="text-text-quaternary mt-0.5 shrink-0" />
-        <p class="text-[13px] text-text-secondary leading-5">
-          Les cartes sont créées au statut <span class="font-semibold">Générée</span>. Le Numéro INA n'est pas imprimé :
-          il est attribué à l'activation, quand la carte est liée à un producteur.
-        </p>
+    <!-- Commander les cartes physiques : opt-in lié AU LOT généré. ON → « Générer
+         le lot » envoie aussi la demande de cartes physiques à Tolbi pour CE lot
+         (même préfixe / quantité). Patron toggle riche de CarteAssocieeToggle, sans
+         featured icon (hiérarchie titre → ligne → toggle) ; fond brand soft à l'état
+         actif pour le feedback. -->
+    <div :class="['rounded-xl border border-border p-4 flex items-start gap-3.5 transition-colors', commanderPhysiques ? 'bg-brand-primary' : 'bg-surface']">
+      <div class="min-w-0 flex-1 flex flex-col gap-0.5">
+        <p class="text-sm font-semibold text-text-primary">Commander les cartes physiques</p>
+        <p class="text-sm text-text-tertiary leading-5">Un mail sera envoyé à l'équipe Tolbi pour produire et te livrer ces cartes.</p>
       </div>
+      <DsToggle v-model="commanderPhysiques" size="md" class="shrink-0 mt-0.5" />
     </div>
 
     <template #footer="{ close }">
       <DsButton label="Annuler" variant="secondary-gray" @click="close" />
-      <DsButton label="Générer le lot" variant="primary" :disabled="!valid" @click="generate" />
+      <DsButton label="Générer les cartes" variant="primary" :disabled="!valid" @click="generate" />
     </template>
   </SlideOverPanel>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CreditCard, Info } from 'lucide-vue-next'
+import { CreditCard } from 'lucide-vue-next'
 import SlideOverPanel from '~/components/ui/SlideOverPanel.vue'
 import { useInaStore } from '~/stores/ina'
 
-const emit = defineEmits<{ close: []; generated: [{ reference: string; quantite: number }] }>()
+const emit = defineEmits<{ close: []; generated: [{ reference: string; quantite: number; commanderPhysiques: boolean }] }>()
 
 const ina = useInaStore()
 
-const prefixe   = ref('KLK')
-const quantite  = ref(50)
-const reference = ref('')
+const prefixe  = ref('KLK')
+const quantite = ref(50)
+// Opt-in : commander les cartes physiques du lot en même temps qu'on le génère.
+const commanderPhysiques = ref(false)
 
-const autoRef = computed(() => `${(prefixe.value || 'KLK').toUpperCase()}-L${String(ina.lots.length + 1).padStart(3, '0')}`)
-const valid   = computed(() => !!prefixe.value.trim() && quantite.value >= 1 && quantite.value <= 5000)
+const valid = computed(() => !!prefixe.value.trim() && quantite.value >= 1 && quantite.value <= 5000)
 
 function generate() {
   if (!valid.value) return
+  // La référence du lot est générée automatiquement (préfixe + n° d'ordre).
   const lot = ina.genererLot({
-    prefixe:   prefixe.value.trim().toUpperCase(),
-    quantite:  quantite.value,
-    reference: reference.value.trim() || undefined,
+    prefixe:  prefixe.value.trim().toUpperCase(),
+    quantite: quantite.value,
   })
-  emit('generated', { reference: lot.reference, quantite: lot.quantite })
+  emit('generated', { reference: lot.reference, quantite: lot.quantite, commanderPhysiques: commanderPhysiques.value })
 }
 </script>

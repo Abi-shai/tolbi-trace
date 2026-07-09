@@ -2,7 +2,7 @@
   <div ref="rootEl" class="relative">
     <!-- Contrôle : sélecteur d'indicatif (gauche) + numéro formaté (droite). -->
     <div
-      class="flex items-stretch h-11 w-full rounded-lg border overflow-hidden transition"
+      class="flex items-stretch h-11 w-full rounded-md border overflow-hidden transition"
       :class="disabled
         ? 'border-border bg-surface cursor-not-allowed'
         : open

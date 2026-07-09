@@ -11,7 +11,7 @@
     <ImportFichiers v-if="step === 'import'" @back="step = 'empty'" @next="step = 'matching'" @add="$emit('add')" />
   </Transition>
 
-  <ProducteursListe v-if="step === 'done'" @add="$emit('add')" />
+  <ProducteursListe v-if="step === 'done'" :focus-producteur-id="focusProducteurId" @add="$emit('add')" />
 
   <div v-if="step === 'empty'" class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Header from '~/components/layout/Header.vue'
 import ImportFichiers from '~/components/id/ImportFichiers.vue'
 import ImportMatching from '~/components/id/ImportMatching.vue'
@@ -128,7 +128,12 @@ import type { Producteur } from '~/types/producteur'
 defineEmits<{ add: []; collect: []; manual: [] }>()
 
 const router  = useRouter()
+const route   = useRoute()
 const uiStore = useUIStore()
+
+// Deep-link « Voir tous les détails sur ID » (fiche INA) : on saute l'écran d'accueil
+// et on affiche directement la liste peuplée, pré-filtrée sur le producteur ciblé.
+const focusProducteurId = (route.query.producteur as string | undefined) ?? ''
 
 // « Lancer une collecte terrain » → on entre dans le module Data OS,
 // avec la transition d'écran utilisée lors d'un changement de module.
@@ -141,7 +146,7 @@ async function goToDataOs() {
   uiStore.moduleTransition = false
 }
 
-const step          = ref<'empty' | 'import' | 'matching' | 'done'>('empty')
+const step          = ref<'empty' | 'import' | 'matching' | 'done'>(focusProducteurId ? 'done' : 'empty')
 const showFinalizing = ref(false)
 const showManuel     = ref(false)
 const scenario      = useScenarioStore()

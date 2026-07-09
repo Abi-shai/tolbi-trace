@@ -276,6 +276,7 @@ import { useToastStore } from '~/stores/toast'
 import { atelierGeoDemo } from '~/scenarios/producteurs-geo'
 import type { Producteur } from '~/types/producteur'
 
+const props = defineProps<{ focusProducteurId?: string }>()
 defineEmits<{ add: [] }>()
 
 // Liste KYF réactive : alimentée aussi par la synchronisation Data OS (TOQ-559).
@@ -298,6 +299,13 @@ const segments = computed(() => [
   { key: 'base' as Segment,       label: 'Base',       count: stats.value.count },
   { key: 'a-corriger' as Segment, label: 'À corriger', count: aCorriger.value.length },
 ])
+
+// Deep-link « Voir tous les détails sur ID » (fiche INA) : pré-filtre la liste sur le
+// producteur ciblé pour révéler sa ligne (code parcelles, INA, téléphone, coopérative).
+if (props.focusProducteurId) {
+  const p = prodStore.producteurs.find((x) => x.id === props.focusProducteurId)
+  if (p) { segment.value = 'base'; search.value = `${p.prenom} ${p.nom}` }
+}
 
 const filteredRows = computed<Producteur[]>(() => {
   const rows = segment.value === 'base' ? base.value : aCorriger.value
