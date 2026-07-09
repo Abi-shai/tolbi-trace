@@ -1,3 +1,3 @@
 <script setup lang="ts">
-await navigateTo('/ina/tableau-de-bord', { replace: true })
+await navigateTo('/ina/identites', { replace: true })
 </script>

@@ -1,54 +1,38 @@
 <template>
   <aside
-    class="flex shrink-0 h-full bg-white border-r border-border sidebar-width-transition"
+    class="relative flex shrink-0 h-full bg-white border-r border-border sidebar-width-transition overflow-hidden"
     :style="{ width: collapsed ? `${W.collapsed}px` : `${W.expanded}px` }"
   >
-    <!-- Icon rail (80px) -->
-    <div :class="cn('relative z-10 flex flex-col w-[80px] shrink-0 pt-4', !collapsed && 'border-r border-border')">
-
-      <!-- Layer collapsed -->
-      <div
-        class="absolute inset-0 flex flex-col pt-4 transition-opacity duration-150"
-        :style="{ opacity: collapsed ? 1 : 0, pointerEvents: collapsed ? 'auto' : 'none' }"
-      >
-        <div class="flex flex-col items-center px-2 mb-6">
-          <div class="w-full flex justify-center pb-4">
-            <IconBtn tooltip="Afficher la navigation" @click="uiStore.toggleSidebar()">
-              <ChevronsRight :size="20" />
-            </IconBtn>
-          </div>
-          <DsModuleIcon module="ID" :size="48" class="shrink-0" />
-          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
-          <div class="w-full h-px bg-border mt-4" />
+    <!-- Couche repliée (80px) -->
+    <div
+      class="absolute inset-0 flex flex-col items-center pt-4 transition-opacity duration-150"
+      :style="{ opacity: collapsed ? 1 : 0, pointerEvents: collapsed ? 'auto' : 'none' }"
+    >
+      <div class="flex flex-col items-center px-2 mb-4 w-full">
+        <div class="w-full flex justify-center pb-4">
+          <IconBtn tooltip="Afficher la navigation" @click="uiStore.toggleSidebar()">
+            <ChevronsRight :size="20" />
+          </IconBtn>
         </div>
-        <div class="flex flex-col gap-2 px-4">
-          <NavIconBtn v-for="n in nav" :key="n.href" :icon="n.icon" :label="n.label" :active="isActive(n.href)" @click="router.push(n.href)" />
-        </div>
+        <DsModuleIcon module="ID" :size="48" class="shrink-0" />
+        <OrgSwitcher variant="rail" class="mt-3" />
+        <div class="w-full h-px bg-border mt-4" />
       </div>
-
-      <!-- Layer expanded -->
-      <div
-        class="absolute inset-0 flex flex-col pt-4 transition-opacity duration-150"
-        :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
-      >
-        <div class="flex flex-col items-center px-2 mb-6">
-          <DsModuleIcon module="ID" :size="48" class="shrink-0" />
-          <OrgSwitcher v-if="collapsed" variant="rail" class="mt-3" />
-          <div class="w-full h-px bg-border mt-4" />
-        </div>
-        <div class="flex flex-col gap-2 px-4">
-          <NavIconBtn v-for="n in nav" :key="n.href" :icon="n.icon" :label="n.label" :active="isActive(n.href)" @click="router.push(n.href)" />
-        </div>
+      <div class="flex flex-col gap-2 px-4">
+        <NavIconBtn v-for="n in nav" :key="n.href" :icon="n.icon" :label="n.label" :active="isActive(n.href)" @click="router.push(n.href)" />
       </div>
     </div>
 
-    <!-- Text panel (expanded) -->
+    <!-- Couche dépliée (320px) -->
     <div
-      class="flex flex-col flex-1 min-w-0 px-4 py-4 gap-6 overflow-y-auto transition-opacity duration-200"
+      class="absolute inset-0 flex flex-col px-4 py-4 gap-6 overflow-y-auto transition-opacity duration-200"
       :style="{ opacity: collapsed ? 0 : 1, pointerEvents: collapsed ? 'none' : 'auto' }"
     >
       <div class="flex items-center justify-between gap-2 shrink-0">
-        <p class="text-xl font-semibold text-text-primary leading-[30px] whitespace-nowrap">INA</p>
+        <div class="flex items-center gap-2.5 min-w-0">
+          <DsModuleIcon module="ID" :size="40" class="shrink-0" />
+          <p class="text-xl font-semibold text-text-primary leading-[30px] truncate">INA</p>
+        </div>
         <IconBtn tooltip="Réduire" @click="uiStore.toggleSidebar()">
           <ChevronsLeft :size="20" />
         </IconBtn>
@@ -64,7 +48,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineComponent, resolveComponent, h, Teleport, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronsLeft, ChevronsRight, LayoutDashboard, CreditCard, Fingerprint, ArrowLeftRight } from 'lucide-vue-next'
+import { ChevronsLeft, ChevronsRight, CreditCard, Fingerprint, ArrowLeftRight } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { useUIStore } from '~/stores/ui'
 
@@ -76,10 +60,9 @@ const uiStore = useUIStore()
 const collapsed = computed(() => uiStore.sidebarCollapsed)
 
 const nav = [
-  { label: 'Tableau de bord', href: '/ina/tableau-de-bord', icon: LayoutDashboard },
-  { label: 'Cartes',          href: '/ina/cartes',          icon: CreditCard      },
-  { label: 'Identités',       href: '/ina/identites',       icon: Fingerprint     },
-  { label: 'Transactions',    href: '/ina/transactions',    icon: ArrowLeftRight  },
+  { label: 'Identités numériques agricoles', href: '/ina/identites',    icon: Fingerprint     },
+  { label: 'Cartes',                         href: '/ina/cartes',       icon: CreditCard      },
+  { label: 'Transactions',                   href: '/ina/transactions', icon: ArrowLeftRight  },
 ]
 
 function isActive(href: string) {
@@ -166,12 +149,12 @@ const NavTextBtn = defineComponent({
     return () => h('button', {
       onClick: () => emit('click'),
       class: cn(
-        'flex items-center gap-3 w-full px-3 py-2 rounded-[6px] text-base font-semibold transition-colors whitespace-nowrap',
+        'flex items-center gap-3 w-full px-3 py-2 rounded-[6px] text-base font-semibold transition-colors',
         props.active ? 'bg-surface text-text-nav-hover' : 'bg-white text-text-secondary hover:bg-surface hover:text-text-nav-hover',
       ),
     }, [
-      h(props.icon as any, { size: 24, class: props.active ? 'text-text-secondary' : 'text-text-quaternary' }),
-      props.label,
+      h(props.icon as any, { size: 24, class: `shrink-0 ${props.active ? 'text-text-secondary' : 'text-text-quaternary'}` }),
+      h('span', { class: 'flex-1 min-w-0 truncate text-left' }, props.label),
     ])
   },
 })

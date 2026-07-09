@@ -23,13 +23,18 @@
           <div class="flex flex-col gap-4">
             <div
               v-if="$slots.icon"
-              class="flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary"
+              :class="iconFrame ? 'flex items-center justify-center w-10 h-10 rounded-lg border border-border shadow-xs text-text-tertiary' : 'flex'"
             >
               <slot name="icon" />
             </div>
-            <div class="flex flex-col gap-1">
-              <h2 class="text-xl font-semibold text-text-primary leading-[30px]">{{ title }}</h2>
-              <p v-if="supportingText" class="text-sm text-text-tertiary leading-5">{{ supportingText }}</p>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-semibold text-text-primary leading-[30px]">{{ title }}</h2>
+                <slot name="title-trailing" />
+              </div>
+              <slot name="subtitle">
+                <p v-if="supportingText" class="text-sm text-text-tertiary leading-5">{{ supportingText }}</p>
+              </slot>
             </div>
           </div>
 
@@ -57,11 +62,15 @@ const props = withDefaults(defineProps<{
   title: string
   supportingText?: string
   width?: number
+  /** Encadre l'icône d'en-tête dans une boîte bordée (featured icon).
+      false = contenu brut, sans cadre (ex. avatar producteur). */
+  iconFrame?: boolean
   /** Garde optionnelle : retourne false pour bloquer la fermeture
       (ex. changements non enregistrés → on affiche une confirmation à la place). */
   beforeClose?: () => boolean
 }>(), {
   width: 400,
+  iconFrame: true,
 })
 
 const emit = defineEmits<{ close: [] }>()

@@ -5,6 +5,7 @@ export interface Producteur {
   codeParcelles: string
   ina:           string
   telephone:     string
+  cni?:          string   // Carte Nationale d'Identité — optionnelle (tous n'en ont pas)
   cooperative:   string
   // Phase 3 — bucket « à corriger » persistant après finalisation. Un producteur
   // mis de côté à l'import vit dans la liste avec statut 'a-corriger' + son motif,

@@ -33,9 +33,8 @@ const SUB_LABELS: Record<string, string> = {
   agents:            'Équipe',
   producteurs:       'Producteurs',
   projets:           'Projets',
-  'tableau-de-bord': 'Tableau de bord',
   cartes:            'Cartes',
-  identites:         'Identités',
+  identites:         'Identités numériques agricoles',
   transactions:      'Transactions',
 }
 

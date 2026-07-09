@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { lotsMock, cartesMock, identitesMock, transactionsMock, INA_DOUBLONS } from '~/data/ina'
-import type { CarteINA, LotINA, IdentiteINA, TransactionINA, Wallet } from '~/types/ina'
+import { cycleOf, type CarteINA, type LotINA, type IdentiteINA, type TransactionINA, type Cycle, type CarteAssociee } from '~/types/ina'
 
 // Store INA (cf. CONTEXT.md + ADR-0013). Source de vérité côté web pour les lots,
 // cartes, identités et transactions INA. Le wallet et les KPIs sont dérivés.
@@ -18,13 +18,12 @@ export const useInaStore = defineStore('ina', {
   }),
 
   getters: {
-    // KPIs du tableau de bord (cartes émises / distribuées / activées + taux).
+    // KPIs du tableau de bord. Taux d'activation = cartes activées / cartes émises.
     kpis(state) {
-      const emises      = state.cartes.length
-      const distribuees = state.cartes.filter((c) => ['distribuee', 'associee', 'activee', 'revoquee'].includes(c.statut)).length
-      const activees    = state.cartes.filter((c) => c.statut === 'activee').length
-      const taux        = distribuees ? Math.round((activees / distribuees) * 100) : 0
-      return { emises, distribuees, activees, taux, transactions: state.transactions.length, doublons: state.doublons }
+      const emises   = state.cartes.length
+      const activees = state.cartes.filter((c) => c.statut === 'activee').length
+      const taux     = emises ? Math.round((activees / emises) * 100) : 0
+      return { emises, activees, taux, transactions: state.transactions.length, doublons: state.doublons }
     },
 
     carteActiveFor: (state) => (producteurId: string): CarteINA | null =>
@@ -44,20 +43,31 @@ export const useInaStore = defineStore('ina', {
     statutFor: (state) => (producteurId: string): 'active' | 'revoquee' =>
       state.cartes.some((c) => c.producteurId === producteurId && c.statut === 'activee') ? 'active' : 'revoquee',
 
-    // Wallet dérivé des transactions (entrées − sorties).
-    walletFor: (state) => (producteurId: string): Wallet => {
-      const txs     = state.transactions.filter((t) => t.producteurId === producteurId)
-      const entrees = txs.filter((t) => t.sens === 'entree').reduce((a, t) => a + t.montant, 0)
-      const sorties = txs.filter((t) => t.sens === 'sortie').reduce((a, t) => a + t.montant, 0)
-      return { entrees, sorties, solde: entrees - sorties }
-    },
-
-    // Répartition des cartes par statut (pour la vue Cartes).
+    // Répartition des cartes par statut fin (interne).
     cartesParStatut(state): Record<string, number> {
       return state.cartes.reduce((acc, c) => {
         acc[c.statut] = (acc[c.statut] ?? 0) + 1
         return acc
       }, {} as Record<string, number>)
+    },
+
+    // Répartition par cycle (3 niveaux) — vue Cartes + tableau de bord.
+    cartesParCycle(state): Record<Cycle, number> {
+      return state.cartes.reduce((acc, c) => {
+        const cy = cycleOf(c.statut)
+        acc[cy] += 1
+        return acc
+      }, { emission: 0, activation: 0, revocation: 0 } as Record<Cycle, number>)
+    },
+
+    // Cartes du stock non encore rattachées à un producteur — pool associable
+    // lors de l'activation d'un statut INA. Triées par proximité terrain :
+    // distribuée (déjà chez un agent) → imprimée → générée.
+    cartesDisponibles(state): CarteINA[] {
+      const rang: Record<string, number> = { distribuee: 0, imprimee: 1, generee: 2 }
+      return state.cartes
+        .filter((c) => !c.producteurId && ['distribuee', 'imprimee', 'generee'].includes(c.statut))
+        .sort((a, b) => (rang[a.statut] ?? 9) - (rang[b.statut] ?? 9) || a.serial.localeCompare(b.serial))
     },
   },
 
@@ -125,6 +135,70 @@ export const useInaStore = defineStore('ina', {
       fresh.statut       = 'activee'
       fresh.activatedAt  = new Date().toISOString()
       return fresh.serial
+    },
+
+    // Activation du statut INA (ADR-0013) — enrôle dans INA un producteur du
+    // module ID : ouvre l'identité (le Numéro INA est logique, déjà porté par le
+    // producteur), et rattache optionnellement une carte PRÉCISE du stock, qui passe
+    // alors « activée ». On lie exactement le serial choisi par l'opérateur (la carte
+    // physique qu'il a en main), pas une carte au hasard. Sans `carteId`, l'INA est
+    // actif mais « sans carte » (associable plus tard). Idempotent par producteur.
+    activerIna(payload: {
+      producteurId:  string
+      numeroIna:     string
+      prenom:        string
+      nom:           string
+      telephone:     string
+      cooperative:   string
+      localite:      string
+      carteId?:      string | null
+    }): IdentiteINA {
+      this.init()
+      const existante = this.identites.find((i) => i.producteurId === payload.producteurId)
+      if (existante) return existante
+
+      let carteAssociee: CarteAssociee = 'non'
+      if (payload.carteId) {
+        const carte = this.cartes.find((c) => c.id === payload.carteId && !c.producteurId)
+        if (carte) {
+          carte.producteurId = payload.producteurId
+          carte.statut       = 'activee'
+          carte.activatedAt  = new Date().toISOString()
+          carteAssociee      = 'oui'
+        }
+      }
+
+      const identite: IdentiteINA = {
+        producteurId:  payload.producteurId,
+        numeroIna:     payload.numeroIna,
+        prenom:        payload.prenom,
+        nom:           payload.nom,
+        telephone:     payload.telephone,
+        cooperative:   payload.cooperative,
+        localite:      payload.localite,
+        enrolledAt:    new Date().toISOString(),
+        carteAssociee,
+      }
+      this.identites.push(identite)
+      return identite
+    },
+
+    // Association d'une carte PRÉCISE à une identité INA déjà active mais sans carte
+    // (bouton « Associer une carte » de la liste / de la fiche). L'opérateur choisit
+    // le serial exact de la carte physique remise ; on l'active pour le producteur et
+    // on bascule `carteAssociee` à 'oui'. Retourne la carte, ou null si le carteId
+    // est introuvable / déjà rattaché.
+    associerCarte(producteurId: string, carteId: string): CarteINA | null {
+      this.init()
+      const identite = this.identites.find((i) => i.producteurId === producteurId)
+      if (!identite) return null
+      const carte = this.cartes.find((c) => c.id === carteId && !c.producteurId)
+      if (!carte) return null
+      carte.producteurId = producteurId
+      carte.statut       = 'activee'
+      carte.activatedAt  = new Date().toISOString()
+      identite.carteAssociee = 'oui'
+      return carte
     },
   },
 })

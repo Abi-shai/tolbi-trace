@@ -5,7 +5,11 @@
         <h1 class="text-2xl font-semibold text-text-primary leading-8">{{ title }}</h1>
         <p v-if="description" class="text-sm text-text-tertiary leading-5">{{ description }}</p>
       </div>
-      <div v-if="$slots.actions" class="flex items-center gap-3 shrink-0">
+      <div
+        v-if="$slots.actions"
+        class="flex items-center gap-3 shrink-0"
+        :class="{ 'self-start': actionsAlign === 'start', 'self-center': actionsAlign === 'center', 'self-end': actionsAlign === 'end' }"
+      >
         <slot name="actions" />
       </div>
     </div>
@@ -15,7 +19,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  title:        string
-  description?: string
+  title:         string
+  description?:  string
+  /** Alignement vertical du bloc d'actions face au titre+description. */
+  actionsAlign?: 'start' | 'center' | 'end'
 }>()
 </script>

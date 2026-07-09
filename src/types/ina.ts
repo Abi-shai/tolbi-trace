@@ -24,8 +24,27 @@ export const CARTE_STATUT_META: Record<CarteStatut, { label: string; color: Badg
   revoquee:   { label: 'Révoquée',   color: 'error'   },
 }
 
-// Étapes affichées dans la progression d'un lot (l'état terminal « révoquée » à part).
-export const CARTE_STATUT_FLOW: CarteStatut[] = ['generee', 'imprimee', 'distribuee', 'activee']
+// ── Cycle de vie (3 niveaux) ─────────────────────────────────────────────────
+// Les 6 statuts fins sont regroupés en 3 cycles présentés à l'utilisateur :
+//   Émises    (créées/émises, pas encore liées à un producteur)
+//   Activées  (liées à un producteur : carte active + wallet)
+//   Révoquées
+// Les statuts fins restent en interne (mock réaliste + horodatages de la fiche).
+export type Cycle = 'emission' | 'activation' | 'revocation'
+
+export const CYCLE_META: Record<Cycle, { label: string; color: BadgeColor; description: string }> = {
+  emission:   { label: 'Émises',    color: 'gray',    description: 'Créées et émises, pas encore liées à un producteur.' },
+  activation: { label: 'Activées',  color: 'success', description: 'Liées à un producteur : carte active.' },
+  revocation: { label: 'Révoquées', color: 'error',   description: 'Révoquées (perte, vol ou détérioration).' },
+}
+
+export const CYCLE_ORDER: Cycle[] = ['emission', 'activation', 'revocation']
+
+export function cycleOf(statut: CarteStatut): Cycle {
+  if (statut === 'revoquee') return 'revocation'
+  if (statut === 'activee' || statut === 'associee') return 'activation'
+  return 'emission' // generee, imprimee, distribuee
+}
 
 export interface CarteINA {
   id:            string
@@ -47,56 +66,46 @@ export interface LotINA {
 }
 
 // ── Transaction (INA) ─────────────────────────────────────────────────────────
-export type TransactionCategorie =
-  | 'financement' | 'ressources' | 'prestations' | 'transport' | 'revente'
-
-// La catégorie est une classification, pas une alerte : texte neutre, aucune
-// couleur. Le seul signal coloré d'une ligne est le montant (entrée = success).
-export const TRANSACTION_CATEGORIE_META: Record<TransactionCategorie, { label: string }> = {
-  financement: { label: 'Financement'          },
-  ressources:  { label: 'Ressources agricoles' },
-  prestations: { label: 'Prestations'          },
-  transport:   { label: 'Transport'            },
-  revente:     { label: 'Revente'              },
-}
-
-export type TransactionSens = 'entree' | 'sortie'
-
+// ⚠️ Une « transaction » INA n'est PAS financière : c'est un ÉVÉNEMENT LOGISTIQUE /
+// FACTUEL rattaché au Numéro INA (le credential scanné sur le terrain) — ex.
+// « remis 12 sacs à un agent ». Aucun montant, aucun flux d'argent. Le libellé UI
+// reste « Transactions » (choix utilisateur) mais le contenu est factuel.
+//
+// Pas de catégorie ni de type : sur le terrain (mobile), l'agent ne choisit pas dans
+// une liste — il saisit librement une explication de ce qu'il a constaté, et la
+// quantité éventuelle vit dans ce texte. Le web n'est qu'un journal en lecture.
 export interface TransactionINA {
   id:           string
   producteurId: string
   numeroIna:    string
-  carteSerial:  string      // credential_id — piste d'audit
-  contrepartie: string
-  categorie:    TransactionCategorie
-  sens:         TransactionSens
-  montant:      number       // FCFA
-  date:         string       // ISO
-  localite:     string       // géolocalisation (libellé)
+  carteSerial:  string          // credential_id — piste d'audit (carte scannée)
+  explication:  string          // texte libre saisi par l'agent au scan
+  agent:        string          // qui a reçu / opéré (ex. « Magasinier coopérative »)
+  date:         string          // ISO
+  localite:     string          // lieu de l'événement
 }
 
 // ── Identité INA (producteur enrôlé dans INA) ─────────────────────────────────
-// Le statut « active / révoquée » et la carte active sont dérivés des cartes ;
-// le wallet est dérivé des transactions (cf. store).
+// Le statut « active / révoquée » et la carte active sont dérivés des cartes.
+// Carte associée à l'INA — Oui / Non (uniquement pour les producteurs à INA
+// activé). Le « — » (pas de statut INA) est géré dans la vue, pas ici.
+export type CarteAssociee = 'oui' | 'non'
+
+export const CARTE_ASSOCIEE_META: Record<CarteAssociee, { label: string; color: BadgeColor }> = {
+  'oui': { label: 'Oui', color: 'success' },
+  'non': { label: 'Non', color: 'warning' },
+}
+
 export interface IdentiteINA {
-  producteurId: string
-  numeroIna:    string       // = Producteur.ina (Numéro INA stable, logique)
-  prenom:       string
-  nom:          string
-  telephone:    string
-  cooperative:  string
-  localite:     string
-  enrolledAt:   string       // ISO
-}
-
-export interface Wallet {
-  solde:   number
-  entrees: number
-  sorties: number
-}
-
-export function formatFcfa(n: number): string {
-  return `${n.toLocaleString('fr-FR')} FCFA`
+  producteurId:  string
+  numeroIna:     string       // = Producteur.ina (Numéro INA stable, logique)
+  prenom:        string
+  nom:           string
+  telephone:     string
+  cooperative:   string
+  localite:      string
+  enrolledAt:    string       // ISO
+  carteAssociee: CarteAssociee   // carte associée à l'INA
 }
 
 export function formatDateFr(iso: string): string {
