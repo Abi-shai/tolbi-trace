@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tolbi Trace
 
-## Getting Started
+Plateforme web de Tolbi OS — configuration et observation des chaînes de valeur agricoles (modules ID, INA, Source, Trace, Data OS…).
 
-First, run the development server:
+## Stack
+
+Nuxt 3 · Vue 3 (`<script setup lang="ts">`) · Tailwind CSS v4 · Pinia · Vue Flow · Cytoscape.
+`srcDir: src/`, routing par fichiers (`src/pages/`).
+
+> ⚠️ Ce projet **n'est pas** du Next.js. Toute référence antérieure à `create-next-app` / App Router / `app/page.tsx` était erronée. La source de vérité de la stack est [`CLAUDE.md`](./CLAUDE.md).
+
+## Démarrer
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # serveur de dev Nuxt
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Autres scripts : `npm run build`, `npm run generate`, `npm run preview`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Sources de vérité
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Avant de contribuer, lis dans cet ordre :
 
-## Learn More
+- [`CLAUDE.md`](./CLAUDE.md) — **règles d'ingénierie et priorité des sources** (stack, conventions, gates lexicale / composants / Figma).
+- [`CONTEXT.md`](./CONTEXT.md) — **le glossaire de domaine** : acteurs, modules, features, vocabulaire figé.
+- [`.claude/context/`](./.claude/context/) — vision produit, design system (`Ds*`), philosophie de design, voix & ton.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`CLAUDE.md` prime sur ce README pour tout ce qui touche au framework, au routing ou à la structure.

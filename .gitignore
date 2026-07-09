@@ -45,4 +45,8 @@ yarn-error.log*
 next-env.d.ts
 
 # claude code
-.claude/
+# On ignore le contenu local de .claude/ (settings.local.json, skills, commands…)
+# mais on PARTAGE les fichiers de contexte (glossaire-adjacent, catalogue DS, vision produit)
+# pour qu'ils voyagent avec le repo et soient reconnaissables par tout agent.
+.claude/*
+!.claude/context/

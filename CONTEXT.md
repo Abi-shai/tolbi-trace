@@ -2,6 +2,8 @@
 
 Tolbi Trace is the web platform for managing and tracing agricultural supply chains. It provides tools for onboarding farmers, mapping parcels, and auditing data quality across cooperatives.
 
+> **Rôle de ce fichier — le glossaire (vérité du _sens_).** Source canonique du vocabulaire de domaine : chaque terme, sa définition courante, ses blocs `_Avoid_`, et ce qui est `(retiré)`. C'est la couche n°2 de la « Priorité des sources » de [`CLAUDE.md`](./CLAUDE.md). Les *règles* d'ingénierie vivent dans `CLAUDE.md` ; la *vision produit* (le quoi/pourquoi) dans [`.claude/context/product.md`](./.claude/context/product.md). Un terme se définit **ici et nulle part ailleurs** — les autres fichiers pointent vers ce glossaire, ils ne le recopient pas. Les entrées `(retiré)` ou décrivant un « ancien modèle » sont de l'historique, jamais une spec.
+
 ## Language
 
 ### Actors
