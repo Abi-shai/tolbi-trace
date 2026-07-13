@@ -54,3 +54,6 @@ next-env.d.ts
 !.claude/skills/
 !.claude/commands/
 !.claude/settings.json
+
+# Lyse local cache
+.lyse/

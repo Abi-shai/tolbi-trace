@@ -1,0 +1,572 @@
+{
+  "components": [
+    {
+      "name": "AbonnementTab",
+      "sourceFile": "src/components/settings/AbonnementTab.vue"
+    },
+    {
+      "name": "AccessBadge",
+      "sourceFile": "src/components/settings/AccessBadge.vue"
+    },
+    {
+      "name": "ActiveAgentsCard",
+      "sourceFile": "src/components/dashboard/ActiveAgentsCard.vue"
+    },
+    {
+      "name": "ActiverInaPanel",
+      "sourceFile": "src/components/ina/ActiverInaPanel.vue"
+    },
+    {
+      "name": "ActivityFeed",
+      "sourceFile": "src/components/dashboard/ActivityFeed.vue"
+    },
+    {
+      "name": "AddButtonEdge",
+      "sourceFile": "src/components/workflow-canvas/AddButtonEdge.vue"
+    },
+    {
+      "name": "AgentEditPanel",
+      "sourceFile": "src/components/settings/AgentEditPanel.vue"
+    },
+    {
+      "name": "AgentsClient",
+      "sourceFile": "src/components/workflow-agents/AgentsClient.vue"
+    },
+    {
+      "name": "AgentsNowCard",
+      "sourceFile": "src/components/dashboard/AgentsNowCard.vue"
+    },
+    {
+      "name": "AnalyticsChart",
+      "sourceFile": "src/components/dataos/charts/AnalyticsChart.vue"
+    },
+    {
+      "name": "AnalyticsChartCard",
+      "sourceFile": "src/components/dataos/AnalyticsChartCard.vue"
+    },
+    {
+      "name": "AssignAgentsPanel",
+      "sourceFile": "src/components/dataos/AssignAgentsPanel.vue"
+    },
+    {
+      "name": "AssocierCartePanel",
+      "sourceFile": "src/components/ina/AssocierCartePanel.vue"
+    },
+    {
+      "name": "BackConfirmModal",
+      "sourceFile": "src/components/id/BackConfirmModal.vue"
+    },
+    {
+      "name": "BagDetail",
+      "sourceFile": "src/components/bags/BagDetail.vue"
+    },
+    {
+      "name": "BagsClient",
+      "sourceFile": "src/components/bags/BagsClient.vue"
+    },
+    {
+      "name": "CampaignEntriesCard",
+      "sourceFile": "src/components/dashboard/CampaignEntriesCard.vue"
+    },
+    {
+      "name": "CarteDetailPanel",
+      "sourceFile": "src/components/ina/CarteDetailPanel.vue"
+    },
+    {
+      "name": "CarteInaTile",
+      "sourceFile": "src/components/ina/CarteInaTile.vue"
+    },
+    {
+      "name": "CartePicker",
+      "sourceFile": "src/components/ina/CartePicker.vue"
+    },
+    {
+      "name": "CompteTab",
+      "sourceFile": "src/components/settings/CompteTab.vue"
+    },
+    {
+      "name": "ConfirmDialog",
+      "sourceFile": "src/components/settings/ConfirmDialog.vue"
+    },
+    {
+      "name": "CorrectionCarto",
+      "sourceFile": "src/components/id/CorrectionCarto.vue"
+    },
+    {
+      "name": "DashboardClient",
+      "sourceFile": "src/components/dashboard/DashboardClient.vue"
+    },
+    {
+      "name": "DataOsClient",
+      "sourceFile": "src/components/dataos/DataOsClient.vue"
+    },
+    {
+      "name": "DataOsSidebar",
+      "sourceFile": "src/components/dataos/DataOsSidebar.vue"
+    },
+    {
+      "name": "DataOsSidebarSingle",
+      "sourceFile": "src/components/dataos/DataOsSidebarSingle.vue"
+    },
+    {
+      "name": "DebugPanel",
+      "sourceFile": "src/components/debug/DebugPanel.vue"
+    },
+    {
+      "name": "DeleteFormulaireModal",
+      "sourceFile": "src/components/dataos/DeleteFormulaireModal.vue"
+    },
+    {
+      "name": "DeleteProjetModal",
+      "sourceFile": "src/components/dataos/DeleteProjetModal.vue"
+    },
+    {
+      "name": "DeleteQuestionModal",
+      "sourceFile": "src/components/dataos/DeleteQuestionModal.vue"
+    },
+    {
+      "name": "DsAvatar",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsBadge",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsBadgeGroup",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsBreadcrumbs",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsButton",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsButtonGroup",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsButtonGroupItem",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsCheckbox",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsCloseButton",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsCreditsChip",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsDropdown",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsDropdownDivider",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsDropdownItem",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsDropdownSelectItem",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsHelpIcon",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsHNav",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsIcon",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsInputDropdown",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsInputField",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsLogo",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsModuleIcon",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsModulesList",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsPagination",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsProgressBar",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsProgressCircle",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsProgressSteps",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsScrollbar",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsSlider",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsTable",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsTabs",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsTag",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsTextareaField",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsToggle",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsTooltip",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "DsVerificationCode",
+      "sourceFile": "@abi-shai/tolbi-design-system"
+    },
+    {
+      "name": "EditableCell",
+      "sourceFile": "src/components/id/EditableCell.vue"
+    },
+    {
+      "name": "EditableField",
+      "sourceFile": "src/components/settings/EditableField.vue"
+    },
+    {
+      "name": "EmptyState",
+      "sourceFile": "src/components/ui/EmptyState.vue"
+    },
+    {
+      "name": "FicheIna",
+      "sourceFile": "src/components/ina/FicheIna.vue"
+    },
+    {
+      "name": "FileItem",
+      "sourceFile": "src/components/id/FileItem.vue"
+    },
+    {
+      "name": "FormAnalyticsClient",
+      "sourceFile": "src/components/dataos/FormAnalyticsClient.vue"
+    },
+    {
+      "name": "FormBuilderClient",
+      "sourceFile": "src/components/dataos/FormBuilderClient.vue"
+    },
+    {
+      "name": "FormDashboardClient",
+      "sourceFile": "src/components/dataos/FormDashboardClient.vue"
+    },
+    {
+      "name": "FormulaireCard",
+      "sourceFile": "src/components/dataos/FormulaireCard.vue"
+    },
+    {
+      "name": "GenererLotPanel",
+      "sourceFile": "src/components/ina/GenererLotPanel.vue"
+    },
+    {
+      "name": "GhostNode",
+      "sourceFile": "src/components/workflow-canvas/GhostNode.vue"
+    },
+    {
+      "name": "GraphLoader",
+      "sourceFile": "src/components/graph/GraphLoader.vue"
+    },
+    {
+      "name": "GraphPageClient",
+      "sourceFile": "src/components/graph/GraphPageClient.vue"
+    },
+    {
+      "name": "GraphView",
+      "sourceFile": "src/components/graph/GraphView.vue"
+    },
+    {
+      "name": "Header",
+      "sourceFile": "src/components/layout/Header.vue"
+    },
+    {
+      "name": "HomeSidebar",
+      "sourceFile": "src/components/layout/HomeSidebar.vue"
+    },
+    {
+      "name": "HoverTooltip",
+      "sourceFile": "src/components/ui/HoverTooltip.vue"
+    },
+    {
+      "name": "IDSidebar",
+      "sourceFile": "src/components/id/IDSidebar.vue"
+    },
+    {
+      "name": "ImportFichiers",
+      "sourceFile": "src/components/id/ImportFichiers.vue"
+    },
+    {
+      "name": "ImportMatching",
+      "sourceFile": "src/components/id/ImportMatching.vue"
+    },
+    {
+      "name": "InaCartes",
+      "sourceFile": "src/components/ina/InaCartes.vue"
+    },
+    {
+      "name": "InaEvenementsList",
+      "sourceFile": "src/components/ina/InaEvenementsList.vue"
+    },
+    {
+      "name": "InaIdentites",
+      "sourceFile": "src/components/ina/InaIdentites.vue"
+    },
+    {
+      "name": "InaSidebar",
+      "sourceFile": "src/components/ina/InaSidebar.vue"
+    },
+    {
+      "name": "InaTransactions",
+      "sourceFile": "src/components/ina/InaTransactions.vue"
+    },
+    {
+      "name": "InviteUserPanel",
+      "sourceFile": "src/components/dataos/InviteUserPanel.vue"
+    },
+    {
+      "name": "ManuelAjout",
+      "sourceFile": "src/components/id/ManuelAjout.vue"
+    },
+    {
+      "name": "MemberEditPanel",
+      "sourceFile": "src/components/settings/MemberEditPanel.vue"
+    },
+    {
+      "name": "MembresTab",
+      "sourceFile": "src/components/settings/MembresTab.vue"
+    },
+    {
+      "name": "MetricCard",
+      "sourceFile": "src/components/ui/MetricCard.vue"
+    },
+    {
+      "name": "Modal",
+      "sourceFile": "src/components/ui/Modal.vue"
+    },
+    {
+      "name": "ModuleAccessPicker",
+      "sourceFile": "src/components/settings/ModuleAccessPicker.vue"
+    },
+    {
+      "name": "NewAgentPanel",
+      "sourceFile": "src/components/workflow-agents/NewAgentPanel.vue"
+    },
+    {
+      "name": "NewFormulairePanel",
+      "sourceFile": "src/components/dataos/NewFormulairePanel.vue"
+    },
+    {
+      "name": "NewProjetPanel",
+      "sourceFile": "src/components/dataos/NewProjetPanel.vue"
+    },
+    {
+      "name": "NewWorkflowPanel",
+      "sourceFile": "src/components/workflows/NewWorkflowPanel.vue"
+    },
+    {
+      "name": "OperationsSummaryCard",
+      "sourceFile": "src/components/dashboard/OperationsSummaryCard.vue"
+    },
+    {
+      "name": "OrgSwitcher",
+      "sourceFile": "src/components/layout/OrgSwitcher.vue"
+    },
+    {
+      "name": "PaiementTab",
+      "sourceFile": "src/components/settings/PaiementTab.vue"
+    },
+    {
+      "name": "PanelHeader",
+      "sourceFile": "src/components/settings/PanelHeader.vue"
+    },
+    {
+      "name": "PhoneField",
+      "sourceFile": "src/components/ui/PhoneField.vue"
+    },
+    {
+      "name": "PreferencesTab",
+      "sourceFile": "src/components/settings/PreferencesTab.vue"
+    },
+    {
+      "name": "ProcessStepper",
+      "sourceFile": "src/components/dashboard/ProcessStepper.vue"
+    },
+    {
+      "name": "ProducteursClient",
+      "sourceFile": "src/components/id/ProducteursClient.vue"
+    },
+    {
+      "name": "ProducteursListe",
+      "sourceFile": "src/components/id/ProducteursListe.vue"
+    },
+    {
+      "name": "ProgressBar",
+      "sourceFile": "src/components/ui/ProgressBar.vue"
+    },
+    {
+      "name": "ProjetCard",
+      "sourceFile": "src/components/dataos/ProjetCard.vue"
+    },
+    {
+      "name": "ProjetDetailClient",
+      "sourceFile": "src/components/dataos/ProjetDetailClient.vue"
+    },
+    {
+      "name": "PublishConfirmModal",
+      "sourceFile": "src/components/workflow-canvas/PublishConfirmModal.vue"
+    },
+    {
+      "name": "QRCodesClient",
+      "sourceFile": "src/components/qr-codes/QRCodesClient.vue"
+    },
+    {
+      "name": "QRCodeViewerModal",
+      "sourceFile": "src/components/qr-codes/QRCodeViewerModal.vue"
+    },
+    {
+      "name": "QuestionCard",
+      "sourceFile": "src/components/dataos/QuestionCard.vue"
+    },
+    {
+      "name": "QuestionSettingsPanel",
+      "sourceFile": "src/components/dataos/QuestionSettingsPanel.vue"
+    },
+    {
+      "name": "ResponseDetailPanel",
+      "sourceFile": "src/components/dataos/ResponseDetailPanel.vue"
+    },
+    {
+      "name": "ResponseEditPanel",
+      "sourceFile": "src/components/dataos/ResponseEditPanel.vue"
+    },
+    {
+      "name": "ScreenTransition",
+      "sourceFile": "src/components/ui/ScreenTransition.vue"
+    },
+    {
+      "name": "ScrollArea",
+      "sourceFile": "src/components/ui/ScrollArea.vue"
+    },
+    {
+      "name": "SharePanel",
+      "sourceFile": "src/components/workflow-canvas/SharePanel.vue"
+    },
+    {
+      "name": "Sidebar",
+      "sourceFile": "src/components/layout/Sidebar.vue"
+    },
+    {
+      "name": "SlideOverPanel",
+      "sourceFile": "src/components/ui/SlideOverPanel.vue"
+    },
+    {
+      "name": "Sparkline",
+      "sourceFile": "src/components/dashboard/Sparkline.vue"
+    },
+    {
+      "name": "StepConfigPanel",
+      "sourceFile": "src/components/workflow-canvas/StepConfigPanel.vue"
+    },
+    {
+      "name": "StepNode",
+      "sourceFile": "src/components/workflow-canvas/StepNode.vue"
+    },
+    {
+      "name": "StepProgressList",
+      "sourceFile": "src/components/dashboard/StepProgressList.vue"
+    },
+    {
+      "name": "TemplatePickerPanel",
+      "sourceFile": "src/components/dataos/TemplatePickerPanel.vue"
+    },
+    {
+      "name": "TemplatePreviewClient",
+      "sourceFile": "src/components/dataos/TemplatePreviewClient.vue"
+    },
+    {
+      "name": "TerminatorNode",
+      "sourceFile": "src/components/workflow-canvas/TerminatorNode.vue"
+    },
+    {
+      "name": "ToastHost",
+      "sourceFile": "src/components/ui/ToastHost.vue"
+    },
+    {
+      "name": "Topbar",
+      "sourceFile": "src/components/layout/Topbar.vue"
+    },
+    {
+      "name": "UnsavedChangesModal",
+      "sourceFile": "src/components/workflow-canvas/UnsavedChangesModal.vue"
+    },
+    {
+      "name": "UploadWaysIcon",
+      "sourceFile": "src/components/id/UploadWaysIcon.vue"
+    },
+    {
+      "name": "WorkflowCanvas",
+      "sourceFile": "src/components/workflow-canvas/WorkflowCanvas.vue"
+    },
+    {
+      "name": "WorkflowCard",
+      "sourceFile": "src/components/workflows/WorkflowCard.vue"
+    },
+    {
+      "name": "WorkflowsClient",
+      "sourceFile": "src/components/workflows/WorkflowsClient.vue"
+    },
+    {
+      "name": "WorkflowSettingsPanel",
+      "sourceFile": "src/components/workflow-canvas/WorkflowSettingsPanel.vue"
+    },
+    {
+      "name": "WorkflowToolbar",
+      "sourceFile": "src/components/workflow-canvas/WorkflowToolbar.vue"
+    }
+  ]
+}
