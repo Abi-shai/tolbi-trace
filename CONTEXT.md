@@ -60,11 +60,11 @@ _Avoid_: utilisateur, opérateur, collecteur; enquêteur (see [[Enquêteur]]); t
 Not a separate actor — a display label used in Data OS's "Suivi des réponses" table for the [[Agent]] who collected a given response (columns "Nom / Prénom de l'enquêteur"). The canonical, page-level noun everywhere else (sidebar tab, header, empty states, `Projet.agents`) is **Agent**.
 _Avoid_: promoting to a first-class entity, or using as the Agents-page title
 
-**Code PIN** (retiré):
-> ⚠️ **Retiré** (cf. ADR-0012) — remplacé par le **code personnel à 4 chiffres** de l'[[Agent]] : l'agent le crée lui-même à sa première connexion mobile, le web ne le génère, ne le régénère ni ne l'affiche jamais (cf. entrée [[Agent]]). Le paragraphe ci-dessous décrit l'**ancien** modèle (PIN géré depuis le web, unique tenant-wide), conservé pour comprendre l'historique.
+**Code PIN**:
+Le nom agent-facing (copy mobile) du **code à 4 chiffres personnel** de l'[[Agent]] — terme réhabilité le 13 juillet 2026, sans réhabiliter l'ancien modèle : l'agent crée son code PIN lui-même à sa première connexion mobile, le web ne le génère, ne le régénère ni ne l'affiche jamais (ADR-0012, cf. entrée [[Agent]]). S'emploie dans l'UI mobile (« Crée ton code PIN », « Code PIN oublié ? ») ; côté web, le code n'apparaît nulle part.
+_Avoid_: mot de passe, code d'accès, token; « code personnel » en copy mobile (l'agent lit « code PIN »)
 
-A 4-digit code attached to a workflow-agent, unique across the whole Fournisseur (tenant) so it alone identifies the agent at mobile login. Used as the agent's personal credential to open their form on mobile without handling a URL. Belongs to exactly one Agent profile; can be regenerated from the web by the Responsable ops.
-_Avoid_: mot de passe, code d'accès, token
+> ⚠️ **Ancien modèle (retiré, cf. ADR-0012)** — conservé pour comprendre l'historique : a 4-digit code attached to a workflow-agent, unique across the whole Fournisseur (tenant) so it alone identifies the agent at mobile login. Used as the agent's personal credential to open their form on mobile without handling a URL. Belongs to exactly one Agent profile; can be regenerated from the web by the Responsable ops.
 
 ### Modules & Features
 
