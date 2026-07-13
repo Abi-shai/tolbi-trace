@@ -1,8 +1,9 @@
 <template>
   <!-- Picker d'accès par module (Figma « sélection de modules ») : une ligne par
-       module ; on déplie pour choisir le niveau (Lecteur/Éditeur/Admin, sélection
-       unique). Les modules hors offre s'affichent désactivés. Le DS n'a pas de
-       radio → radio custom minimal, fidèle au Figma. -->
+       module ; on déplie pour choisir le niveau (Lecteur/Éditeur, sélection unique —
+       le niveau module-Admin est retiré, ADR-0014). Utilisé par l'éditeur de RÔLE.
+       Les modules hors offre s'affichent désactivés. Le DS n'a pas de radio →
+       radio custom minimal, fidèle au Figma. -->
   <div class="flex flex-col gap-1.5">
     <template v-for="m in MODULES" :key="m.id">
       <!-- Module inclus dans l'offre -->

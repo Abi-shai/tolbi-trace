@@ -134,10 +134,11 @@ function savePwd() {
 
 // ── Suppression du compte ─────────────────────────────────────────────────────
 const deleteOpen = ref(false)
-// Garde : User seul Propriétaire d'une org → la suppression l'emporterait avec.
+// Garde : User Propriétaire d'une org (rôle unique par org, ADR-0014) → la
+// suppression du compte l'emporterait avec.
 const soleOwnerCount = computed(() =>
   session.organisations.filter(
-    (o) => o.isOwner && o.membres.filter((m) => m.proprietaire).length === 1,
+    (o) => o.membres.some((m) => m.isCurrentUser && m.roleId === 'proprietaire'),
   ).length,
 )
 const deleteDescription = computed(() =>

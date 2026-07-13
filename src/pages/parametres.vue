@@ -29,8 +29,8 @@
 
     <!-- Panneau actif -->
     <div class="mt-8 pb-8">
-      <CompteTab      v-if="tab === 'compte'" />
-      <MembresTab     v-else-if="tab === 'organisation'" />
+      <CompteTab       v-if="tab === 'compte'" />
+      <OrganisationTab v-else-if="tab === 'organisation'" />
       <AbonnementTab  v-else-if="tab === 'abonnement'" />
       <PaiementTab    v-else-if="tab === 'paiement'" />
       <PreferencesTab v-else-if="tab === 'preferences'" />
