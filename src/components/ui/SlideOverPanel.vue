@@ -78,7 +78,10 @@ const emit = defineEmits<{ close: [] }>()
 const visible = ref(false)
 
 onMounted(() => {
-  requestAnimationFrame(() => { visible.value = true })
+  // Pas de requestAnimationFrame ici : la transition d'entrée se joue dès que
+  // l'élément est inséré, et rAF ne tourne jamais dans un onglet caché (le
+  // panneau resterait invisible — la visibilité ne dépend pas d'une animation).
+  visible.value = true
   document.addEventListener('keydown', onKeydown)
 })
 
