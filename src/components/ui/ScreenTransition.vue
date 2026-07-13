@@ -23,7 +23,7 @@ withDefaults(defineProps<{ show: boolean; zIndex?: number }>(), { zIndex: 9991 }
 
 /* Sortie : glisse vers le haut */
 .fullscreen-overlay-leave-active {
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.55s var(--ds-motion-easing-in-out);
 }
 .fullscreen-overlay-leave-to {
   transform: translateY(-100%);

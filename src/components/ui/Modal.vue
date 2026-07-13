@@ -72,7 +72,7 @@ const sizes = {
 </script>
 
 <style scoped>
-.modal-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
-.modal-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
+.modal-enter-active { transition: opacity var(--ds-motion-duration-moderate) ease, transform var(--ds-motion-duration-moderate) ease; }
+.modal-leave-active { transition: opacity var(--ds-motion-duration-quick) ease, transform var(--ds-motion-duration-quick) ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; transform: scale(0.97); }
 </style>

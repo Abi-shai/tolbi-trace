@@ -25,8 +25,8 @@ const moduleName = computed(() => def.value?.name ?? props.moduleId)
 const label      = computed(() => ACCESS_LEVEL_LABELS[props.level])
 
 const cls = computed(() => ({
-  lecteur: 'bg-[#ecfdf3] border-[#abefc6] text-[#067647]',
-  editeur: 'bg-[#fffaeb] border-[#fedf89] text-[#b54708]',
-  admin:   'bg-[#fef3f2] border-[#fecdca] text-[#b42318]',
+  lecteur: 'bg-[var(--ds-color-success-50)] border-[#abefc6] text-[var(--ds-color-success-700)]',
+  editeur: 'bg-[var(--ds-color-warning-50)] border-[var(--ds-color-warning-200)] text-[var(--ds-color-warning-700)]',
+  admin:   'bg-[var(--ds-color-error-50)] border-[var(--ds-color-error-200)] text-[var(--ds-color-error-700)]',
 }[props.level]))
 </script>

@@ -51,9 +51,9 @@ const toast = useToastStore()
 
 <style scoped>
 /* Motion DS : entrée 150ms, sortie 200ms, ease-out — glisse depuis la droite. */
-.toast-enter-active { transition: opacity 0.15s ease-out, transform 0.15s ease-out; }
-.toast-leave-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
+.toast-enter-active { transition: opacity var(--ds-motion-duration-moderate) ease-out, transform var(--ds-motion-duration-moderate) ease-out; }
+.toast-leave-active { transition: opacity var(--ds-motion-duration-enter) ease-out, transform var(--ds-motion-duration-enter) ease-out; }
 .toast-enter-from,
 .toast-leave-to { opacity: 0; transform: translateX(16px); }
-.toast-move { transition: transform 0.2s ease-out; }
+.toast-move { transition: transform var(--ds-motion-duration-enter) ease-out; }
 </style>

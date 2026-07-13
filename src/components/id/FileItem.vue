@@ -53,7 +53,7 @@ const formattedSize = computed(() => {
 .spinner {
   width: 28px;
   height: 28px;
-  border: 2.5px solid #eaecf0;
+  border: 2.5px solid var(--ds-color-gray-light-200);
   border-top-color: var(--ds-semantic-fg-brand-primary, #056033);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;

@@ -127,7 +127,7 @@ body {
 
 /* Sidebar width transition */
 .sidebar-width-transition {
-  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.22s var(--ds-motion-easing-in-out);
 }
 
 /* Cartes de liste (TransitionGroup) — apparition d'un nouvel élément,
@@ -178,4 +178,15 @@ body {
 .ds-dropdown-item--danger:hover .ds-dropdown-item__label,
 .ds-dropdown-item--danger:hover .ds-dropdown-item__icon {
   color: var(--ds-color-error-700) !important;                /* #b42318 */
+}
+
+/* Windows High Contrast Mode — préserver bordures et focus visibles. */
+@media (forced-colors: active) {
+  button, [role="button"], a[href], input, select, textarea {
+    forced-color-adjust: none;
+  }
+  :focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }

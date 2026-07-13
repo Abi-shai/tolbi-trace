@@ -60,7 +60,7 @@ const STATE_META: Record<Cycle, StateStyle> = {
   activation: {
     label: 'Associée', pillColor: 'success',
     tile:   'bg-white border-border',
-    accent: 'text-[#067647]', label2: 'text-text-quaternary',
+    accent: 'text-[var(--ds-color-success-700)]', label2: 'text-text-quaternary',
     numero: 'text-text-primary', holder: 'text-text-secondary', serial: 'text-text-tertiary',
   },
   // Détruite : fond gris rempli + tout atténué + opacité réduite = « grisé / off ».

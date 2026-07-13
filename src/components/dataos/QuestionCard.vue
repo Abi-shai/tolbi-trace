@@ -237,7 +237,7 @@ function hideTip() {
   opacity: 0;
   transform: scale(0.9);
   pointer-events: none;
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out, background-color 0.12s ease-out;
+  transition: opacity var(--ds-motion-duration-moderate) ease-out, transform var(--ds-motion-duration-moderate) ease-out, background-color 0.12s ease-out;
 }
 .group\/qcard:hover .qc-add-below,
 .qc-add-below:focus-visible {
