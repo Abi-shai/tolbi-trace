@@ -651,9 +651,9 @@ const readyPct = computed(() => {
 // Chaque bloc porte sa sévérité et devient une porte vers sa correction.
 type FileSeverity = { kind: 'error' | 'warning' | 'success'; label: string }
 function sevClass(kind: FileSeverity['kind']) {
-  if (kind === 'error')   return 'bg-[#fef3f2] border border-[#fecdca] text-[#b42318]'
-  if (kind === 'warning') return 'bg-[#fffaeb] border border-[#fedf89] text-[#b54708]'
-  return 'bg-[#ecfdf3] border border-[#abefc6] text-[#067647]'
+  if (kind === 'error')   return 'bg-[var(--ds-color-error-50)] border border-[var(--ds-color-error-200)] text-[var(--ds-color-error-700)]'
+  if (kind === 'warning') return 'bg-[var(--ds-color-warning-50)] border border-[var(--ds-color-warning-200)] text-[var(--ds-color-warning-700)]'
+  return 'bg-[var(--ds-color-success-50)] border border-[#abefc6] text-[var(--ds-color-success-700)]'
 }
 // Les 3 blocs SONT le switcher de fichier (état + navigation fusionnés).
 const ventilation = computed(() => [
@@ -772,8 +772,8 @@ function activeCells(row: DataRow) { return isExcelTab.value ? row.excelCells : 
 function activeRowMotif(row: DataRow) { return isExcelTab.value ? excelRowMotif(row) : geoRowMotif(row) }
 function rowBg(row: DataRow) {
   const cells = activeCells(row)
-  if (cells.some(c => c.hasError))   return 'bg-[#fef3f2]'
-  if (cells.some(c => c.hasWarning)) return 'bg-[#fffaeb]'
+  if (cells.some(c => c.hasError))   return 'bg-[var(--ds-color-error-50)]'
+  if (cells.some(c => c.hasWarning)) return 'bg-[var(--ds-color-warning-50)]'
   return 'bg-white'
 }
 
@@ -880,8 +880,8 @@ onUnmounted(() => clearTimeout(timer))
 
 <style scoped>
 /* ── Cancel modal ── */
-.cancel-modal-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
-.cancel-modal-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
+.cancel-modal-enter-active { transition: opacity var(--ds-motion-duration-moderate) ease, transform var(--ds-motion-duration-moderate) ease; }
+.cancel-modal-leave-active { transition: opacity var(--ds-motion-duration-quick) ease, transform var(--ds-motion-duration-quick) ease; }
 .cancel-modal-enter-from,
 .cancel-modal-leave-to { opacity: 0; transform: scale(0.97); }
 
@@ -890,7 +890,7 @@ onUnmounted(() => clearTimeout(timer))
   transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .sheet-leave-active {
-  transition: transform 0.28s cubic-bezier(0.4, 0, 1, 1);
+  transition: transform 0.28s var(--ds-motion-easing-in);
 }
 .sheet-enter-from,
 .sheet-leave-to {
@@ -907,7 +907,7 @@ onUnmounted(() => clearTimeout(timer))
 .spinner-lg {
   width: 64px;
   height: 64px;
-  border: 4px solid #eaecf0;
+  border: 4px solid var(--ds-color-gray-light-200);
   border-top-color: var(--ds-semantic-fg-brand-primary, #056033);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

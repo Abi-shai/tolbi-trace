@@ -915,7 +915,7 @@ onBeforeUnmount(destroyMap)
 
 <style scoped>
 /* Apparition du modal */
-.ma-enter-active { transition: opacity 0.2s ease; }
+.ma-enter-active { transition: opacity var(--ds-motion-duration-enter) ease; }
 .ma-leave-active { transition: opacity 0.18s ease; }
 .ma-enter-from, .ma-leave-to { opacity: 0; }
 .ma-enter-active .ma-card { transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -923,7 +923,7 @@ onBeforeUnmount(destroyMap)
 .ma-enter-from .ma-card, .ma-leave-to .ma-card { transform: translateY(12px) scale(0.99); }
 
 /* Confirmation */
-.ma-confirm-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
-.ma-confirm-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
+.ma-confirm-enter-active { transition: opacity var(--ds-motion-duration-moderate) ease, transform var(--ds-motion-duration-moderate) ease; }
+.ma-confirm-leave-active { transition: opacity var(--ds-motion-duration-quick) ease, transform var(--ds-motion-duration-quick) ease; }
 .ma-confirm-enter-from, .ma-confirm-leave-to { opacity: 0; transform: scale(0.97); }
 </style>

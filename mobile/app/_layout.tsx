@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
-import { Stack, useRouter, useSegments } from 'expo-router'
+import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { View } from 'react-native'
 import {
   useFonts,
   Poppins_400Regular,
@@ -9,27 +9,14 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins'
-import { AuthProvider, useAuth } from '../context/AuthContext'
-import { ExplorationProvider } from '../context/ExplorationContext'
-
-function RootLayoutNav() {
-  const { isLoggedIn } = useAuth()
-  const segments = useSegments()
-  const router = useRouter()
-
-  useEffect(() => {
-    const onLoginScreen = segments[0] === 'login'
-    const onProtectedRoute = !onLoginScreen
-
-    if (!isLoggedIn && onProtectedRoute) {
-      router.replace('/login')
-    } else if (isLoggedIn && onLoginScreen) {
-      router.replace('/')
-    }
-  }, [isLoggedIn, segments])
-
-  return <Stack screenOptions={{ headerShown: false }} />
-}
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter'
+import { AppProvider } from '../store/app'
+import { sem } from '../theme/tokens'
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -37,19 +24,32 @@ export default function RootLayout() {
     Poppins_500Medium,
     Poppins_600SemiBold,
     Poppins_700Bold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   })
 
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: sem.bg.secondary }} />
 
   return (
     <SafeAreaProvider>
-      {/* @ts-ignore — backgroundColor is valid on expo-status-bar but typing lags */}
-      <StatusBar style="dark" backgroundColor="#f2f4f7" />
-      <AuthProvider>
-        <ExplorationProvider>
-          <RootLayoutNav />
-        </ExplorationProvider>
-      </AuthProvider>
+      <StatusBar style="dark" />
+      <AppProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: sem.bg.secondary },
+          }}
+        >
+          <Stack.Screen name="index" options={{ animation: 'fade' }} />
+          <Stack.Screen name="agent" options={{ animation: 'fade' }} />
+          <Stack.Screen name="producer" options={{ animation: 'fade' }} />
+          <Stack.Screen name="notifications" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="orgs" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="module/[name]" options={{ presentation: 'card' }} />
+        </Stack>
+      </AppProvider>
     </SafeAreaProvider>
   )
 }

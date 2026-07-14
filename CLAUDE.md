@@ -27,7 +27,7 @@ Pièges de collision à ne jamais commettre :
 - **`champ` = champ de formulaire**, JAMAIS une parcelle. Une parcelle agricole est une `Parcelle`. (Collision dure signalée au glossaire.)
 - **`rôle` est retiré** comme niveau org-wide — l'accès est par module (`Accès (module)` : Lecteur / Éditeur / Admin). Seul `Propriétaire` survit, comme flag de gouvernance.
 - **`fournisseur`** n'est plus le tenant générique — c'est UN type d'`Organisation`. Le tenant, c'est `Organisation`.
-- **`Code PIN` est retiré** (ADR-0012) — remplacé par le code personnel à 4 chiffres que l'Agent crée lui-même. Le web ne le génère, ni ne l'affiche.
+- **`Code PIN` = le code à 4 chiffres que l'Agent crée lui-même** (terme réhabilité le 13 juil. 2026 pour la copy mobile). Ce qui reste retiré (ADR-0012), c'est l'ancien modèle : un PIN généré/régénéré côté web. Le web ne génère ni n'affiche jamais le code PIN.
 
 En cas de doute sur un terme, consulte le glossaire plutôt que d'inventer — la cohérence terminologique est un livrable produit, pas un détail.
 

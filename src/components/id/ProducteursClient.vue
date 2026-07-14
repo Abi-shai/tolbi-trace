@@ -245,7 +245,7 @@ onUnmounted(() => {
 /* L'overlay quitte en 0.28s — on démarre le fondu après 0.1s
    pour que la page apparaisse pendant la descente, pas après */
 .step-reveal-enter-active {
-  transition: opacity 0.3s ease 0.1s;
+  transition: opacity var(--ds-motion-duration-process) ease var(--ds-motion-duration-quick);
 }
 .step-reveal-enter-from {
   opacity: 0;

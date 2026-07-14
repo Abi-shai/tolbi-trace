@@ -167,6 +167,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 
 <style scoped>
 .pf-pop-enter-active { transition: opacity 0.14s ease, transform 0.14s ease; }
-.pf-pop-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
+.pf-pop-leave-active { transition: opacity var(--ds-motion-duration-quick) ease, transform var(--ds-motion-duration-quick) ease; }
 .pf-pop-enter-from, .pf-pop-leave-to { opacity: 0; transform: translateY(-4px); }
 </style>

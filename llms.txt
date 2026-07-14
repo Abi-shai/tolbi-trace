@@ -1,0 +1,26 @@
+# Tolbi Trace
+
+> Plateforme de traçabilité multi-modules « Tolbi OS » (modules ID, INA, Source, Trace, Data OS, Yield) construite en Nuxt 3 + Vue 3 avec le design system `@abi-shai/tolbi-design-system` (composants `Ds*` enregistrés globalement). Le vocabulaire de domaine, le produit et le design font autorité via les fichiers de contexte ci-dessous ; le code réel vit dans `src/`.
+
+## Documentation
+
+- [CLAUDE.md](CLAUDE.md): référence technique et règles d'orchestration (source d'autorité n°1 : stack, gates, conventions).
+- [CONTEXT.md](CONTEXT.md): glossaire de domaine canonique (vocabulaire métier, gate lexicale, renommages).
+- [README.md](README.md): présentation du dépôt (OBSOLÈTE sur la stack — parle de Next.js ; voir MIGRATION.md).
+- [AGENTS.md](AGENTS.md): instructions destinées aux assistants de code (bloc audit Lyse géré + toolchain).
+
+## Contexte produit & design
+
+- [product.md](.claude/context/product.md): vision produit, architecture fonctionnelle, principes de design, scénario de démo.
+- [design-system.md](.claude/context/design-system.md): catalogue des composants `Ds*`, tokens CSS, règles d'usage.
+- [design-philosophy.md](.claude/context/design-philosophy.md): motion, densité, patterns d'interaction, états de feedback.
+- [voice-and-tone.md](.claude/context/voice-and-tone.md): voix Tolbi, règles de rédaction UI, tutoiement, modulation par situation.
+- [design-system.components.json](.claude/context/design-system.components.json): inventaire machine-readable (composants `Ds*`, primitives locales, composants supprimés).
+
+## Code
+
+- [src/pages](src/pages): routes Nuxt (auto-routing par fichiers).
+- [src/components](src/components): composants Vue locaux, organisés par domaine (id, ina, dataos, workflow-canvas, ui…).
+- [src/stores](src/stores): stores Pinia (un fichier par domaine).
+- [src/data](src/data): données mock TypeScript (jamais hardcodées dans les composants).
+- [src/types](src/types): types TypeScript de domaine (un fichier par domaine).
