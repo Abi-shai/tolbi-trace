@@ -1,7 +1,7 @@
 import { View, ScrollView, Pressable } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useRouter } from 'expo-router'
+import { useRouter, useLocalSearchParams } from 'expo-router'
 import { Icon, Txt, Badge } from '../../components/ds'
 import { QrCode } from '../../components/ds/QrCode'
 import { color, sem, font, radius, shadow } from '../../theme/tokens'
@@ -9,6 +9,13 @@ import { color, sem, font, radius, shadow } from '../../theme/tokens'
 export default function ProducerDetail() {
   const insets = useSafeAreaInsets()
   const router = useRouter()
+  /* Ouverte depuis le scan avec l'identité résolue ; défauts = démo directe. */
+  const p = useLocalSearchParams<{ name?: string; init?: string; village?: string; ina?: string; pending?: string }>()
+  const name = p.name ?? 'Ibrahima Diop'
+  const init = p.init ?? 'ID'
+  const village = p.village ?? 'Ndiaganiao'
+  const ina = p.ina ?? 'INA-SN-04217'
+  const pending = p.pending === '1'
 
   return (
     <View style={{ flex: 1, backgroundColor: sem.bg.secondary }}>
@@ -23,11 +30,11 @@ export default function ProducerDetail() {
         {/* producer header */}
         <View style={[cardStyle, { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16 }]}>
           <View style={{ width: 54, height: 54, borderRadius: 999, backgroundColor: sem.bg.brandPrimary, alignItems: 'center', justifyContent: 'center' }}>
-            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 18, color: color.brand[700] }}>ID</Txt>
+            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 18, color: color.brand[700] }}>{init}</Txt>
           </View>
           <View style={{ flex: 1, gap: 3 }}>
-            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 16 }}>Ibrahima Diop</Txt>
-            <Txt style={{ fontSize: 12, color: sem.text.quarterary }}>Ndiaganiao · Coop. Kaolack</Txt>
+            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 16 }}>{name}</Txt>
+            <Txt style={{ fontSize: 12, color: sem.text.quarterary }}>{village} · Coop. Kaolack</Txt>
             <View style={{ flexDirection: 'row', gap: 6, marginTop: 2 }}>
               <Badge label="Arachide" color="brand" />
               <Badge label="Maïs" color="warning" />
@@ -42,8 +49,10 @@ export default function ProducerDetail() {
           </View>
           <View style={{ flex: 1, gap: 3 }}>
             <Txt style={{ fontFamily: font.inter.semibold, fontSize: 10.5, letterSpacing: 0.84, textTransform: 'uppercase', color: color.brand[200] }}>Identité numérique agricole</Txt>
-            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 17, color: color.white }}>INA-SN-04217</Txt>
-            <Txt style={{ fontSize: 11, color: color.brand[200] }}>Scannez pour ouvrir cette fiche sur le terrain</Txt>
+            <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 17, color: color.white }}>{ina}</Txt>
+            <Txt style={{ fontSize: 11, color: color.brand[200] }}>
+              {pending ? 'Émise hors ligne · à synchroniser vers le registre KYF' : 'Scannez pour ouvrir cette fiche sur le terrain'}
+            </Txt>
           </View>
         </LinearGradient>
 

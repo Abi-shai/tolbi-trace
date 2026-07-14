@@ -73,7 +73,7 @@ export default function InaModule() {
                 </View>
               </LinearGradient>
             </Pressable>
-            <Pressable style={[cardStyle, { flex: 1, borderRadius: 16, padding: 14, gap: 8 }]}>
+            <Pressable onPress={() => router.push('/module/ina-scan')} style={[cardStyle, { flex: 1, borderRadius: 16, padding: 14, gap: 8 }]}>
               <Icon name="grid" size={22} color={color.brand[700]} />
               <View style={{ gap: 2 }}>
                 <Txt style={{ fontFamily: font.poppins.semibold, fontSize: 13 }}>Scanner une INA</Txt>
