@@ -1,13 +1,13 @@
 <template>
-  <!-- Panneau latéral (Figma node 1069) : ajout / édition d'un membre.
-       Prénom+nom, email, puis picker d'accès par module. Même coquille pour un
-       futur Agent (email → téléphone + code à 4 chiffres) — cf. Sprint 18. -->
+  <!-- Panneau latéral (Figma node 1069) : ajout / édition d'un collaborateur.
+       Prénom+nom, email, puis le RÔLE — obligatoire, seule source d'accès du
+       membre (ADR-0014). Propriétaire n'est pas attribuable (transfert only). -->
   <SlideOverPanel
     ref="panel"
     :title="mode === 'add' ? 'Ajouter un membre' : 'Modifier les informations'"
     :supporting-text="mode === 'add'
-      ? 'Invite une personne dans ton organisation et choisis ses accès aux modules.'
-      : 'Mets à jour les informations et les accès de ce membre.'"
+      ? 'Invite une personne dans ton organisation et choisis son rôle.'
+      : 'Mets à jour les informations et le rôle de ce membre.'"
     :width="480"
     @close="emit('close')"
   >
@@ -35,14 +35,19 @@
       />
     </div>
 
-    <div class="flex flex-col gap-3">
-      <div>
-        <h3 class="text-base font-semibold text-text-primary">Choisis les autorisations</h3>
-        <p class="mt-0.5 text-sm text-text-tertiary">
-          Choisis les modules et le niveau d'accès de ce membre.
-        </p>
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-text-secondary">Rôle</label>
+      <DsInputDropdown v-model="roleId" :options="roleOptions" placeholder="Choisis un rôle" />
+      <!-- Aperçu du rôle choisi : description (natif) ou accès portés (custom). -->
+      <div v-if="selectedNative" class="rounded-lg bg-surface px-3.5 py-3 text-sm text-text-tertiary">
+        {{ selectedNative.description }}
       </div>
-      <ModuleAccessPicker v-model="access" :enabled-modules="enabledModules" />
+      <div v-else-if="selectedCustom" class="flex flex-wrap items-center gap-1 rounded-lg bg-surface px-3.5 py-3">
+        <template v-if="customEntries.length">
+          <AccessBadge v-for="[modId, lvl] in customEntries" :key="modId" :module-id="modId" :level="lvl" />
+        </template>
+        <span v-else class="text-sm text-text-tertiary">Ce rôle ne donne accès à aucun module pour l'instant.</span>
+      </div>
     </div>
 
     <template #footer="{ close }">
@@ -63,7 +68,13 @@
 import { ref, computed } from 'vue'
 import SlideOverPanel from '~/components/ui/SlideOverPanel.vue'
 import { useSessionStore } from '~/stores/session'
-import type { Membre, ModuleAccess } from '~/types/organisation'
+import {
+  NATIVE_ROLES,
+  NATIVE_ROLE_BY_ID,
+  isNativeRoleId,
+  type AccessLevel,
+  type Membre,
+} from '~/types/organisation'
 
 const props = defineProps<{ mode: 'add' | 'edit'; membre?: Membre }>()
 const emit  = defineEmits<{ close: []; saved: [string] }>()
@@ -72,13 +83,29 @@ const session = useSessionStore()
 
 const panel = ref<{ close: () => void } | null>(null)
 
-const enabledModules = computed(() => session.activeOrg?.enabledModules ?? [])
-
 const name   = ref(props.membre ? `${props.membre.prenom} ${props.membre.nom}`.trim() : '')
 const email  = ref(props.membre?.email ?? '')
-const access = ref<ModuleAccess>({ ...(props.membre?.access ?? {}) })
+const roleId = ref(props.membre?.roleId ?? '')
 
-const valid = computed(() => name.value.trim() !== '' && /.+@.+\..+/.test(email.value))
+// Rôles attribuables : natifs sauf Propriétaire (unique, s'obtient par transfert)
+// + les rôles custom de l'org.
+const roleOptions = computed(() => [
+  ...NATIVE_ROLES.filter((r) => r.id !== 'proprietaire').map((r) => ({ value: r.id, label: r.label })),
+  ...session.customRoles.map((r) => ({ value: r.id, label: r.name })),
+])
+
+const selectedNative = computed(() =>
+  isNativeRoleId(roleId.value) ? NATIVE_ROLE_BY_ID[roleId.value] : null,
+)
+const selectedCustom = computed(() =>
+  session.customRoles.find((r) => r.id === roleId.value) ?? null,
+)
+const customEntries = computed(() =>
+  Object.entries(selectedCustom.value?.access ?? {}) as [string, AccessLevel][],
+)
+
+// Le rôle est requis : pas d'état « membre sans rôle » (ADR-0014).
+const valid = computed(() => name.value.trim() !== '' && /.+@.+\..+/.test(email.value) && roleId.value !== '')
 
 function splitName(full: string) {
   const parts = full.trim().split(/\s+/)
@@ -89,7 +116,7 @@ function splitName(full: string) {
 function save() {
   if (!valid.value) return
   const { prenom, nom } = splitName(name.value)
-  const payload = { prenom, nom, email: email.value.trim(), access: { ...access.value } }
+  const payload = { prenom, nom, email: email.value.trim(), roleId: roleId.value }
 
   if (props.mode === 'add') {
     session.inviteMembre(payload)
