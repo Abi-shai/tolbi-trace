@@ -1,182 +1,192 @@
-# Protocole de production & diffusion des tutos vidéo
+# Protocole de production et de diffusion des vidéos d'apprentissage
 
-> **Rôle de ce document.** Le compagnon opérationnel de la [stratégie des tutos d'apprentissage](./tutos-apprentissage-strategie.md) : la stratégie dit *pourquoi et quoi*, ce protocole dit *quand, comment et qui*. C'est le document à mettre dans les mains d'un prestataire vidéo ou d'un nouveau membre de l'équipe le jour du premier tournage. Il suit la forme normée de l'industrie : une **SOP en gates** (pipeline étape par étape avec validations) + une **delivery specification** interne (critères d'acceptation mesurables, à la manière des specs de livraison Netflix/DPP — un asset non conforme n'est pas publié).
->
-> Vocabulaire : les termes de domaine suivent le glossaire `CONTEXT.md` ([[Agent]], [[Affectation]], [[Collaborateur]], [[Organisation]]…). Le script de voice-over est de la copy UI : la gate lexicale de `CLAUDE.md` s'y applique intégralement.
+Alors ce doc, c'est le protocole complet des vidéos d'apprentissage : le référentiel qu'on met dans les mains d'un prestataire vidéo ou d'un nouveau dans l'équipe le jour du premier tournage. Il cadre quatre sujets : qu'est-ce qui fait qu'une vidéo mérite d'être produite, comment la production se déroule de bout en bout, comment on l'exploite dans le produit après production, et est-ce que le mobile et le web SaaS c'est la même chose (spoiler : non).
+
+La forme suit ce qui se fait dans l'industrie : un pipeline en gates — on ne passe pas à l'étape suivante sans validation — et une spec de livraison avec des critères mesurables. Une vidéo qui n'est pas conforme à la spec, elle n'est pas publiée, point.
+
+Dernière chose avant de rentrer dedans : les scripts de voix off, c'est de la copy produit. Donc le vocabulaire du domaine s'applique pareil que dans l'app — on dit « Code PIN », on dit « Parcelle », et on ne dit jamais « champ » pour une parcelle.
 
 ---
 
-## 1. Gate zéro — qu'est-ce qui mérite une vidéo ?
+## 1. Qu'est-ce qui fait qu'une vidéo mérite d'être produite ? C'est quoi les critères ?
 
-Aucune production ne démarre sans passer cette gate. Elle protège contre le vrai risque du format : la bibliothèque de vidéos mortes, chères à produire et jamais regardées.
+En fait, tout part toujours d'un ressenti : quelqu'un se dit « il faudrait une vidéo pour ça ». Le protocole est là pour transformer ce ressenti en décision. Parce que le vrai risque du format, c'est la bibliothèque de vidéos mortes — chères à produire, jamais regardées.
 
-### 1.1 Déclencheurs légitimes
+### D'où vient le besoin
 
-La question « faut-il un tuto ? » se pose quand survient l'un de ces signaux :
+Les déclencheurs légitimes, c'est :
 
-- **Livraison** : une nouvelle capacité mobile arrive (module, type de formulaire, geste nouveau).
-- **Signal terrain** : questions récurrentes aux référents ; erreurs récurrentes dans les collectes ; étape systématiquement lente ou ratée (mesure par chapitre, cf. §3.2).
-- **Signal produit** : une feature critique est sous-utilisée.
-- **Déploiement** : une nouvelle [[Organisation]] embarque ses [[Agent]]s.
+- une nouvelle capacité mobile qui arrive (module, type de formulaire, geste nouveau) ;
+- un signal terrain : des questions qui reviennent chez les référents, des erreurs récurrentes dans les collectes, une étape systématiquement lente ou ratée ;
+- un signal produit : une feature critique que personne n'utilise ;
+- un déploiement : une nouvelle organisation qui embarque ses agents.
 
-### 1.2 Critères d'éligibilité
+### Les critères
 
-Une *vidéo* est la bonne réponse si **tous** les critères passent :
+Une vidéo est la bonne réponse si **tous** les critères passent :
 
 | # | Critère | Le test |
 |---|---|---|
-| 1 | **Gestuel / visuel** | La tâche se *montre* mieux qu'elle ne se *dit* (cadrer une photo, dessiner un polygone de [[Parcelle]], scanner en rafale). Une information ponctuelle relève d'une micro-instruction ou d'un tooltip, pas d'une vidéo. |
-| 2 | **Fréquence × criticité** | Tâche exécutée souvent, **ou** à fort enjeu (ex. transaction INA confirmée par [[Code PIN]]). |
-| 3 | **Stabilité** | L'écran et le geste survivront à 2-3 releases. Sinon : attendre (anti-péremption, cf. stratégie §2.G). |
-| 4 | **Audience** | Assez d'agents concernés pour amortir tournage terrain + VO wolof. |
-| 5 | **Non-doublon** | Le catalogue n'a ni tuto ni chapitre qui couvre déjà le besoin — même discipline que la gate d'inventaire des composants. |
+| 1 | Gestuel / visuel | La tâche se montre mieux qu'elle ne s'explique (cadrer une photo, dessiner le polygone d'une parcelle, scanner en rafale). Une info ponctuelle, c'est une micro-instruction ou un tooltip, pas une vidéo. |
+| 2 | Fréquence × criticité | La tâche est exécutée souvent, ou elle a un fort enjeu (une transaction INA confirmée par code PIN, par exemple). |
+| 3 | Stabilité | L'écran et le geste vont survivre à 2-3 releases. Sinon on attend — pas la peine de produire un truc périmé dans un mois. |
+| 4 | Audience | Assez d'agents concernés pour amortir un tournage terrain et une voix off wolof. |
+| 5 | Non-doublon | Aucun tuto ni chapitre existant ne couvre déjà le besoin. |
 
-### 1.3 Cascade d'alternatives (à épuiser avant le « go »)
+### Avant de dire oui, on épuise les alternatives
 
-1. **Corriger l'UI.** Si une vidéo est nécessaire pour comprendre un écran, c'est peut-être l'écran qui a un problème. La réponse « on ne produit pas, on améliore la copy/le flux » est un résultat légitime — et prioritaire — de cette gate.
-2. **Ajouter un chapitre** à un tuto existant plutôt qu'une vidéo nouvelle.
-3. **Micro-instruction d'étape** (illustration + consignes + audio wolof dans le formulaire).
-4. **Vidéo complète** — seulement si 1-3 ne suffisent pas.
+Dans l'ordre :
 
-**Sortie de la gate 0** : une *fiche de production* (issue sur le tracker) — tâche, module, audience, déclencheur, critères cochés, alternative écartée et pourquoi. Validée par le owner produit → GO.
+1. **Corriger l'écran.** Si une vidéo est nécessaire pour comprendre un écran, c'est peut-être l'écran le problème. « On ne produit pas, on améliore l'UI » est une sortie légitime — et prioritaire — de cette étape.
+2. **Ajouter un chapitre** à une vidéo existante.
+3. **Une micro-instruction d'étape** dans le formulaire (illustration + consignes + audio wolof).
+4. **Une vidéo complète** — seulement si le reste ne suffit pas.
+
+Si on arrive au bout : on remplit une **fiche de production** (une issue sur le tracker) — la tâche, le module, l'audience, le déclencheur, les critères cochés, l'alternative écartée et pourquoi. Le owner produit valide → feu vert.
 
 ---
 
-## 2. Pipeline de production — huit étapes, huit gates
+## 2. Comment se déroule la production, de bout en bout ?
 
-Règle de forme : on ne saute pas une gate ; chaque gate a un livrable et un valideur nommé. Les *owners* ci-dessous sont des rôles — le RACI nominal est à compléter par l'équipe (§5).
+Huit étapes, huit gates. La règle : on ne saute pas une gate, et chaque gate a un livrable et un valideur.
 
-| # | Étape | Livrable | Validation (gate) |
+| # | Étape | Livrable | Qui valide |
 |---|---|---|---|
-| 0 | **Fiche de production** | Issue complète (cf. §1.3) | Owner produit |
-| 1 | **Script VO française** | Script chapitre par chapitre, généré (skill `tuto-script`) puis retravaillé — tutoiement, gate lexicale `CONTEXT.md` | Owner produit **+ relecture par un agent/référent terrain** |
-| 2 | **Storyboard** | Découpage click-par-click ; chaque séquence marquée *geste app* (screencast) ou *geste métier* (tournage) | Owner produit |
-| 3 | **Captation** | Screencasts : flows scriptés rejouables (Maestro) — jamais de capture à la main. Terrain : checklist de tournage (annexe C.1) — pairs réels, décor local, matériel réel | Rushes revus par le monteur |
-| 4 | **Montage V1 (FR)** | Vidéo montée selon les règles de la stratégie §2.E : ouverture ≤ 10 s, signaling, pauses après action, cartons de chapitre, récap 15 s, rien de décoratif | Owner produit |
-| 5 | **Adaptation wolof** | Draft de traduction (LLM autorisé) → **révision par locuteur natif obligatoire** → enregistrement VO → conformation sur la timeline FR verrouillée | Locuteur natif référent |
-| 6 | **QA** | Checklist mesurable (annexe C.2) **+ test terrain éclair** : 2-3 agents regardent puis refont le geste sans aide | Passe = publiable ; échec = retour gate 4 ou 5 |
-| 7 | **Encodage & dépôt** | Assets conformes à la delivery spec (annexe A ou B) + métadonnées complètes | Contrôle automatique (spec) |
-| 8 | **Publication** | Entrée au catalogue + mappings (cf. §3.1) + notification | Owner produit |
+| 0 | Fiche de production | L'issue complète (cf. section 1) | Owner produit |
+| 1 | Script de voix off (français) | Le script chapitre par chapitre — tutoiement, vocabulaire du domaine | Owner produit + relecture par un agent ou référent terrain |
+| 2 | Storyboard | Le découpage click par click ; chaque séquence marquée « geste app » (screencast) ou « geste métier » (tournage) | Owner produit |
+| 3 | Captation | Screencasts via des flows scriptés rejouables — jamais de capture à la main. Terrain : checklist de tournage (annexe C.1), avec des pairs réels, un décor local, du matériel réel | Le monteur revoit les rushes |
+| 4 | Montage V1 (français) | La vidéo montée : ouverture ≤ 10 s, signaling sur chaque action, pauses après chaque geste, cartons de chapitre, récap de 15 s, rien de décoratif | Owner produit |
+| 5 | Adaptation wolof | Draft de traduction (l'IA a le droit) → révision par un locuteur natif, obligatoire → enregistrement de la voix → calage sur la timeline française verrouillée | Le locuteur natif référent |
+| 6 | QA | La checklist complète (annexe C.2) **+ le test terrain éclair** : 2-3 agents regardent la vidéo puis refont le geste sans aide | Ça passe = publiable ; ça casse = retour gate 4 ou 5 |
+| 7 | Encodage et dépôt | Les assets conformes à la spec de livraison (annexe A ou B) + les métadonnées complètes | Contrôle automatique |
+| 8 | Publication | L'entrée au catalogue + les mappings (cf. section 3) + la notification | Owner produit |
 
-Le **test terrain éclair** (gate 6) est le critère d'acceptation ultime : si l'agent ne peut pas refaire le geste après visionnage, la vidéo a échoué, quelle que soit sa qualité formelle.
+Le test terrain éclair de la gate 6, c'est le vrai juge de paix : si l'agent ne peut pas refaire le geste après avoir vu la vidéo, la vidéo a raté — peu importe qu'elle soit belle.
 
 ---
 
-## 3. Exploitation dans le produit — le cycle de vie
+## 3. Après production, comment on l'exploite dans le produit ?
 
-### 3.1 Publication
+### La publication
 
-Publier = créer l'entrée de catalogue **et** ses mappings, sinon la vidéo est introuvable :
+Publier, ce n'est pas juste déposer un fichier. C'est créer l'entrée au catalogue **et** ses mappings, sinon la vidéo est introuvable :
 
-- **Écrans** : sur quels écrans de l'app le panel d'aide contextuel doit la proposer (et quels chapitres).
-- **[[Affectation]]s** : quels formulaires / étapes Source la concernent → alimente « Ta formation » et l'auto-download du pack à la connexion.
-- **Parcours** : position éventuelle dans le parcours nouvel agent.
-- **Notification** : les agents affectés reçoivent « Nouveau tuto disponible » ; jamais de notification aux non-concernés.
+- **Les écrans** : sur quels écrans de l'app le panel d'aide doit la proposer, et quels chapitres.
+- **Les affectations** : quels formulaires et quelles étapes de workflow la concernent — c'est ce qui alimente « Ta formation » et le pré-téléchargement du pack à la connexion.
+- **Le parcours** : sa position éventuelle dans le parcours du nouvel agent.
+- **La notification** : les agents affectés reçoivent « Nouveau tuto disponible ». Les autres, rien — on ne notifie jamais les non-concernés.
 
-### 3.2 Vie
+### La vie
 
-- **Déclencheurs de redécouverte** : notification à l'Affectation, badge « Mis à jour », remontée saisonnière (avant campagne).
-- **Mesure** : complétion par vidéo et **par chapitre**, croisée avec la qualité des collectes ; visible du Responsable ops côté web (observation). C'est cette mesure qui alimente les déclencheurs de la gate 0 (étape ratée → besoin identifié) et les décisions de re-tournage.
+- Les déclencheurs qui ramènent vers les vidéos : la notification à l'affectation, le badge « Mis à jour », la remontée saisonnière (avant campagne).
+- La mesure : la complétion par vidéo et **par chapitre**, croisée avec la qualité des collectes, visible du Responsable ops côté web. C'est cette mesure qui nourrit la section 1 (une étape ratée partout = un besoin identifié) et les décisions de re-tournage.
 
-### 3.3 Fin de vie
+### La fin de vie
 
-À chaque release d'un module, la **revue de péremption** (checklist annexe C.3) classe chaque tuto du module :
+À chaque release d'un module, on passe la revue de péremption (annexe C.3) et on classe chaque tuto du module :
 
 - **À jour** — rien à faire.
-- **À re-capturer** — l'UI a changé : rejouer les flows scriptés, ré-encoder, régénérer la ou les phrases de VO touchées (TTS/Overdub côté FR ; re-prise ciblée côté wolof). Badge « Mis à jour » à la republication.
-- **Déprécié** — la tâche n'existe plus ou a trop changé : retrait du catalogue, archivage du master. **Un tuto périmé visible est pire que pas de tuto : il enseigne le mauvais geste.**
+- **À re-capturer** — l'UI a changé : on rejoue les flows scriptés, on ré-encode, on régénère la ou les phrases de voix off touchées. Badge « Mis à jour » à la republication.
+- **Déprécié** — la tâche n'existe plus ou a trop changé : on retire du catalogue, on archive le master.
+
+Une chose à retenir : un tuto périmé visible, c'est pire que pas de tuto. Il enseigne le mauvais geste.
 
 ---
 
-## 4. Deux profils de diffusion — mobile ≠ web SaaS
+## 4. Sur le mobile et sur le web SaaS, c'est la même chose ?
 
-Le protocole définit deux profils, parce que l'audience, le contexte et donc la spec diffèrent presque en tout :
+Non. Et c'est même un point structurant : l'audience, le contexte et donc la spec diffèrent presque en tout. Du coup le protocole définit deux profils :
 
-| | **Profil MOBILE ([[Agent]])** | **Profil WEB ([[Collaborateur]])** |
+| | Profil MOBILE (Agent) | Profil WEB (Collaborateur) |
 |---|---|---|
-| Audience | Agent terrain, lettrisme partiel, wolof/FR | Responsable ops, Admin — back-office, FR |
-| Contexte | Debout, soleil, une main, hors ligne | Bureau, desktop, en ligne, souvent **son coupé** |
+| Audience | Agent terrain, lettrisme partiel, wolof/français | Responsable ops, Admin — back-office, français |
+| Contexte | Debout, soleil, une main, hors ligne | Bureau, desktop, en ligne, souvent le son coupé |
 | Tâches | Gestes courts répétés | Configurations longues et rares |
-| Place de la vidéo | **Format central** (décision produit) | **Format d'appoint** — un Collaborateur lit et cherche ; privilégier guide interactif, empty state éducatif, doc texte *searchable* |
-| Sous-titres | **Jamais** (modalité/redondance, lettrisme) | **Souhaitables** (son coupé au bureau) |
+| Place de la vidéo | Format central | Format d'appoint — un collaborateur lit et cherche ; un guide interactif ou une doc structurée fait souvent mieux |
+| Sous-titres | Jamais | Souhaitables (le son est coupé au bureau) |
 | Texte incrusté | Zéro texte porteur de sens | Autorisé |
-| Langues | FR + wolof obligatoires | FR seul |
-| Format image | Vertical 9:16 | Paysage 16:9 desktop |
+| Langues | Français + wolof obligatoires | Français seul |
+| Format image | Vertical 9:16 | Paysage 16:9 |
 | Diffusion | Pré-téléchargé (packs, poids affiché, partage de proximité) | Streaming, intégré au panneau d'aide web et aux empty states |
-| Delivery spec | Annexe A | Annexe B |
+| Spec de livraison | Annexe A | Annexe B |
 
-Côté web, la gate 0 penche donc différemment : la cascade d'alternatives s'arrête presque toujours avant la vidéo. Les candidats vidéo web légitimes sont les workflows réellement démonstratifs — la [[Correction cartographique]] est l'exemple type.
+À noter : les deux profils sont quasiment opposés sur les sous-titres et le texte incrusté, parce que le contexte d'écoute est inversé — l'agent n'a que l'oreille, le collaborateur n'a souvent que l'œil.
 
-Ce qui reste **commun** aux deux profils : le catalogue conceptuel (module × tâche), la gate lexicale, le pipeline en gates (§2), la mesure de complétion.
+Côté web, la section 1 penche donc différemment : la cascade d'alternatives s'arrête presque toujours avant la vidéo. Les vrais candidats vidéo web, ce sont les workflows démonstratifs — la correction cartographique, typiquement.
+
+Ce qui reste commun aux deux profils : le catalogue (module × tâche), le vocabulaire du domaine, le pipeline en gates, la mesure de complétion.
 
 ---
 
-## 5. Rôles (RACI à compléter)
+## 5. Qui fait quoi
+
+Les rôles sont posés, les noms restent à mettre :
 
 | Rôle | Responsabilités | Qui |
 |---|---|---|
-| **Owner produit** | Gates 0, 1, 2, 4, 8 ; arbitrages de la cascade | _à nommer_ |
-| **Référent terrain** | Relecture script (gate 1), recrutement des pairs au tournage, test éclair (gate 6) | _à nommer_ |
-| **Monteur / prestataire vidéo** | Gates 3, 4, 7 ; garant de la delivery spec | _à nommer_ |
-| **Locuteur natif wolof référent** | Gate 5 : révision de l'adaptation + VO (ou validation d'une VO tierce) | _à nommer_ |
+| Owner produit | Gates 0, 1, 2, 4, 8 ; les arbitrages de la cascade | _à nommer_ |
+| Référent terrain | Relecture du script (gate 1), recrutement des pairs au tournage, test éclair (gate 6) | _à nommer_ |
+| Monteur / prestataire vidéo | Gates 3, 4, 7 ; garant de la spec de livraison | _à nommer_ |
+| Locuteur natif wolof référent | Gate 5 : révision de l'adaptation + voix off (ou validation d'une voix tierce) | _à nommer_ |
 
 ---
 
-## Annexe A — Delivery spec MOBILE (v1)
+## Annexe A — Spec de livraison MOBILE (v1)
 
-Un asset non conforme n'entre pas au catalogue. Contrôles automatisables en CI de contenu.
+Un asset non conforme n'entre pas au catalogue. Tout est contrôlable automatiquement.
 
 **Vidéo**
-- Codec : H.264 **baseline profile**, conteneur MP4
-- Résolution : 480p vertical (854×480 → 480×854), 30 fps max
-- Débit : ~700 kbps (cible ≈ 5 Mo/min ; tuto de 3 min ≈ 15 Mo ; pack module < 60 Mo)
-- Format : 9:16 pour les screencasts ; séquences terrain recadrées
-- Durée : ≤ 6 min (cible 2-4 min)
-- **Zéro texte incrusté porteur de sens** (cartons de chapitre : pictogramme + numéro tolérés)
+- Codec : H.264 baseline profile, conteneur MP4
+- Résolution : 480p vertical (480×854), 30 fps max
+- Débit : ~700 kbps (soit ≈ 5 Mo/min ; un tuto de 3 min ≈ 15 Mo ; un pack module < 60 Mo)
+- Format : 9:16 pour les screencasts ; les séquences terrain sont recadrées
+- Durée : ≤ 6 min (la cible c'est 2-4 min)
+- Zéro texte incrusté porteur de sens (les cartons de chapitre — pictogramme + numéro — sont tolérés)
 
 **Audio**
 - Une piste par langue : `fr`, `wo` — jamais de vidéo bilingue, jamais de sous-titres
-- Loudness normalisée : **−16 LUFS** (standard streaming mobile), true peak ≤ −1 dBTP
-- Voix seule — pas de musique sous la narration
+- Loudness normalisée : −16 LUFS, true peak ≤ −1 dBTP
+- La voix seule — pas de musique sous la narration
 
 **Master (archivage)**
 - 720p, H.264 high profile, pistes audio séparées, projet de montage conservé
 
-**Métadonnées obligatoires** (l'asset est rejeté si une manque)
+**Métadonnées obligatoires** (l'asset est rejeté s'il en manque une)
 `id` · `module` · `tache` · `chapitres[]` (titre + timecode, alignés sur les étapes) · `langue` · `tailleMo` · `versionApp` · `affectations[]` · `ordreParcours?`
 
 **Nommage** : `tuto_<module>_<tache-kebab>_<langue>_v<versionApp>.mp4` (ex. `tuto_collecte_creer-collecte-terrain_wo_v1.4.mp4`)
 
-## Annexe B — Delivery spec WEB (v1)
+## Annexe B — Spec de livraison WEB (v1)
 
 - Codec : H.264 main profile, MP4, 720p paysage 16:9, ~1,5 Mbps
 - Durée : ≤ 6 min ; mêmes règles de montage (signaling, chapitres, récap)
-- Audio : FR seul, −16 LUFS ; **sous-titres FR fournis** (fichier `.vtt` séparé, jamais incrustés — le lecteur les active)
+- Audio : français seul, −16 LUFS ; sous-titres français fournis en fichier `.vtt` séparé, jamais incrustés — c'est le lecteur qui les active
 - Texte incrusté autorisé s'il sert l'apprentissage
-- Métadonnées : identiques à l'annexe A, sans `affectations` (remplacé par le mapping écrans web)
+- Métadonnées : identiques à l'annexe A, sans `affectations` (remplacé par le mapping des écrans web)
 
 ## Annexe C — Checklists
 
 ### C.1 Tournage terrain
-- [ ] Présentateur = agent/producteur réel, consentement écrit (image + voix), rémunération convenue
-- [ ] Décor reconnaissable (coop, magasin, parcelle de la zone) ; matériel réel (téléphone d'entrée de gamme)
-- [ ] Audio : micro-cravate, prise témoin ; environnement contrôlé (vent !)
-- [ ] Gestes filmés en entier + gros plan par geste (zoom au montage)
-- [ ] Plans de coupe : mains, écran, contexte
+- [ ] Le présentateur est un agent ou un producteur réel ; consentement écrit (image + voix), rémunération convenue
+- [ ] Décor reconnaissable (la coop, le magasin, une parcelle de la zone) ; matériel réel (téléphone d'entrée de gamme)
+- [ ] Audio : micro-cravate, prise témoin ; environnement contrôlé (attention au vent)
+- [ ] Chaque geste filmé en entier + un gros plan par geste (le zoom se fait au montage)
+- [ ] Plans de coupe : les mains, l'écran, le contexte
 
 ### C.2 QA avant publication
-- [ ] Durée ≤ 6 min ; ouverture ≤ 10 s avec objectif énoncé ; récap final présent
+- [ ] Durée ≤ 6 min ; ouverture ≤ 10 s avec l'objectif énoncé ; récap final présent
 - [ ] Chapitres alignés sur les étapes de la tâche, timecodes corrects
-- [ ] Signaling présent sur chaque action d'écran (zoom/halo/tap)
+- [ ] Signaling présent sur chaque action d'écran (zoom, halo, tap)
 - [ ] Aucun texte incrusté porteur de sens (profil mobile)
-- [ ] Lexique conforme `CONTEXT.md` (passe automatisée + relecture)
+- [ ] Vocabulaire conforme au glossaire du domaine (passe automatisée + relecture)
 - [ ] Loudness mesurée à −16 LUFS ±1
-- [ ] VO wolof validée par le locuteur natif référent
-- [ ] **Test terrain éclair réussi** : 2-3 agents refont le geste sans aide
-- [ ] Delivery spec (annexe A/B) : contrôle automatique passé
+- [ ] Voix off wolof validée par le locuteur natif référent
+- [ ] Test terrain éclair réussi : 2-3 agents refont le geste sans aide
+- [ ] Spec de livraison (annexe A ou B) : contrôle automatique passé
 
 ### C.3 Revue de péremption (à chaque release de module)
-- [ ] Diff visuel : captures des flows scriptés vs plans d'UI des tutos publiés du module
+- [ ] Diff visuel : les captures des flows scriptés comparées aux plans d'UI des tutos publiés du module
 - [ ] Chaque tuto classé : à jour / à re-capturer / déprécié
-- [ ] Re-captures planifiées (fiche de production allégée — gates 3, 4, 7, 8)
-- [ ] Tutos dépréciés retirés du catalogue et archivés
+- [ ] Les re-captures planifiées (fiche de production allégée — gates 3, 4, 7, 8)
+- [ ] Les tutos dépréciés retirés du catalogue et archivés
