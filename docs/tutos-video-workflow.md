@@ -1,54 +1,41 @@
-# Production des supports d'apprentissage — workflow
+# Comment on produit nos vidéos d'apprentissage
 
-> **Rôle de ce document.** La version digeste du dispositif tutos vidéo : le cycle de vie d'une vidéo en 5 phases, dans le découpage canonique de l'industrie audiovisuelle (Développement → Pré-production → Production → Post-production → Livraison). C'est le document d'entrée — le détail vit dans la [stratégie](./tutos-apprentissage-strategie.md) (pourquoi et quoi) et le [protocole](./tutos-video-protocole.md) (gates, specs et checklists complètes).
+Ce doc explique comment une vidéo naît chez Tolbi, de l'idée jusqu'à sa place dans l'app. C'est la vue d'ensemble : les checklists et les specs complètes sont dans le [protocole](./tutos-video-protocole.md), le fond de la réflexion dans la [stratégie](./tutos-apprentissage-strategie.md).
 
----
+Les cinq phases sont celles de n'importe quelle production audiovisuelle — développement, pré-prod, tournage, post-prod, livraison. Un prestataire vidéo s'y retrouvera sans qu'on lui explique.
 
-## Phase 1 · Développement — le greenlight
+## 1. Décider si la vidéo doit exister
 
-> *Dans l'industrie : la phase où un projet obtient (ou non) son feu vert. Rien n'est engagé avant.*
+Tout commence par quelqu'un qui se dit « il faudrait une vidéo pour ça ». Très bien — mais on ne sort pas la caméra tout de suite. On vérifie d'abord que le besoin tient la route : est-ce que la tâche se montre mieux qu'elle ne s'explique ? Est-ce que l'écran est stable, ou va encore bouger dans deux sprints ? Est-ce qu'un tuto existant ne couvre pas déjà le sujet ? Les critères complets sont dans le [protocole, gate zéro](./tutos-video-protocole.md#1-gate-zéro--quest-ce-qui-mérite-une-vidéo-).
 
-```
-Besoin ressenti → Vérification des critères → Critères validés = GREENLIGHT
-```
+Si ça passe, feu vert. Si ça ne passe pas, c'est souvent que la bonne réponse est ailleurs : améliorer l'écran lui-même, ajouter un chapitre à une vidéo existante, ou glisser une simple instruction dans le formulaire.
 
-Aucune vidéo ne part d'une intuition seule : le besoin passe les critères ([protocole, gate zéro](./tutos-video-protocole.md#1-gate-zéro--quest-ce-qui-mérite-une-vidéo-)), et seul le greenlight ouvre la pré-production.
+## 2. Préparer avant de filmer
 
-## Phase 2 · Pré-production — tout se décide avant de filmer
+C'est la phase où tout se décide — et le moment le moins cher pour changer d'avis. Avant d'allumer quoi que ce soit :
 
-> *Dans l'industrie : script, découpage, casting, repérages. La phase la moins chère pour corriger une erreur.*
+**On écrit le script et le storyboard.** Pas de tournage sans script. Sinon on improvise, et ça s'entend.
 
-- **Script & storyboard** — on écrit avant de filmer.
-- **Genre** (décidé au storyboard, séquence par séquence) :
-  - **Genre App** → screencast du téléphone
-  - **Genre métier** → tournage terrain réel
-- **Casting** (genre métier) : une personne à laquelle **ceux qui visionnent s'identifient** — un pair, pas un présentateur.
-- **Plan des versions linguistiques** : **chaque langue a sa vidéo**. Pas de sous-titres — c'est la piste audio qui porte la langue.
+**On tranche le genre de chaque séquence.** Deux genres : montrer l'app (un screencast du téléphone) ou montrer le geste métier (un tournage sur le terrain). La plupart des vidéos mélangent les deux, le storyboard dit qui fait quoi.
 
-## Phase 3 · Production — la captation
+**On choisit qui apparaît à l'écran.** Pour les séquences terrain, il faut quelqu'un à qui les agents peuvent s'identifier : un agent, un producteur du coin. Pas un présentateur.
 
-> *Dans l'industrie : le tournage. On exécute le storyboard, on ne le réinvente pas.*
+**On liste les langues.** Règle simple : une langue = une vidéo. On ne sous-titre jamais — c'est la voix qui porte la langue, pas le texte.
 
-- Genre App → **screen-record**
-- Genre métier → **tournage terrain**
+## 3. Tourner
 
-## Phase 4 · Post-production — montage et versions
+On exécute le storyboard, rien de plus. Screen-record pour les séquences app, tournage pour les séquences terrain. Si quelque chose coince au tournage, on ne bricole pas sur place : on retourne corriger le storyboard.
 
-> *Dans l'industrie : montage, mixage, versioning linguistique.*
+## 4. Monter
 
-- **Montage sur Descript**
-- **Déclinaison des versions par langue** (une vidéo par langue, jamais de sous-titres)
+Le montage se fait sur Descript. C'est aussi là qu'on décline les versions linguistiques : même image, une piste audio par langue.
 
-## Phase 5 · Livraison — QC et validation
+## 5. Contrôler, puis publier
 
-> *Dans l'industrie : le Quality Control contre la spec de livraison. Un master non conforme est refusé.*
+Dernière étape avant l'app : le contrôle qualité. Trois choses à vérifier :
 
-La vidéo est contrôlée contre la **spec technique** avant d'exister dans le produit :
+- la vidéo est **courte** — une vidéo = une tâche, pas plus ;
+- elle est **chapitrée** — un agent doit pouvoir revenir sur l'étape GPS sans se retaper les quatre minutes ;
+- elle est **légère** — 480p, parce qu'elle doit se télécharger et tenir sur les téléphones du terrain.
 
-| Spec | Règle |
-|---|---|
-| Durée | Courte — une vidéo = une tâche |
-| Chapitrage | Découpage par chapitres — on re-regarde une étape, pas tout |
-| Poids | 480p, fichier léger — téléchargeable sur les téléphones du terrain |
-
-**Validated** = la vidéo passe le QC → elle entre au catalogue.
+Une vidéo qui passe entre au catalogue. Une vidéo qui ne passe pas retourne au montage. Il n'y a pas de troisième cas.
